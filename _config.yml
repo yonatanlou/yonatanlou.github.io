@@ -58,22 +58,31 @@ plugins:
   - jekyll-include-cache
 
 author:
-  name   : "First Lastname"
+  name   : "Yonatan Lourie"
   avatar : "/assets/images/bio-photo.jpg"
-  bio    : "My awesome biography constrained to a sentence or two goes here."
+  bio    : ""
   links:
     - label: "Website"
       icon: "fas fa-fw fa-link"
       url: "https://"
     - label: "Twitter"
       icon: "fab fa-fw fa-twitter-square"
-      url: "https://twitter.com/"
+      url: "https://twitter.com/yonatanlou"
     - label: "GitHub"
       icon: "fab fa-fw fa-github"
-      url: "https://github.com/"
+      url: "https://github.com/yonatanlou"
     - label: "Instagram"
       icon: "fab fa-fw fa-instagram"
-      url: "https://instagram.com/"
+      url: "https://www.instagram.com/yonatanlourie/"
+    - label: "Goodreads"
+      icon: "fab fa-fw fa-goodreads"
+      url: "https://www.goodreads.com/user/show/103722180-yonatan-lourie"
+    - label: "Spotify"
+      icon: "fab fa-fw fa-spotify"
+      url: "https://open.spotify.com/user/224udkuetwxsiqba7n4tums6q?si=_RD2kBO8QlSUYLfjBLjBEQ&nd=1"
+    - label: "Linkedin"
+      icon: "fab fa-fw fa-linkedin"
+      url: "https://www.linkedin.com/in/yonatanlourie/"            
 
 footer:
   links:
