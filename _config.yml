@@ -55,6 +55,8 @@ plugins:
   - jemoji
   - jekyll-include-cache
 
+#Site settings:
+breadcrumbs: true
 author:
   name   : "Yonatan Lourie"
   avatar : "/assets/images/bio-photo.jpg"
@@ -114,7 +116,7 @@ category_archive:
 tag_archive:
   type: liquid
   path: /tags/
-  
+
 sass:
   sass_dir: _sass
   style: compressed # http://sass-lang.com/documentation/file.SASS_REFERENCE.html#output_style
