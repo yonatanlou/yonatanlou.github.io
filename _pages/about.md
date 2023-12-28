@@ -3,6 +3,9 @@ permalink: /about/
 title: "About"
 ---
 
-Tempor velit sint sunt ipsum tempor enim ad qui ullamco. Est dolore anim ad velit duis dolore minim sunt aliquip amet commodo labore. Ut eu pariatur aute ea aute excepteur laborum. Esse ea esse excepteur minim mollit qui cillum excepteur ex dolore magna. Labore deserunt fugiat incididunt incididunt sint ea. Consequat dolore aute laboris quis proident quis non et est consectetur ex eiusmod sit culpa.
-
-Cupidatat ea do et in excepteur in. Ad nostrud ut est esse eu duis ea sunt eiusmod. Aliquip tempor veniam sint elit fugiat. Velit incididunt laboris amet incididunt labore dolore irure velit excepteur commodo deserunt laborum. Consectetur eu fugiat veniam veniam Lorem labore magna eiusmod. Ea occaecat reprehenderit pariatur consectetur minim labore ut aliquip.
+<center >
+I am Y{J}onatan, a Tel Aviv University (TAU) graduate student pursuing my master's in Statistics and Data Science. Beyond my academic pursuits, I'm working as a researcher at  <a href="https://www.forter.com/" >Forter</a>, and trying to catch the bad guys using data science, pure analytics, and a lot of data. I enjoy solving complex problems using machine learning, statistical techniques, and creativity. I have a strong desire to continuously expand my skill set, with a particular focus on Python, R, Spark, SQL, Elasticsearch, Git, Docker, Jenkins, and a variety of other technologies. 
+<br />
+<br />
+<br />
+</center>
