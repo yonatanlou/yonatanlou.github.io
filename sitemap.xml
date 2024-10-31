@@ -2,42 +2,42 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
 	
 	<url>
-		<loc>https://yonatanlou.github.io/base/blog/firstpost/</loc>
+		<loc>https://yonatanlou.github.io/blog/firstpost/</loc>
 		<lastmod>2023-10-29</lastmod>
 	</url>
 	
 	<url>
-		<loc>https://yonatanlou.github.io/base/blog/data-pipeline-for-qumran-scrolls/data-pipeline-for-the-qumran-scrolls-using-text-fabric/</loc>
+		<loc>https://yonatanlou.github.io/blog/data-pipeline-for-qumran-scrolls/data-pipeline-for-the-qumran-scrolls-using-text-fabric/</loc>
 		<lastmod>2023-10-30</lastmod>
 	</url>
 	
 	<url>
-		<loc>https://yonatanlou.github.io/base/about/</loc>
+		<loc>https://yonatanlou.github.io/about/</loc>
 		<lastmod>2024-10-31</lastmod>
 	</url>
 	
 	<url>
-		<loc>https://yonatanlou.github.io/base/blog/</loc>
+		<loc>https://yonatanlou.github.io/blog/</loc>
 		<lastmod>2024-10-31</lastmod>
 	</url>
 	
 	<url>
-		<loc>https://yonatanlou.github.io/base/</loc>
+		<loc>https://yonatanlou.github.io/</loc>
 		<lastmod>2024-10-31</lastmod>
 	</url>
 	
 	<url>
-		<loc>https://yonatanlou.github.io/base/quality-content/</loc>
+		<loc>https://yonatanlou.github.io/quality-content/</loc>
 		<lastmod>2024-10-31</lastmod>
 	</url>
 	
 	<url>
-		<loc>https://yonatanlou.github.io/base/tags/</loc>
+		<loc>https://yonatanlou.github.io/tags/</loc>
 		<lastmod>2024-10-31</lastmod>
 	</url>
 	
 	<url>
-		<loc>https://yonatanlou.github.io/base/feed/feed.xml</loc>
+		<loc>https://yonatanlou.github.io/feed/feed.xml</loc>
 		<lastmod>2024-10-31</lastmod>
 	</url>
 </urlset>

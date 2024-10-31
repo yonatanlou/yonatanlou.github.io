@@ -3,19 +3,19 @@
 <feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en">
   <title>Yonatan Lourie</title>
   <subtitle>Just a solid place to have a proper virtual identity.</subtitle>
-  <link href="https://yonatanlou.github.io/base/feed/feed.xml" rel="self" />
-  <link href="https://yonatanlou.github.io/base/" />
+  <link href="https://yonatanlou.github.io/feed/feed.xml" rel="self" />
+  <link href="https://yonatanlou.github.io/" />
   <updated>2023-10-30T00:00:00Z</updated>
-  <id>https://yonatanlou.github.io/base/</id>
+  <id>https://yonatanlou.github.io/</id>
   <author>
     <name>Yonatan Lourie</name>
   </author>
   <entry>
     <title>How to use the Qumran scrolls for NLP tasks using text-fabric</title>
-    <link href="https://yonatanlou.github.io/base/blog/data-pipeline-for-qumran-scrolls/data-pipeline-for-the-qumran-scrolls-using-text-fabric/" />
+    <link href="https://yonatanlou.github.io/blog/data-pipeline-for-qumran-scrolls/data-pipeline-for-the-qumran-scrolls-using-text-fabric/" />
     <updated>2023-10-30T00:00:00Z</updated>
-    <id>https://yonatanlou.github.io/base/blog/data-pipeline-for-qumran-scrolls/data-pipeline-for-the-qumran-scrolls-using-text-fabric/</id>
-    <content type="html">&lt;p&gt;When I first started my thesis, I inherited the Dead Sea Scrolls project from another student in my lab. He provided a large file that looked something like this: &lt;picture&gt;&lt;source type=&quot;image/avif&quot; srcset=&quot;https://yonatanlou.github.io/base/blog/data-pipeline-for-qumran-scrolls/data-pipeline-for-the-qumran-scrolls-using-text-fabric/l__zRaStbu-510.avif 510w&quot;&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://yonatanlou.github.io/base/blog/data-pipeline-for-qumran-scrolls/data-pipeline-for-the-qumran-scrolls-using-text-fabric/l__zRaStbu-510.webp 510w&quot;&gt;&lt;img loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://yonatanlou.github.io/base/blog/data-pipeline-for-qumran-scrolls/data-pipeline-for-the-qumran-scrolls-using-text-fabric/l__zRaStbu-510.png&quot; alt=&quot;abeg_origin&quot; width=&quot;510&quot; height=&quot;340&quot;&gt;&lt;/picture&gt;&lt;/p&gt;
+    <id>https://yonatanlou.github.io/blog/data-pipeline-for-qumran-scrolls/data-pipeline-for-the-qumran-scrolls-using-text-fabric/</id>
+    <content type="html">&lt;p&gt;When I first started my thesis, I inherited the Dead Sea Scrolls project from another student in my lab. He provided a large file that looked something like this: &lt;picture&gt;&lt;source type=&quot;image/avif&quot; srcset=&quot;https://yonatanlou.github.io/blog/data-pipeline-for-qumran-scrolls/data-pipeline-for-the-qumran-scrolls-using-text-fabric/l__zRaStbu-510.avif 510w&quot;&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://yonatanlou.github.io/blog/data-pipeline-for-qumran-scrolls/data-pipeline-for-the-qumran-scrolls-using-text-fabric/l__zRaStbu-510.webp 510w&quot;&gt;&lt;img loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://yonatanlou.github.io/blog/data-pipeline-for-qumran-scrolls/data-pipeline-for-the-qumran-scrolls-using-text-fabric/l__zRaStbu-510.png&quot; alt=&quot;abeg_origin&quot; width=&quot;510&quot; height=&quot;340&quot;&gt;&lt;/picture&gt;&lt;/p&gt;
 &lt;p&gt;I also inherited a complex &amp;quot;spaghetti&amp;quot; code that parsed this data into readable Hebrew text. These files (from the image above),  were created by Martin Abegg and contain all of the text of the Dead Sea Scrolls, with morphological data on each word.&lt;/p&gt;
 &lt;p&gt;A few weeks later, I discovered the text-fabric package, a toolkit for analyzing large, structured text datasets, including ancient manuscripts, biblical texts, and other linguistically complex corpora. Popular among researchers in linguistics, biblical studies, and digital humanities, it efficiently manages intricate text structures and large datasets.&lt;/p&gt;
 &lt;p&gt;This package actually parsing those files that looks like gibberish from Abegg, but with much more organized and easy to use code.&lt;/p&gt;
@@ -179,9 +179,9 @@ For more context and much ordered pipeline you can take a peek in here: &lt;a hr
   </entry>
   <entry>
     <title>Moving from Jekyll to Eleventy.</title>
-    <link href="https://yonatanlou.github.io/base/blog/firstpost/" />
+    <link href="https://yonatanlou.github.io/blog/firstpost/" />
     <updated>2023-10-29T00:00:00Z</updated>
-    <id>https://yonatanlou.github.io/base/blog/firstpost/</id>
+    <id>https://yonatanlou.github.io/blog/firstpost/</id>
     <content type="html">&lt;ol&gt;
 &lt;li&gt;I got tired of the Ruby environment.&lt;/li&gt;
 &lt;li&gt;I wanted to start using javascript.&lt;/li&gt;
