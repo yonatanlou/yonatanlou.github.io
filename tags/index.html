@@ -6,6 +6,7 @@
 		<title>Yonatan Lourie</title>
 		<meta name="description" content="Just a solid place to have a proper virtual identity.">
 		<link rel="alternate" href="feed/feed.xml" type="application/atom+xml" title="Yonatan Lourie">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 		
 		<style>/* Message Box */
 .message-box {
@@ -14,13 +15,15 @@
 	display: block;
 	background-color: var(--color-message-box);
 	color: var(--color-gray-90);
-	padding: 1em 0.625em; /* 16px 10px /16 */
+	padding: 1em 0.625em;
+	/* 16px 10px /16 */
 }
+
 .message-box ol {
 	margin-top: 0;
 }
 
-@media (prefers-color-scheme: dark) {
+@media (prefers-color-scheme: light) {
 	.message-box {
 		--color-message-box: #082840;
 	}
@@ -37,18 +40,19 @@
 	--color-gray-20: #e0e0e0;
 	--color-gray-50: #C0C0C0;
 	--color-gray-90: #333;
+	/* Change to a darker shade */
 
-	--background-color: #fff;
+	--background-color: #f5f5f5;
+	/* Lighter background */
 
-	--text-color: var(--color-gray-90);
-	--text-color-link: #082840;
-	--text-color-link-active: #5f2b48;
-	--text-color-link-visited: #17050F;
-
-	--syntax-tab-size: 2;
+	--text-color: #333;
+	/* Change to a darker shade */
+	--text-color-link: #007bff;
+	--text-color-link-active: #0056b3;
+	--text-color-link-visited: #563d7c;
 }
 
-@media (prefers-color-scheme: dark) {
+@media (prefers-color-scheme: light) {
 	:root {
 		--color-gray-20: #e0e0e0;
 		--color-gray-50: #C0C0C0;
@@ -81,11 +85,13 @@ body {
 	color: var(--text-color);
 	background-color: var(--background-color);
 }
+
 html {
 	overflow-y: scroll;
 }
+
 body {
-	max-width: 40em;
+	max-width: 65em;
 }
 
 /* https://www.a11yproject.com/posts/how-to-hide-content/ */
@@ -102,6 +108,7 @@ body {
 p:last-child {
 	margin-bottom: 0;
 }
+
 p {
 	line-height: 1.5;
 }
@@ -113,9 +120,11 @@ li {
 a[href] {
 	color: var(--text-color-link);
 }
+
 a[href]:visited {
 	color: var(--text-color-link-visited);
 }
+
 a[href]:hover,
 a[href]:active {
 	color: var(--text-color-link-active);
@@ -125,6 +134,7 @@ main,
 footer {
 	padding: 1rem;
 }
+
 main :first-child {
 	margin-top: 0;
 }
@@ -132,6 +142,7 @@ main :first-child {
 header {
 	border-bottom: 1px dashed var(--color-gray-20);
 }
+
 header:after {
 	content: "";
 	display: table;
@@ -146,9 +157,11 @@ header:after {
 	border-top: 1px dashed var(--color-gray-20);
 	padding: 1em 0;
 }
-.links-nextprev > * {
+
+.links-nextprev>* {
 	flex-grow: 1;
 }
+
 .links-nextprev-next {
 	text-align: right;
 }
@@ -156,6 +169,7 @@ header:after {
 table {
 	margin: 1em 0;
 }
+
 table td,
 table th {
 	padding-right: 1em;
@@ -165,9 +179,11 @@ pre,
 code {
 	font-family: var(--font-family-monospace);
 }
+
 pre:not([class*="language-"]) {
 	margin: .5em 0;
-	line-height: 1.375; /* 22px /16 */
+	line-height: 1.375;
+	/* 22px /16 */
 	-moz-tab-size: var(--syntax-tab-size);
 	-o-tab-size: var(--syntax-tab-size);
 	tab-size: var(--syntax-tab-size);
@@ -181,6 +197,7 @@ pre:not([class*="language-"]) {
 	word-break: normal;
 	overflow-x: auto;
 }
+
 code {
 	word-break: break-all;
 }
@@ -193,11 +210,14 @@ header {
 	align-items: center;
 	padding: 1em;
 }
+
 .home-link {
-	font-size: 1em; /* 16px /16 */
+	font-size: 1em;
+	/* 16px /16 */
 	font-weight: 700;
 	margin-right: 2em;
 }
+
 .home-link:link:not(:hover) {
 	text-decoration: none;
 }
@@ -209,13 +229,16 @@ header {
 	margin: 0;
 	list-style: none;
 }
+
 .nav-item {
 	display: inline-block;
 	margin-right: 1em;
 }
+
 .nav-item a[href]:not(:hover) {
 	text-decoration: none;
 }
+
 .nav a[href][aria-current="page"] {
 	text-decoration: underline;
 }
@@ -226,6 +249,7 @@ header {
 	padding: 0;
 	padding-left: 1.5rem;
 }
+
 .postlist-item {
 	display: flex;
 	flex-wrap: wrap;
@@ -233,6 +257,7 @@ header {
 	counter-increment: start-from -1;
 	margin-bottom: 1em;
 }
+
 .postlist-item:before {
 	display: inline-block;
 	pointer-events: none;
@@ -241,16 +266,21 @@ header {
 	text-align: right;
 	margin-left: -1.5rem;
 }
+
 .postlist-date,
 .postlist-item:before {
-	font-size: 0.8125em; /* 13px /16 */
+	font-size: 0.8125em;
+	/* 13px /16 */
 	color: var(--color-gray-90);
 }
+
 .postlist-date {
 	word-spacing: -0.5px;
 }
+
 .postlist-link {
-	font-size: 1.1875em; /* 19px /16 */
+	font-size: 1.1875em;
+	/* 19px /16 */
 	font-weight: 700;
 	flex-basis: calc(100% - 1.5rem);
 	padding-left: .25em;
@@ -259,6 +289,7 @@ header {
 	text-underline-offset: 0;
 	text-decoration-thickness: 1px;
 }
+
 .postlist-item-active .postlist-link {
 	font-weight: bold;
 }
@@ -271,7 +302,8 @@ header {
 	text-transform: capitalize;
 	font-style: italic;
 }
-.postlist-item > .post-tag {
+
+.postlist-item>.post-tag {
 	align-self: center;
 }
 
@@ -284,8 +316,34 @@ header {
 	padding: 0;
 	margin: 0;
 }
+
 .post-metadata time {
 	margin-right: 1em;
+}
+
+footer {
+	text-align: center;
+	padding: 20px 0;
+}
+
+.social-links {
+	margin-top: 5px;
+}
+
+.social-links a {
+	margin: 0 3px;
+	text-decoration: none;
+	color: #333;
+}
+
+.social-links a:hover {
+	color: #cca4f4;
+	/* Customize this color as needed */
+}
+
+.social-links i {
+	font-size: 1.5em;
+	/* Adjust size as needed */
 }</style>
 	</head>
 	<body>
@@ -297,9 +355,9 @@ header {
 				<h2 class="visually-hidden" id="top-level-navigation-menu">Top level navigation menu</h2>
 				<ul class="nav">
 					<li class="nav-item"><a href="/">Home</a></li>
-					<li class="nav-item"><a href="/blog/">Archive</a></li>
+					<li class="nav-item"><a href="/blog/">Blog</a></li>
 					<li class="nav-item"><a href="/about/">About</a></li>
-					<li class="nav-item"><a href="/quality-content/">Quality content</a></li>
+					<li class="nav-item"><a href="/Links/">Links</a></li>
 					<li class="nav-item"><a href="/feed/feed.xml">Feed</a></li>
 				</ul>
 			</nav>
@@ -324,11 +382,20 @@ header {
 			</heading-anchors>
 		</main>
 
-		<footer>
-			<p><em>Built with <a href="https://www.11ty.dev/">Eleventy v3.0.0</a></em></p>
-		</footer>
+<footer>
+    <div class="social-links">
+        <a href="https://www.goodreads.com/user/show/103722180-yonatan-lourie" target="_blank" title="Goodreads"><i class="fab fa-goodreads"></i></a>
+        <a href="https://www.imdb.com/user/ur88119677/ratings/" target="_blank" title="IMDb"><i class="fab fa-imdb"></i></a>
+        <a href="https://open.spotify.com/user/224udkuetwxsiqba7n4tums6q?si=_RD2kBO8QlSUYLfjBLjBEQ&nd=1" target="_blank" title="Spotify"><i class="fab fa-spotify"></i></a>
+        <a href="https://x.com/yonatanlou" target="_blank" title="Twitter"><i class="fab fa-twitter"></i></a>
+        <a href="https://www.linkedin.com/in/yonatanlourie/" target="_blank" title="LinkedIn"><i class="fab fa-linkedin"></i></a>
+        <a href="https://github.com/yonatanlou" target="_blank" title="GitHub"><i class="fab fa-github"></i></a>
+		<a href="mailto:yonatanlou@gmail.com" target="_blank" title="Email"><i class="fa-solid fa-envelope"></i></a>
+    </div>
+</footer>
 
-		<!-- This page `/tags/` was built on 2024-10-31T11:38:10.616Z -->
+
+		<!-- This page `/tags/` was built on 2024-10-31T12:47:26.167Z -->
 		<script type="module" src="/dist/rJ3_G-2ArF.js"></script>
 	</body>
 </html>
