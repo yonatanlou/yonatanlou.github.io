@@ -6,8 +6,8 @@
 	"scripts": {
 		"build": "npx @11ty/eleventy",
 		"build-nocolor": "cross-env NODE_DISABLE_COLORS=1 npx @11ty/eleventy",
-		"build-ghpages": "npx @11ty/eleventy",
-		"start": "npx @11ty/eleventy --serve --quiet",
+		"build-ghpages": "npx @11ty/eleventy --pathprefix=/yonatanlou.github.io/",
+		"start": "npx @11ty/eleventy --pathprefix=/yonatanlou.github.io/ --serve --quiet",
 		"start-ghpages": "npx @11ty/eleventy --serve --quiet",
 		"debug": "cross-env DEBUG=Eleventy* npx @11ty/eleventy",
 		"debugstart": "cross-env DEBUG=Eleventy* npx @11ty/eleventy --serve --quiet",
