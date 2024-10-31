@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet href="pretty-atom-feed.xsl" type="text/xsl"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en">
+  <title>Yonatan Lourie</title>
+  <subtitle>Just a solid place to have a proper virtual identity.</subtitle>
+  <link href="https://yonatanlou.github.io/eleventy-base-blog/feed/feed.xml" rel="self" />
+  <link href="https://yonatanlou.github.io/eleventy-base-blog/" />
+  <updated>2023-10-30T00:00:00Z</updated>
+  <id>https://yonatanlou.github.io/eleventy-base-blog/</id>
+  <author>
+    <name>Yonatan Lourie</name>
+  </author>
+  <entry>
+    <title>How to use the Qumran scrolls for NLP tasks using text-fabric</title>
+    <link href="https://yonatanlou.github.io/eleventy-base-blog/blog/data-pipeline-for-qumran-scrolls/data-pipeline-for-the-qumran-scrolls-using-text-fabric/" />
+    <updated>2023-10-30T00:00:00Z</updated>
+    <id>https://yonatanlou.github.io/eleventy-base-blog/blog/data-pipeline-for-qumran-scrolls/data-pipeline-for-the-qumran-scrolls-using-text-fabric/</id>
+    <content type="html">&lt;p&gt;When I first started my thesis, I inherited the Dead Sea Scrolls project from another student in my lab. He provided a large file that looked something like this: &lt;picture&gt;&lt;source type=&quot;image/avif&quot; srcset=&quot;https://yonatanlou.github.io/eleventy-base-blog/blog/data-pipeline-for-qumran-scrolls/data-pipeline-for-the-qumran-scrolls-using-text-fabric/l__zRaStbu-510.avif 510w&quot;&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://yonatanlou.github.io/eleventy-base-blog/blog/data-pipeline-for-qumran-scrolls/data-pipeline-for-the-qumran-scrolls-using-text-fabric/l__zRaStbu-510.webp 510w&quot;&gt;&lt;img loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://yonatanlou.github.io/eleventy-base-blog/blog/data-pipeline-for-qumran-scrolls/data-pipeline-for-the-qumran-scrolls-using-text-fabric/l__zRaStbu-510.png&quot; alt=&quot;abeg_origin&quot; width=&quot;510&quot; height=&quot;340&quot;&gt;&lt;/picture&gt;&lt;/p&gt;
+&lt;p&gt;I also inherited a complex &amp;quot;spaghetti&amp;quot; code that parsed this data into readable Hebrew text. These files (from the image above),  were created by Martin Abegg and contain all of the text of the Dead Sea Scrolls, with morphological data on each word.&lt;/p&gt;
+&lt;p&gt;A few weeks later, I discovered the text-fabric package, a toolkit for analyzing large, structured text datasets, including ancient manuscripts, biblical texts, and other linguistically complex corpora. Popular among researchers in linguistics, biblical studies, and digital humanities, it efficiently manages intricate text structures and large datasets.&lt;/p&gt;
+&lt;p&gt;This package actually parsing those files that looks like gibberish from Abegg, but with much more organized and easy to use code.&lt;/p&gt;
+&lt;p&gt;For my purposes, I needed the entire corpus as plain text, along with the morphological features of each word (similar to Named Entity Recognition or NER). Here’s a quick guide on how to set it up:&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Disclaimer&lt;/strong&gt;
+The documentation for this package is solid, but i felt that the learning curve was to steep for what I needed. This post is simply if you need to do something similiar to mine.&lt;/p&gt;
+&lt;h2 id=&quot;installation&quot;&gt;Installation&lt;/h2&gt;
+&lt;p&gt;Follow the instructions in &lt;a href=&quot;https://annotation.github.io/text-fabric/tf/about/install.html&quot;&gt;here&lt;/a&gt;.
+If you having problems, you can try to install it with: &lt;code&gt;pip instal &#39;text-fabric[github]&#39;&lt;/code&gt;.&lt;/p&gt;
+&lt;h3 id=&quot;installation-and-setup&quot;&gt;Installation and Setup&lt;/h3&gt;
+&lt;p&gt;(For more comprehensive guide check the &lt;a href=&quot;https://annotation.github.io/text-fabric/tf/index.html&quot;&gt;documentation&lt;/a&gt;)
+To get started, you’ll need to install &lt;code&gt;text-fabric&lt;/code&gt; and load a dataset.
+Here’s an example using the ETCBC Hebrew Bible dataset:&lt;/p&gt;
+&lt;pre class=&quot;language-python&quot; tabindex=&quot;0&quot;&gt;&lt;code class=&quot;language-python&quot;&gt;!pip install text&lt;span class=&quot;token operator&quot;&gt;-&lt;/span&gt;fabric
+&lt;span class=&quot;token comment&quot;&gt;# If it will not work, you can try:&lt;/span&gt;
+!pip instal &lt;span class=&quot;token string&quot;&gt;&#39;text-fabric[github]&#39;&lt;/span&gt;
+
+&lt;span class=&quot;token comment&quot;&gt;# Import Text-Fabric and load a dataset&lt;/span&gt;
+&lt;span class=&quot;token keyword&quot;&gt;from&lt;/span&gt; tf&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;app &lt;span class=&quot;token keyword&quot;&gt;import&lt;/span&gt; use
+
+&lt;span class=&quot;token comment&quot;&gt;# Load the Hebrew Bible (ETCBC dataset)&lt;/span&gt;
+A &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; use&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&#39;etcbc/bhsa&#39;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; hoist&lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;token builtin&quot;&gt;globals&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;strong&gt;Some basic operations:&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Get the Text Structure: You can load text elements by type (book, chapter, verse) and navigate through them.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre class=&quot;language-python&quot; tabindex=&quot;0&quot;&gt;&lt;code class=&quot;language-python&quot;&gt;&lt;span class=&quot;token comment&quot;&gt;# Get all books&lt;/span&gt;
+&lt;span class=&quot;token keyword&quot;&gt;for&lt;/span&gt; book &lt;span class=&quot;token keyword&quot;&gt;in&lt;/span&gt; F&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;otype&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;s&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&#39;book&#39;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;token keyword&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;F&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;book&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;v&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;book&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;  &lt;span class=&quot;token comment&quot;&gt;# Prints book names&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;Accessing Specific Text Data: Let’s retrieve a verse in Genesis.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre class=&quot;language-python&quot; tabindex=&quot;0&quot;&gt;&lt;code class=&quot;language-python&quot;&gt;&lt;span class=&quot;token comment&quot;&gt;# Get Genesis 1:1&lt;/span&gt;
+verse_node &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; T&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;nodeFromSection&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&#39;Genesis&#39;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;token number&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;token number&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;token keyword&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;T&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;text&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;verse_node&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;  &lt;span class=&quot;token comment&quot;&gt;# Outputs the text of Genesis 1:1&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;Accessing Metadata: You can retrieve metadata for specific elements like morphology or part of speech.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre class=&quot;language-python&quot; tabindex=&quot;0&quot;&gt;&lt;code class=&quot;language-python&quot;&gt;&lt;span class=&quot;token comment&quot;&gt;# Get morphological and part of speech info for a specific word in Genesis 1:1&lt;/span&gt;
+word_node &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; L&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;d&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;verse_node&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; otype&lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&#39;word&#39;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;token number&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;]&lt;/span&gt;  &lt;span class=&quot;token comment&quot;&gt;# First word in Genesis 1:1&lt;/span&gt;
+&lt;span class=&quot;token keyword&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;F&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;lex&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;v&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;word_node&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; F&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;sp&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;v&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;word_node&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; F&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;g_cons&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;v&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;word_node&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id=&quot;implementation&quot;&gt;Implementation&lt;/h2&gt;
+&lt;p&gt;For my case, i want to use the DSS dataset, the implementation is pretty straight forward, run over each scroll, store each word as a dict (each word have few attributes). That means we eventually end up with a dict of dict of dicts&lt;/p&gt;
+&lt;pre class=&quot;language-cmd&quot; tabindex=&quot;0&quot;&gt;&lt;code class=&quot;language-cmd&quot;&gt;{Scroll1:[{text:ושמע, lex:שמע, ...}, {text:ה׳, lex:ה, ...}], 
+Scroll2:[{text:רצה, lex:רצה, ...}, {text:משה, lex:משה, ...}]}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Where each item in the list of each scroll is a word.&lt;/p&gt;
+&lt;pre class=&quot;language-python&quot; tabindex=&quot;0&quot;&gt;&lt;code class=&quot;language-python&quot;&gt;&lt;span class=&quot;token keyword&quot;&gt;from&lt;/span&gt; collections &lt;span class=&quot;token keyword&quot;&gt;import&lt;/span&gt; defaultdict
+&lt;span class=&quot;token keyword&quot;&gt;from&lt;/span&gt; tf&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;app &lt;span class=&quot;token keyword&quot;&gt;import&lt;/span&gt; use
+&lt;span class=&quot;token keyword&quot;&gt;from&lt;/span&gt; tqdm &lt;span class=&quot;token keyword&quot;&gt;import&lt;/span&gt; tqdm
+
+A &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; use&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot;ETCBC/dss&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; hoist&lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;token builtin&quot;&gt;globals&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;token comment&quot;&gt;#here we will load the DSS (dead sea scrolls) dataa&lt;/span&gt;
+
+all_scrolls &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; defaultdict&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token builtin&quot;&gt;list&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;token keyword&quot;&gt;for&lt;/span&gt; scroll_node &lt;span class=&quot;token keyword&quot;&gt;in&lt;/span&gt; tqdm&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;F&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;otype&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;s&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot;scroll&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;token comment&quot;&gt;#running over all scrolls available&lt;/span&gt;
+    word_line_num &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;token number&quot;&gt;1&lt;/span&gt; &lt;span class=&quot;token comment&quot;&gt;#first line&lt;/span&gt;
+    sub_word_num &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;token number&quot;&gt;1&lt;/span&gt; &lt;span class=&quot;token comment&quot;&gt;#first place in the line&lt;/span&gt;
+    scroll_data &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; process_word&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;scroll_node&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; word_line_num&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; sub_word_num&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+    all_scrolls&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;update&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;scroll_data&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;For getting the attributes of each word we can  use the following function, which running over all of the words of a given scroll, and getting the attributes that you need.&lt;/p&gt;
+&lt;pre class=&quot;language-python&quot; tabindex=&quot;0&quot;&gt;&lt;code class=&quot;language-python&quot;&gt;
+&lt;span class=&quot;token keyword&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;token function&quot;&gt;get_scroll_and_chapter_info&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;word&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;token triple-quoted-string string&quot;&gt;&quot;&quot;&quot;Get scroll and chapter information for a given word node.&quot;&quot;&quot;&lt;/span&gt;
+    scroll_and_chapter &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; A&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;sectionStrFromNode&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;word&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+    scroll&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; chapter_info &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; scroll_and_chapter&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;split&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot; &quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;token comment&quot;&gt;# frag_label, frag_line_num = chapter_info.split(&quot;:&quot;)&lt;/span&gt;
+    &lt;span class=&quot;token keyword&quot;&gt;return&lt;/span&gt; scroll_and_chapter&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; scroll
+    &lt;span class=&quot;token comment&quot;&gt;# frag_label, frag_line_num&lt;/span&gt;
+
+&lt;span class=&quot;token keyword&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;token function&quot;&gt;process_word&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;scroll_node&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; word_line_num&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; sub_word_num&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
+    single_scroll_data &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; defaultdict&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token builtin&quot;&gt;list&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;token keyword&quot;&gt;for&lt;/span&gt; word &lt;span class=&quot;token keyword&quot;&gt;in&lt;/span&gt; L&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;d&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;scroll_node&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; otype&lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot;word&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;token comment&quot;&gt;#running over all of the words of this scroll&lt;/span&gt;
+        &lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;
+            scroll_and_chapter&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt;
+            scroll
+        &lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; get_scroll_and_chapter_info&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;word&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+        transcript &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; T&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;text&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;word&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;token comment&quot;&gt;#get raw text&lt;/span&gt;
+        word_entry &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;{&lt;/span&gt;
+            &lt;span class=&quot;token string&quot;&gt;&quot;book_and_chapter&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; scroll_and_chapter&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt;
+            &lt;span class=&quot;token string&quot;&gt;&quot;scroll_name&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; scroll&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt;
+            &lt;span class=&quot;token string&quot;&gt;&quot;transcript&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; transcript&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt;
+
+        &lt;span class=&quot;token punctuation&quot;&gt;}&lt;/span&gt;
+        single_scroll_data&lt;span class=&quot;token punctuation&quot;&gt;[&lt;/span&gt;scroll&lt;span class=&quot;token punctuation&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;append&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;word_entry&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;token keyword&quot;&gt;return&lt;/span&gt; single_scroll_data
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;But in case you want to get much rich data you can use something more complex like:&lt;/p&gt;
+&lt;pre class=&quot;language-python&quot; tabindex=&quot;0&quot;&gt;&lt;code class=&quot;language-python&quot;&gt;&lt;span class=&quot;token keyword&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;token function&quot;&gt;get_morphological_features&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;word&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;token triple-quoted-string string&quot;&gt;&quot;&quot;&quot;Extract morphological features for a given word node.&quot;&quot;&quot;&lt;/span&gt;
+    &lt;span class=&quot;token keyword&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;token string&quot;&gt;&quot;sp&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; F&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;sp&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;v&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;word&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt;
+        &lt;span class=&quot;token string&quot;&gt;&quot;cl&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; F&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;cl&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;v&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;word&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt;
+        &lt;span class=&quot;token string&quot;&gt;&quot;ps&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; F&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;ps&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;v&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;word&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt;
+        &lt;span class=&quot;token string&quot;&gt;&quot;gn&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; F&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;gn&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;v&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;word&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt;
+        &lt;span class=&quot;token string&quot;&gt;&quot;nu&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; F&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;nu&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;v&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;word&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt;
+        &lt;span class=&quot;token string&quot;&gt;&quot;st&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; F&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;st&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;v&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;word&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt;
+        &lt;span class=&quot;token string&quot;&gt;&quot;vs&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; F&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;vs&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;v&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;word&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt;
+        &lt;span class=&quot;token string&quot;&gt;&quot;vt&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; F&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;vt&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;v&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;word&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt;
+        &lt;span class=&quot;token string&quot;&gt;&quot;md&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; F&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;md&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;v&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;word&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt;
+    &lt;span class=&quot;token punctuation&quot;&gt;}&lt;/span&gt;
+
+
+&lt;span class=&quot;token keyword&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;token function&quot;&gt;get_scroll_and_chapter_info&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;word&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;token triple-quoted-string string&quot;&gt;&quot;&quot;&quot;Get scroll and chapter information for a given word node.&quot;&quot;&quot;&lt;/span&gt;
+    scroll_and_chapter &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; A&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;sectionStrFromNode&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;word&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+    scroll&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; chapter_info &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; scroll_and_chapter&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;split&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot; &quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+    frag_label&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; frag_line_num &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; chapter_info&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;split&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot;:&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;token keyword&quot;&gt;return&lt;/span&gt; scroll_and_chapter&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; scroll&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; frag_label&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; frag_line_num
+
+
+&lt;span class=&quot;token keyword&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;token function&quot;&gt;process_word&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;scroll_node&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; word_line_num&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; sub_word_num&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
+    single_scroll_data &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; defaultdict&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token builtin&quot;&gt;list&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;token keyword&quot;&gt;for&lt;/span&gt; word &lt;span class=&quot;token keyword&quot;&gt;in&lt;/span&gt; L&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;d&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;scroll_node&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; otype&lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot;word&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
+        &lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;
+            scroll_and_chapter&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt;
+            scroll&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt;
+            frag_label&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt;
+            frag_line_num&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt;
+        &lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; get_scroll_and_chapter_info&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;word&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+        transcript &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; T&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;text&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;word&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+        lexeme &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; F&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;glex&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;v&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;word&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+        morphological_features &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; get_morphological_features&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;word&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+        lang &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; F&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;lang&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;v&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;word&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+        srcLn &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; F&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;srcLn&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;v&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;word&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+        word_type &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; F&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;token builtin&quot;&gt;type&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;v&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;word&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+        after &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; F&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;after&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;v&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;word&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+
+        word_entry &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;{&lt;/span&gt;
+            &lt;span class=&quot;token string&quot;&gt;&quot;frag_label&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; frag_label&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt;
+            &lt;span class=&quot;token string&quot;&gt;&quot;frag_line_num&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; frag_line_num&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt;
+            &lt;span class=&quot;token string&quot;&gt;&quot;word_line_num&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;token builtin&quot;&gt;str&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;word_line_num&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt;
+            &lt;span class=&quot;token string&quot;&gt;&quot;sub_word_num&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;token builtin&quot;&gt;str&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;sub_word_num&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt;
+            &lt;span class=&quot;token string&quot;&gt;&quot;book_and_chapter&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; scroll_and_chapter&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt;
+            &lt;span class=&quot;token string&quot;&gt;&quot;scroll_name&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; scroll&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt;
+            &lt;span class=&quot;token string&quot;&gt;&quot;transcript&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; transcript&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt;
+            &lt;span class=&quot;token string&quot;&gt;&quot;lex&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; lexeme&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt;
+            &lt;span class=&quot;token string&quot;&gt;&quot;parsed_morph&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; morphological_features&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt;
+            &lt;span class=&quot;token string&quot;&gt;&quot;lang&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; lang&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt;
+            &lt;span class=&quot;token string&quot;&gt;&quot;srcLn&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; srcLn&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt;
+            &lt;span class=&quot;token string&quot;&gt;&quot;type_of&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; word_type&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt;
+            &lt;span class=&quot;token string&quot;&gt;&quot;after&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; after&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt;
+        &lt;span class=&quot;token punctuation&quot;&gt;}&lt;/span&gt;
+        
+
+        &lt;span class=&quot;token keyword&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;
+            &lt;span class=&quot;token keyword&quot;&gt;not&lt;/span&gt; after
+        &lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;  &lt;span class=&quot;token comment&quot;&gt;# If there is no space after the word, it means it&#39;s a conjunction like ו or ב.&lt;/span&gt;
+            sub_word_num &lt;span class=&quot;token operator&quot;&gt;+=&lt;/span&gt; &lt;span class=&quot;token number&quot;&gt;1&lt;/span&gt;
+        &lt;span class=&quot;token keyword&quot;&gt;else&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
+            sub_word_num &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;token number&quot;&gt;1&lt;/span&gt;
+            word_line_num &lt;span class=&quot;token operator&quot;&gt;+=&lt;/span&gt; &lt;span class=&quot;token number&quot;&gt;1&lt;/span&gt;
+
+        single_scroll_data&lt;span class=&quot;token punctuation&quot;&gt;[&lt;/span&gt;scroll&lt;span class=&quot;token punctuation&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;append&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;word_entry&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;token keyword&quot;&gt;return&lt;/span&gt; single_scroll_data
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;That&#39;s it, from here you can do whatever you want with the data.
+For more context and much ordered pipeline you can take a peek in here: &lt;a href=&quot;https://github.com/yonatanlou/QumranNLP/blob/main/src/ETL/main_ETL.py&quot;&gt;main_ETL.py&lt;/a&gt;.&lt;/p&gt;
+</content>
+  </entry>
+  <entry>
+    <title>Moving from Jekyll to Eleventy.</title>
+    <link href="https://yonatanlou.github.io/eleventy-base-blog/blog/firstpost/" />
+    <updated>2023-10-29T00:00:00Z</updated>
+    <id>https://yonatanlou.github.io/eleventy-base-blog/blog/firstpost/</id>
+    <content type="html">&lt;ol&gt;
+&lt;li&gt;I got tired of the Ruby environment.&lt;/li&gt;
+&lt;li&gt;I wanted to start using javascript.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;That&#39;s all&lt;/p&gt;
+</content>
+  </entry>
+</feed>
