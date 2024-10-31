@@ -6,6 +6,8 @@ import pluginSyntaxHighlight from "@11ty/eleventy-plugin-syntaxhighlight";
 
 import pluginFilters from "./_config/filters.js";
 
+
+
 /** @param {import("@11ty/eleventy").UserConfig} eleventyConfig */
 export default async function (eleventyConfig) {
 	// Drafts, see also _data/eleventyDataSchema.js
@@ -149,3 +151,4 @@ export const config = {
 
 	// pathPrefix: "/",
 };
+
