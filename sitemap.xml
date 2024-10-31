@@ -2,42 +2,42 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
 	
 	<url>
-		<loc>https://yonatanlou.github.io/eleventy-base-blog/blog/firstpost/</loc>
+		<loc>https://yonatanlou.github.io/base/blog/firstpost/</loc>
 		<lastmod>2023-10-29</lastmod>
 	</url>
 	
 	<url>
-		<loc>https://yonatanlou.github.io/eleventy-base-blog/blog/data-pipeline-for-qumran-scrolls/data-pipeline-for-the-qumran-scrolls-using-text-fabric/</loc>
+		<loc>https://yonatanlou.github.io/base/blog/data-pipeline-for-qumran-scrolls/data-pipeline-for-the-qumran-scrolls-using-text-fabric/</loc>
 		<lastmod>2023-10-30</lastmod>
 	</url>
 	
 	<url>
-		<loc>https://yonatanlou.github.io/eleventy-base-blog/about/</loc>
+		<loc>https://yonatanlou.github.io/base/about/</loc>
 		<lastmod>2024-10-31</lastmod>
 	</url>
 	
 	<url>
-		<loc>https://yonatanlou.github.io/eleventy-base-blog/blog/</loc>
+		<loc>https://yonatanlou.github.io/base/blog/</loc>
 		<lastmod>2024-10-31</lastmod>
 	</url>
 	
 	<url>
-		<loc>https://yonatanlou.github.io/eleventy-base-blog/</loc>
+		<loc>https://yonatanlou.github.io/base/</loc>
 		<lastmod>2024-10-31</lastmod>
 	</url>
 	
 	<url>
-		<loc>https://yonatanlou.github.io/eleventy-base-blog/quality-content/</loc>
+		<loc>https://yonatanlou.github.io/base/quality-content/</loc>
 		<lastmod>2024-10-31</lastmod>
 	</url>
 	
 	<url>
-		<loc>https://yonatanlou.github.io/eleventy-base-blog/tags/</loc>
+		<loc>https://yonatanlou.github.io/base/tags/</loc>
 		<lastmod>2024-10-31</lastmod>
 	</url>
 	
 	<url>
-		<loc>https://yonatanlou.github.io/eleventy-base-blog/feed/feed.xml</loc>
+		<loc>https://yonatanlou.github.io/base/feed/feed.xml</loc>
 		<lastmod>2024-10-31</lastmod>
 	</url>
 </urlset>
