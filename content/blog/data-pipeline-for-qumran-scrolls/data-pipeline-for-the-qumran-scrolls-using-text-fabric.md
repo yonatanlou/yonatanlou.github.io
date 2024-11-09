@@ -4,18 +4,19 @@ description: In case you got curious and want to do some cool stuff with one of 
 date: 2023-10-30
 tags: posts
 ---
-When I first started my thesis, I inherited the Dead Sea Scrolls project from another student in my lab. He provided a large file that looked something like this: <img src="abeg_origin.png" alt="abeg_origin" width="10"/>
+When I first started my thesis, I inherited the Dead Sea Scrolls project from another student in my lab. He provided a large file that looked something like this:\
+<img src="abeg_origin.png" alt="abeg_origin" width="10"/>
 
-I also inherited a complex "spaghetti" code that parsed this data into readable Hebrew text. These files (from the image above),  were created by Martin Abegg and contain all of the text of the Dead Sea Scrolls, with morphological data on each word.
+I also inherited a complex spaghetti code that parsed this data into readable Hebrew text. These files (from the image above),  were created by [Martin Abegg](https://en.wikipedia.org/wiki/Martin_Abegg) and contain the raw text of the Dead Sea Scrolls, with morphological data on each word.
 
-A few weeks later, I discovered the text-fabric package, a toolkit for analyzing large, structured text datasets, including ancient manuscripts, biblical texts, and other linguistically complex corpora. Popular among researchers in linguistics, biblical studies, and digital humanities, it efficiently manages intricate text structures and large datasets.
+A few weeks later, I discovered the [text-fabric](https://github.com/annotation/text-fabric) package, a toolkit for analyzing large, structured text datasets, including ancient manuscripts, biblical texts, and other linguistically complex corpora. Popular among researchers in linguistics, biblical studies, and digital humanities.
 
-This package actually parsing those files that looks like gibberish from Abegg, but with much more organized and easy to use code.
+This package actually parsing those files that looks like gibberish from Abegg, but with easy to use API.
 
-For my purposes, I needed the entire corpus as plain text, along with the morphological features of each word (similar to Named Entity Recognition or NER). Here’s a quick guide on how to set it up:
+For my purposes, I needed the entire corpus as plain text, along with some morphological features of each word. Here’s a quick guide on how to set it up:
 
 **Disclaimer** 
-The documentation for this package is solid, but i felt that the learning curve was to steep for what I needed. This post is simply if you need to do something similiar to mine.
+The original documentation for this package is pretty good, but i felt that the learning curve was too steep for what I needed. This post is very simple, and it will be good if you need to do something similar to mine.
 ## Installation
 Follow the instructions in [here](https://annotation.github.io/text-fabric/tf/about/install.html). 
 If you having problems, you can try to install it with: `pip instal 'text-fabric[github]'`.
@@ -26,10 +27,6 @@ To get started, you’ll need to install `text-fabric` and load a dataset.
 Here’s an example using the ETCBC Hebrew Bible dataset:
 
 ```python
-!pip install text-fabric
-# If it will not work, you can try:
-!pip instal 'text-fabric[github]'
-
 # Import Text-Fabric and load a dataset
 from tf.app import use
 
@@ -64,12 +61,15 @@ print(F.lex.v(word_node), F.sp.v(word_node), F.g_cons.v(word_node))
 
 
 ## Implementation
-For my case, i want to use the DSS dataset, the implementation is pretty straight forward, run over each scroll, store each word as a dict (each word have few attributes). That means we eventually end up with a dict of dict of dicts 
+For my case, i wanted to use the DSS dataset. the implementation is pretty straight forward: run over each scroll, store each word as a dict (each word have few attributes). That means we eventually end up with a dict of dict of dicts 
 ```cmd
-{Scroll1:[{text:ושמע, lex:שמע, ...}, {text:ה׳, lex:ה, ...}], 
-Scroll2:[{text:רצה, lex:רצה, ...}, {text:משה, lex:משה, ...}]}
+{scroll1:[{text:ושמע, lex:שמע, ...}, {text:ה׳, lex:ה, ...}], 
+scroll2:[{text:רצה, lex:רצה, ...}, {text:משה, lex:משה, ...}]}
 ```
-Where each item in the list of each scroll is a word.
+The value for each scroll is simply a list of the words of this scroll (with a lot features expect from the raw text).
+
+### Simple run
+In here, we will iterate over the whole corpus (scroll by scroll), and gather the words for each scroll (with the corresponding location in the scroll).
 
 
 ```python
@@ -77,29 +77,12 @@ from collections import defaultdict
 from tf.app import use
 from tqdm import tqdm
 
-A = use("ETCBC/dss", hoist=globals()) #here we will load the DSS (dead sea scrolls) dataa
-
-all_scrolls = defaultdict(list)
-for scroll_node in tqdm(F.otype.s("scroll")): #running over all scrolls available
-    word_line_num = 1 #first line
-    sub_word_num = 1 #first place in the line
-    scroll_data = process_word(scroll_node, word_line_num, sub_word_num)
-    all_scrolls.update(scroll_data)
-
-```
-
-For getting the attributes of each word we can  use the following function, which running over all of the words of a given scroll, and getting the attributes that you need.
-
-
-```python
-
 def get_scroll_and_chapter_info(word):
     """Get scroll and chapter information for a given word node."""
     scroll_and_chapter = A.sectionStrFromNode(word)
     scroll, chapter_info = scroll_and_chapter.split(" ")
-    # frag_label, frag_line_num = chapter_info.split(":")
     return scroll_and_chapter, scroll
-    # frag_label, frag_line_num
+
 
 def process_word(scroll_node, word_line_num, sub_word_num):
     single_scroll_data = defaultdict(list)
@@ -118,7 +101,18 @@ def process_word(scroll_node, word_line_num, sub_word_num):
         single_scroll_data[scroll].append(word_entry)
     return single_scroll_data
 
+
+A = use("ETCBC/dss", hoist=globals()) #here we will load the DSS (dead sea scrolls) data
+
+all_scrolls = defaultdict(list)
+for scroll_node in tqdm(F.otype.s("scroll")): #running over all scrolls available
+    word_line_num = 1 #first line
+    sub_word_num = 1 #first place in the line
+    scroll_data = process_word(scroll_node, word_line_num, sub_word_num)
+    all_scrolls.update(scroll_data)
+
 ```
+
 
 But in case you want to get much rich data you can use something more complex like:
 ```python
