@@ -212,7 +212,8 @@ pre[class*="language-diff-"] {
 		--text-color-link-active: #6969f7;
 		--text-color-link-visited: #a6a6f8;
 
-		--background-color: #15202b;
+		/* --background-color: #15202b; */
+		--background-color: #79bcff;
 	}
 }
 
@@ -528,13 +529,14 @@ footer {
 	<li><time datetime="2023-10-30">30 October 2023</time></li>
 </ul>
 
-<p>When I first started my thesis, I inherited the Dead Sea Scrolls project from another student in my lab. He provided a large file that looked something like this: <picture><source type="image/avif" srcset="/blog/data-pipeline-for-qumran-scrolls/data-pipeline-for-the-qumran-scrolls-using-text-fabric/l__zRaStbu-510.avif 510w"><source type="image/webp" srcset="/blog/data-pipeline-for-qumran-scrolls/data-pipeline-for-the-qumran-scrolls-using-text-fabric/l__zRaStbu-510.webp 510w"><img loading="lazy" decoding="async" src="/blog/data-pipeline-for-qumran-scrolls/data-pipeline-for-the-qumran-scrolls-using-text-fabric/l__zRaStbu-510.png" alt="abeg_origin" width="510" height="340"></picture></p>
-<p>I also inherited a complex &quot;spaghetti&quot; code that parsed this data into readable Hebrew text. These files (from the image above),  were created by Martin Abegg and contain all of the text of the Dead Sea Scrolls, with morphological data on each word.</p>
-<p>A few weeks later, I discovered the text-fabric package, a toolkit for analyzing large, structured text datasets, including ancient manuscripts, biblical texts, and other linguistically complex corpora. Popular among researchers in linguistics, biblical studies, and digital humanities, it efficiently manages intricate text structures and large datasets.</p>
-<p>This package actually parsing those files that looks like gibberish from Abegg, but with much more organized and easy to use code.</p>
-<p>For my purposes, I needed the entire corpus as plain text, along with the morphological features of each word (similar to Named Entity Recognition or NER). Here’s a quick guide on how to set it up:</p>
+<p>When I first started my thesis, I inherited the Dead Sea Scrolls project from another student in my lab. He provided a large file that looked something like this:<br>
+<picture><source type="image/avif" srcset="/blog/data-pipeline-for-qumran-scrolls/data-pipeline-for-the-qumran-scrolls-using-text-fabric/l__zRaStbu-510.avif 510w"><source type="image/webp" srcset="/blog/data-pipeline-for-qumran-scrolls/data-pipeline-for-the-qumran-scrolls-using-text-fabric/l__zRaStbu-510.webp 510w"><img loading="lazy" decoding="async" src="/blog/data-pipeline-for-qumran-scrolls/data-pipeline-for-the-qumran-scrolls-using-text-fabric/l__zRaStbu-510.png" alt="abeg_origin" width="510" height="340"></picture></p>
+<p>I also inherited a complex spaghetti code that parsed this data into readable Hebrew text. These files (from the image above),  were created by <a href="https://en.wikipedia.org/wiki/Martin_Abegg">Martin Abegg</a> and contain the raw text of the Dead Sea Scrolls, with morphological data on each word.</p>
+<p>A few weeks later, I discovered the <a href="https://github.com/annotation/text-fabric">text-fabric</a> package, a toolkit for analyzing large, structured text datasets, including ancient manuscripts, biblical texts, and other linguistically complex corpora. Popular among researchers in linguistics, biblical studies, and digital humanities.</p>
+<p>This package actually parsing those files that looks like gibberish from Abegg, but with easy to use API.</p>
+<p>For my purposes, I needed the entire corpus as plain text, along with some morphological features of each word. Here’s a quick guide on how to set it up:</p>
 <p><strong>Disclaimer</strong>
-The documentation for this package is solid, but i felt that the learning curve was to steep for what I needed. This post is simply if you need to do something similiar to mine.</p>
+The original documentation for this package is pretty good, but i felt that the learning curve was too steep for what I needed. This post is very simple, and it will be good if you need to do something similar to mine.</p>
 <h2 id="installation">Installation</h2>
 <p>Follow the instructions in <a href="https://annotation.github.io/text-fabric/tf/about/install.html">here</a>.
 If you having problems, you can try to install it with: <code>pip instal 'text-fabric[github]'</code>.</p>
@@ -542,11 +544,7 @@ If you having problems, you can try to install it with: <code>pip instal 'text-f
 <p>(For more comprehensive guide check the <a href="https://annotation.github.io/text-fabric/tf/index.html">documentation</a>)
 To get started, you’ll need to install <code>text-fabric</code> and load a dataset.
 Here’s an example using the ETCBC Hebrew Bible dataset:</p>
-<pre class="language-python" tabindex="0"><code class="language-python">!pip install text<span class="token operator">-</span>fabric
-<span class="token comment"># If it will not work, you can try:</span>
-!pip instal <span class="token string">'text-fabric[github]'</span>
-
-<span class="token comment"># Import Text-Fabric and load a dataset</span>
+<pre class="language-python" tabindex="0"><code class="language-python"><span class="token comment"># Import Text-Fabric and load a dataset</span>
 <span class="token keyword">from</span> tf<span class="token punctuation">.</span>app <span class="token keyword">import</span> use
 
 <span class="token comment"># Load the Hebrew Bible (ETCBC dataset)</span>
@@ -573,32 +571,22 @@ word_node <span class="token operator">=</span> L<span class="token punctuation"
 <span class="token keyword">print</span><span class="token punctuation">(</span>F<span class="token punctuation">.</span>lex<span class="token punctuation">.</span>v<span class="token punctuation">(</span>word_node<span class="token punctuation">)</span><span class="token punctuation">,</span> F<span class="token punctuation">.</span>sp<span class="token punctuation">.</span>v<span class="token punctuation">(</span>word_node<span class="token punctuation">)</span><span class="token punctuation">,</span> F<span class="token punctuation">.</span>g_cons<span class="token punctuation">.</span>v<span class="token punctuation">(</span>word_node<span class="token punctuation">)</span><span class="token punctuation">)</span>
 </code></pre>
 <h2 id="implementation">Implementation</h2>
-<p>For my case, i want to use the DSS dataset, the implementation is pretty straight forward, run over each scroll, store each word as a dict (each word have few attributes). That means we eventually end up with a dict of dict of dicts</p>
-<pre class="language-cmd" tabindex="0"><code class="language-cmd">{Scroll1:[{text:ושמע, lex:שמע, ...}, {text:ה׳, lex:ה, ...}], 
-Scroll2:[{text:רצה, lex:רצה, ...}, {text:משה, lex:משה, ...}]}</code></pre>
-<p>Where each item in the list of each scroll is a word.</p>
+<p>For my case, i wanted to use the DSS dataset. the implementation is pretty straight forward: run over each scroll, store each word as a dict (each word have few attributes). That means we eventually end up with a dict of dict of dicts</p>
+<pre class="language-cmd" tabindex="0"><code class="language-cmd">{scroll1:[{text:ושמע, lex:שמע, ...}, {text:ה׳, lex:ה, ...}], 
+scroll2:[{text:רצה, lex:רצה, ...}, {text:משה, lex:משה, ...}]}</code></pre>
+<p>The value for each scroll is simply a list of the words of this scroll (with a lot features expect from the raw text).</p>
+<h3 id="simple-run">Simple run</h3>
+<p>In here, we will iterate over the whole corpus (scroll by scroll), and gather the words for each scroll (with the corresponding location in the scroll).</p>
 <pre class="language-python" tabindex="0"><code class="language-python"><span class="token keyword">from</span> collections <span class="token keyword">import</span> defaultdict
 <span class="token keyword">from</span> tf<span class="token punctuation">.</span>app <span class="token keyword">import</span> use
 <span class="token keyword">from</span> tqdm <span class="token keyword">import</span> tqdm
 
-A <span class="token operator">=</span> use<span class="token punctuation">(</span><span class="token string">"ETCBC/dss"</span><span class="token punctuation">,</span> hoist<span class="token operator">=</span><span class="token builtin">globals</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token comment">#here we will load the DSS (dead sea scrolls) dataa</span>
-
-all_scrolls <span class="token operator">=</span> defaultdict<span class="token punctuation">(</span><span class="token builtin">list</span><span class="token punctuation">)</span>
-<span class="token keyword">for</span> scroll_node <span class="token keyword">in</span> tqdm<span class="token punctuation">(</span>F<span class="token punctuation">.</span>otype<span class="token punctuation">.</span>s<span class="token punctuation">(</span><span class="token string">"scroll"</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">:</span> <span class="token comment">#running over all scrolls available</span>
-    word_line_num <span class="token operator">=</span> <span class="token number">1</span> <span class="token comment">#first line</span>
-    sub_word_num <span class="token operator">=</span> <span class="token number">1</span> <span class="token comment">#first place in the line</span>
-    scroll_data <span class="token operator">=</span> process_word<span class="token punctuation">(</span>scroll_node<span class="token punctuation">,</span> word_line_num<span class="token punctuation">,</span> sub_word_num<span class="token punctuation">)</span>
-    all_scrolls<span class="token punctuation">.</span>update<span class="token punctuation">(</span>scroll_data<span class="token punctuation">)</span>
-</code></pre>
-<p>For getting the attributes of each word we can  use the following function, which running over all of the words of a given scroll, and getting the attributes that you need.</p>
-<pre class="language-python" tabindex="0"><code class="language-python">
 <span class="token keyword">def</span> <span class="token function">get_scroll_and_chapter_info</span><span class="token punctuation">(</span>word<span class="token punctuation">)</span><span class="token punctuation">:</span>
     <span class="token triple-quoted-string string">"""Get scroll and chapter information for a given word node."""</span>
     scroll_and_chapter <span class="token operator">=</span> A<span class="token punctuation">.</span>sectionStrFromNode<span class="token punctuation">(</span>word<span class="token punctuation">)</span>
     scroll<span class="token punctuation">,</span> chapter_info <span class="token operator">=</span> scroll_and_chapter<span class="token punctuation">.</span>split<span class="token punctuation">(</span><span class="token string">" "</span><span class="token punctuation">)</span>
-    <span class="token comment"># frag_label, frag_line_num = chapter_info.split(":")</span>
     <span class="token keyword">return</span> scroll_and_chapter<span class="token punctuation">,</span> scroll
-    <span class="token comment"># frag_label, frag_line_num</span>
+
 
 <span class="token keyword">def</span> <span class="token function">process_word</span><span class="token punctuation">(</span>scroll_node<span class="token punctuation">,</span> word_line_num<span class="token punctuation">,</span> sub_word_num<span class="token punctuation">)</span><span class="token punctuation">:</span>
     single_scroll_data <span class="token operator">=</span> defaultdict<span class="token punctuation">(</span><span class="token builtin">list</span><span class="token punctuation">)</span>
@@ -616,6 +604,16 @@ all_scrolls <span class="token operator">=</span> defaultdict<span class="token 
         <span class="token punctuation">}</span>
         single_scroll_data<span class="token punctuation">[</span>scroll<span class="token punctuation">]</span><span class="token punctuation">.</span>append<span class="token punctuation">(</span>word_entry<span class="token punctuation">)</span>
     <span class="token keyword">return</span> single_scroll_data
+
+
+A <span class="token operator">=</span> use<span class="token punctuation">(</span><span class="token string">"ETCBC/dss"</span><span class="token punctuation">,</span> hoist<span class="token operator">=</span><span class="token builtin">globals</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token comment">#here we will load the DSS (dead sea scrolls) data</span>
+
+all_scrolls <span class="token operator">=</span> defaultdict<span class="token punctuation">(</span><span class="token builtin">list</span><span class="token punctuation">)</span>
+<span class="token keyword">for</span> scroll_node <span class="token keyword">in</span> tqdm<span class="token punctuation">(</span>F<span class="token punctuation">.</span>otype<span class="token punctuation">.</span>s<span class="token punctuation">(</span><span class="token string">"scroll"</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">:</span> <span class="token comment">#running over all scrolls available</span>
+    word_line_num <span class="token operator">=</span> <span class="token number">1</span> <span class="token comment">#first line</span>
+    sub_word_num <span class="token operator">=</span> <span class="token number">1</span> <span class="token comment">#first place in the line</span>
+    scroll_data <span class="token operator">=</span> process_word<span class="token punctuation">(</span>scroll_node<span class="token punctuation">,</span> word_line_num<span class="token punctuation">,</span> sub_word_num<span class="token punctuation">)</span>
+    all_scrolls<span class="token punctuation">.</span>update<span class="token punctuation">(</span>scroll_data<span class="token punctuation">)</span>
 </code></pre>
 <p>But in case you want to get much rich data you can use something more complex like:</p>
 <pre class="language-python" tabindex="0"><code class="language-python"><span class="token keyword">def</span> <span class="token function">get_morphological_features</span><span class="token punctuation">(</span>word<span class="token punctuation">)</span><span class="token punctuation">:</span>
@@ -719,7 +717,7 @@ For more context and much ordered pipeline you can take a peek in here: <a href=
                 </a>
             </div>
         </footer>
-        <!-- This page `/blog/data-pipeline-for-qumran-scrolls/data-pipeline-for-the-qumran-scrolls-using-text-fabric/` was built on 2024-11-01T05:54:30.811Z -->
+        <!-- This page `/blog/data-pipeline-for-qumran-scrolls/data-pipeline-for-the-qumran-scrolls-using-text-fabric/` was built on 2024-11-09T14:08:03.171Z -->
         <script type="module" src="/dist/rJ3_G-2ArF.js"></script>
     </body>
 </html>

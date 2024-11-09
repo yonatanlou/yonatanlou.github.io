@@ -1,6 +1,6 @@
 /* Message Box */
 .message-box {
-	--color-message-box: #ffc;
+	--color-message-box: #F1E3FF;
 
 	display: block;
 	background-color: var(--color-message-box);
