@@ -1,7 +1,7 @@
 ---
 title: How to use the Qumran scrolls for NLP tasks using text-fabric
 description: In case you got curious and want to do some cool stuff with one of the ancient texts ever found.
-date: 2023-10-30
+date: 2024-10-30
 tags: posts
 ---
 When I first started my thesis, I inherited the Dead Sea Scrolls project from another student in my lab. He provided a large file that looked something like this:\
