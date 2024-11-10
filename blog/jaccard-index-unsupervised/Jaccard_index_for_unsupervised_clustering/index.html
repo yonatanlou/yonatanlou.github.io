@@ -1,0 +1,851 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Yonatan Lourie</title>
+        <meta name="description" content="Why Jaccard Index (as implemented in sklearn.metrics) will not work in unsupervised clustering, and how to implement it.">
+        <link rel="alternate" href="feed/feed.xml" type="application/atom+xml" title="Yonatan Lourie">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+        
+        <script async="" src="https://www.googletagmanager.com/gtag/js?id=G-C6PG57BBFC"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag() {
+                dataLayer.push(arguments);
+            }
+            gtag('js', new Date());
+            gtag('config', 'G-C6PG57BBFC');
+        </script>
+        
+        <style>
+        /**
+ * okaidia theme for JavaScript, CSS and HTML
+ * Loosely based on Monokai textmate theme by http://www.monokai.nl/
+ * @author ocodia
+ */
+
+code[class*="language-"],
+pre[class*="language-"] {
+	color: #f8f8f2;
+	background: none;
+	text-shadow: 0 1px rgba(0, 0, 0, 0.3);
+	font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+	font-size: 1em;
+	text-align: left;
+	white-space: pre;
+	word-spacing: normal;
+	word-break: normal;
+	word-wrap: normal;
+	line-height: 1.5;
+
+	-moz-tab-size: 4;
+	-o-tab-size: 4;
+	tab-size: 4;
+
+	-webkit-hyphens: none;
+	-moz-hyphens: none;
+	-ms-hyphens: none;
+	hyphens: none;
+}
+
+/* Code blocks */
+pre[class*="language-"] {
+	padding: 1em;
+	margin: .5em 0;
+	overflow: auto;
+	border-radius: 0.3em;
+}
+
+:not(pre) > code[class*="language-"],
+pre[class*="language-"] {
+	background: #272822;
+}
+
+/* Inline code */
+:not(pre) > code[class*="language-"] {
+	padding: .1em;
+	border-radius: .3em;
+	white-space: normal;
+}
+
+.token.comment,
+.token.prolog,
+.token.doctype,
+.token.cdata {
+	color: #8292a2;
+}
+
+.token.punctuation {
+	color: #f8f8f2;
+}
+
+.token.namespace {
+	opacity: .7;
+}
+
+.token.property,
+.token.tag,
+.token.constant,
+.token.symbol,
+.token.deleted {
+	color: #f92672;
+}
+
+.token.boolean,
+.token.number {
+	color: #ae81ff;
+}
+
+.token.selector,
+.token.attr-name,
+.token.string,
+.token.char,
+.token.builtin,
+.token.inserted {
+	color: #a6e22e;
+}
+
+.token.operator,
+.token.entity,
+.token.url,
+.language-css .token.string,
+.style .token.string,
+.token.variable {
+	color: #f8f8f2;
+}
+
+.token.atrule,
+.token.attr-value,
+.token.function,
+.token.class-name {
+	color: #e6db74;
+}
+
+.token.keyword {
+	color: #66d9ef;
+}
+
+.token.regex,
+.token.important {
+	color: #fd971f;
+}
+
+.token.important,
+.token.bold {
+	font-weight: bold;
+}
+.token.italic {
+	font-style: italic;
+}
+
+.token.entity {
+	cursor: help;
+}
+/*
+ * New diff- syntax
+ */
+
+pre[class*="language-diff-"] {
+	--eleventy-code-padding: 1.25em;
+	padding-left: var(--eleventy-code-padding);
+	padding-right: var(--eleventy-code-padding);
+}
+.token.deleted {
+	background-color: hsl(0, 51%, 37%);
+	color: inherit;
+}
+.token.inserted {
+	background-color: hsl(126, 31%, 39%);
+	color: inherit;
+}
+
+/* Make the + and - characters unselectable for copy/paste */
+.token.prefix.unchanged,
+.token.prefix.inserted,
+.token.prefix.deleted {
+	-webkit-user-select: none;
+	user-select: none;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding-top: 2px;
+	padding-bottom: 2px;
+}
+.token.prefix.inserted,
+.token.prefix.deleted {
+	width: var(--eleventy-code-padding);
+	background-color: rgba(0,0,0,.2);
+}
+
+/* Optional: full-width background color */
+.token.inserted:not(.prefix),
+.token.deleted:not(.prefix) {
+	display: block;
+	margin-left: calc(-1 * var(--eleventy-code-padding));
+	margin-right: calc(-1 * var(--eleventy-code-padding));
+	text-decoration: none; /* override del, ins, mark defaults */
+	color: inherit; /* override del, ins, mark defaults */
+}
+/* This is an arbitrary CSS string added to the bundle */
+/* Defaults */
+:root {
+	--font-family: -apple-system, system-ui, sans-serif;
+	--font-family-monospace: Consolas, Menlo, Monaco, Andale Mono WT, Andale Mono, Lucida Console, Lucida Sans Typewriter, DejaVu Sans Mono, Bitstream Vera Sans Mono, Liberation Mono, Nimbus Mono L, Courier New, Courier, monospace;
+}
+
+/* Theme colors */
+:root {
+	--color-gray-20: #e0e0e0;
+	--color-gray-50: #C0C0C0;
+	--color-gray-90: #333;
+	/* Change to a darker shade */
+
+	--background-color: #f5f5f5;
+	/* Lighter background */
+
+	--text-color: #333;
+	/* Change to a darker shade */
+	--text-color-link: #007bff;
+	--text-color-link-active: #0056b3;
+	--text-color-link-visited: #563d7c;
+}
+
+@media (prefers-color-scheme: light) {
+	:root {
+		--color-gray-20: #e0e0e0;
+		--color-gray-50: #C0C0C0;
+		--color-gray-90: #dad8d8;
+
+		/* --text-color is assigned to --color-gray-_ above */
+		--text-color-link: #1493fb;
+		--text-color-link-active: #6969f7;
+		--text-color-link-visited: #a6a6f8;
+
+		/* --background-color: #15202b; */
+		--background-color: #79bcff;
+	}
+}
+
+
+/* Global stylesheet */
+* {
+	box-sizing: border-box;
+}
+
+@view-transition {
+	navigation: auto;
+}
+
+html,
+body {
+	padding: 0;
+	margin: 0 auto;
+	font-family: var(--font-family);
+	color: var(--text-color);
+	background-color: var(--background-color);
+}
+
+html {
+	overflow-y: scroll;
+}
+
+body {
+	max-width: 65em;
+}
+
+/* https://www.a11yproject.com/posts/how-to-hide-content/ */
+.visually-hidden {
+	clip: rect(0 0 0 0);
+	clip-path: inset(50%);
+	height: 1px;
+	overflow: hidden;
+	position: absolute;
+	white-space: nowrap;
+	width: 1px;
+}
+
+p:last-child {
+	margin-bottom: 0;
+}
+
+p {
+	line-height: 1.5;
+}
+
+li {
+	line-height: 1.5;
+}
+
+a[href] {
+	color: var(--text-color-link);
+}
+
+a[href]:visited {
+	color: var(--text-color-link-visited);
+}
+
+a[href]:hover,
+a[href]:active {
+	color: var(--text-color-link-active);
+}
+
+main,
+footer {
+	padding: 1rem;
+}
+
+main :first-child {
+	margin-top: 0;
+}
+
+header {
+	border-bottom: 1px dashed var(--color-gray-20);
+}
+
+header:after {
+	content: "";
+	display: table;
+	clear: both;
+}
+
+.links-nextprev {
+	display: flex;
+	justify-content: space-between;
+	gap: .5em 1em;
+	list-style: "";
+	border-top: 1px dashed var(--color-gray-20);
+	padding: 1em 0;
+}
+
+.links-nextprev>* {
+	flex-grow: 1;
+}
+
+.links-nextprev-next {
+	text-align: right;
+}
+
+table {
+	margin: 1em 0;
+}
+
+table td,
+table th {
+	padding-right: 1em;
+}
+
+pre,
+code {
+	font-family: var(--font-family-monospace);
+}
+
+pre:not([class*="language-"]) {
+	margin: .5em 0;
+	line-height: 1.375;
+	/* 22px /16 */
+	-moz-tab-size: var(--syntax-tab-size);
+	-o-tab-size: var(--syntax-tab-size);
+	tab-size: var(--syntax-tab-size);
+	-webkit-hyphens: none;
+	-ms-hyphens: none;
+	hyphens: none;
+	direction: ltr;
+	text-align: left;
+	white-space: pre;
+	word-spacing: normal;
+	word-break: normal;
+	overflow-x: auto;
+}
+
+code {
+	word-break: break-all;
+}
+
+/* Header */
+header {
+	display: flex;
+	gap: 1em .5em;
+	flex-wrap: wrap;
+	align-items: center;
+	padding: 1em;
+}
+
+.home-link {
+	font-size: 1em;
+	/* 16px /16 */
+	font-weight: 700;
+	margin-right: 2em;
+}
+
+.home-link:link:not(:hover) {
+	text-decoration: none;
+}
+
+/* Nav */
+.nav {
+	display: flex;
+	padding: 0;
+	margin: 0;
+	list-style: none;
+}
+
+.nav-item {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+.nav-item a[href]:not(:hover) {
+	text-decoration: none;
+}
+
+.nav a[href][aria-current="page"] {
+	text-decoration: underline;
+}
+
+/* Posts list */
+.postlist {
+	list-style: none;
+	padding: 0;
+	padding-left: 1.5rem;
+}
+
+.postlist-item {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: baseline;
+	counter-increment: start-from -1;
+	margin-bottom: 1em;
+}
+
+.postlist-item:before {
+	display: inline-block;
+	pointer-events: none;
+	content: "" counter(start-from, decimal-leading-zero) ". ";
+	line-height: 100%;
+	text-align: right;
+	margin-left: -1.5rem;
+}
+
+.postlist-date,
+.postlist-item:before {
+	font-size: 0.8125em;
+	/* 13px /16 */
+	color: var(--color-gray-90);
+}
+
+.postlist-date {
+	word-spacing: -0.5px;
+}
+
+.postlist-link {
+	font-size: 1.1875em;
+	/* 19px /16 */
+	font-weight: 700;
+	flex-basis: calc(100% - 1.5rem);
+	padding-left: .25em;
+	padding-right: .5em;
+	text-underline-position: from-font;
+	text-underline-offset: 0;
+	text-decoration-thickness: 1px;
+}
+
+.postlist-item-active .postlist-link {
+	font-weight: bold;
+}
+
+/* Tags */
+.post-tag {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	text-transform: capitalize;
+	font-style: italic;
+}
+
+.postlist-item>.post-tag {
+	align-self: center;
+}
+
+/* Tags list */
+.post-metadata {
+	display: inline-flex;
+	flex-wrap: wrap;
+	gap: .5em;
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+
+.post-metadata time {
+	margin-right: 1em;
+}
+
+footer {
+	text-align: center;
+	padding: 20px 0;
+}
+
+.social-links {
+	margin-top: 5px;
+}
+
+.social-links a {
+	margin: 0 3px;
+	text-decoration: none;
+	color: #333;
+}
+
+.social-links a:hover {
+	color: #cca4f4;
+	/* Customize this color as needed */
+}
+
+.social-links i {
+	font-size: 1.5em;
+	/* Adjust size as needed */
+}</style>
+    </head>
+        <body><a href="#skip" class="visually-hidden">Skip to main content</a>
+        <header>
+            <a href="/" class="home-link">Yonatan Lourie</a>
+            <nav>
+                <h2 class="visually-hidden" id="top-level-navigation-menu">Top level navigation menu</h2>
+                <ul class="nav">
+                        <li class="nav-item">
+                            <a href="/">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/blog/">Blog</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/about/">About</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/Links/">Links</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/feed/feed.xml">Feed</a>
+                        </li>
+                </ul>
+            </nav>
+        </header>
+        <main id="skip">
+            <heading-anchors>
+                
+<h1 id="jaccard-index-for-unsupervised-clustering">Jaccard index for unsupervised clustering</h1>
+
+<ul class="post-metadata">
+	<li><time datetime="2024-11-10">10 November 2024</time></li>
+</ul>
+
+<p>TL;DR - Don't use sklearn jaccard_score function when dealing with unsupervised clustering.</p>
+<p>The Jaccard Index is a similarity measure used to compare the similarity and diversity of sample sets. It's calculated as the intersection divided by the union of sample sets. While it's a useful metric, its direct application in scikit-learn's <code>jaccard_score</code> is not suitable for unsupervised clustering scenarios.</p>
+<h3 id="the-problem-with-sklearns-jaccard-score">The Problem with Sklearn's Jaccard Score</h3>
+<p>Scikit-learn's <code>jaccard_score</code> is designed for supervised classification, where the true labels are known. It assumes that the predicted labels correspond directly to the true labels. In unsupervised clustering, however, we don't have ground truth labels. Instead, we have cluster assignments that can be permuted.</p>
+<p>For instance, consider two cluster assignments: <code>[0, 0, 1, 1]</code> and <code>[1, 1, 0, 0]</code>. While these assignments represent the same clustering, the scikit-learn <code>jaccard_score</code> would incorrectly report a low similarity.</p>
+<h3 id="custom-implementation-for-unsupervised-clustering">Custom Implementation for Unsupervised Clustering</h3>
+<p>To address this limitation, we can implement a custom Jaccard Index calculation that is agnostic to label permutations:</p>
+<pre class="language-python" tabindex="0"><code class="language-python"><span class="token keyword">def</span> <span class="token function">calculate_jaccard_unsupervised</span><span class="token punctuation">(</span>labels_true<span class="token punctuation">,</span> labels_pred<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    <span class="token triple-quoted-string string">"""
+    Calculates the Jaccard index between true and predicted labels without sklearn.
+
+    Args:
+        labels_true: True cluster labels.
+        labels_pred: Predicted cluster labels.
+
+    Returns:
+        Jaccard index.
+    """</span>
+
+    labels_true <span class="token operator">=</span> np<span class="token punctuation">.</span>array<span class="token punctuation">(</span>labels_true<span class="token punctuation">)</span>
+    labels_pred <span class="token operator">=</span> np<span class="token punctuation">.</span>array<span class="token punctuation">(</span>labels_pred<span class="token punctuation">)</span>
+
+    <span class="token comment"># Create pairwise comparison matrices</span>
+    same_in_true <span class="token operator">=</span> labels_true<span class="token punctuation">[</span><span class="token punctuation">:</span><span class="token punctuation">,</span> <span class="token boolean">None</span><span class="token punctuation">]</span> <span class="token operator">==</span> labels_true<span class="token punctuation">[</span><span class="token boolean">None</span><span class="token punctuation">,</span> <span class="token punctuation">:</span><span class="token punctuation">]</span>
+    same_in_pred <span class="token operator">=</span> labels_pred<span class="token punctuation">[</span><span class="token punctuation">:</span><span class="token punctuation">,</span> <span class="token boolean">None</span><span class="token punctuation">]</span> <span class="token operator">==</span> labels_pred<span class="token punctuation">[</span><span class="token boolean">None</span><span class="token punctuation">,</span> <span class="token punctuation">:</span><span class="token punctuation">]</span>
+
+    <span class="token comment"># Calculate intersection and union of the matrices</span>
+    intersection <span class="token operator">=</span> np<span class="token punctuation">.</span>logical_and<span class="token punctuation">(</span>same_in_true<span class="token punctuation">,</span> same_in_pred<span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token builtin">sum</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">-</span> <span class="token builtin">len</span><span class="token punctuation">(</span>labels_true<span class="token punctuation">)</span>
+    union <span class="token operator">=</span> np<span class="token punctuation">.</span>logical_or<span class="token punctuation">(</span>same_in_true<span class="token punctuation">,</span> same_in_pred<span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token builtin">sum</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">-</span> <span class="token builtin">len</span><span class="token punctuation">(</span>labels_true<span class="token punctuation">)</span>
+
+    <span class="token keyword">return</span> intersection <span class="token operator">/</span> union <span class="token keyword">if</span> union <span class="token operator">!=</span> <span class="token number">0</span> <span class="token keyword">else</span> <span class="token number">0.0</span></code></pre>
+<p>This implementation first creates pairwise comparison matrices for both true and predicted labels. Then, it calculates the intersection and union of these matrices, accounting for the fact that cluster labels can be permuted.</p>
+<p>First, i will make a function that will simulate data based on number of classes and how simliar those clusters are.</p>
+<pre class="language-python" tabindex="0"><code class="language-python"><span class="token keyword">try</span><span class="token punctuation">:</span>
+    <span class="token keyword">import</span> umap
+<span class="token keyword">except</span><span class="token punctuation">:</span>
+    !pip install umap<span class="token operator">-</span>learn
+    <span class="token keyword">import</span> umap
+
+<span class="token keyword">import</span> numpy <span class="token keyword">as</span> np
+<span class="token keyword">import</span> matplotlib<span class="token punctuation">.</span>pyplot <span class="token keyword">as</span> plt
+<span class="token keyword">from</span> sklearn<span class="token punctuation">.</span>cluster <span class="token keyword">import</span> KMeans
+<span class="token keyword">from</span> sklearn<span class="token punctuation">.</span>metrics <span class="token keyword">import</span> jaccard_score
+<span class="token keyword">from</span> sklearn<span class="token punctuation">.</span>preprocessing <span class="token keyword">import</span> LabelBinarizer
+<span class="token keyword">from</span> umap <span class="token keyword">import</span> UMAP
+<span class="token keyword">import</span> matplotlib <span class="token keyword">as</span> mpl
+
+BACKGROUND_COLOR <span class="token operator">=</span> <span class="token string">"#f5f5f5"</span>
+FIGSIZE <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token number">10.5</span><span class="token punctuation">,</span> <span class="token number">3.5</span><span class="token punctuation">)</span>
+
+mpl<span class="token punctuation">.</span>rcParams<span class="token punctuation">[</span><span class="token string">"figure.facecolor"</span><span class="token punctuation">]</span> <span class="token operator">=</span> BACKGROUND_COLOR
+mpl<span class="token punctuation">.</span>rcParams<span class="token punctuation">[</span><span class="token string">"axes.facecolor"</span><span class="token punctuation">]</span> <span class="token operator">=</span> BACKGROUND_COLOR
+mpl<span class="token punctuation">.</span>rcParams<span class="token punctuation">[</span><span class="token string">"savefig.facecolor"</span><span class="token punctuation">]</span> <span class="token operator">=</span> BACKGROUND_COLOR
+</code></pre>
+<pre class="language-python" tabindex="0"><code class="language-python">
+<span class="token keyword">def</span> <span class="token function">simulate_data</span><span class="token punctuation">(</span>num_samples<span class="token punctuation">,</span> num_features<span class="token punctuation">,</span> similarity<span class="token punctuation">,</span> num_classes<span class="token punctuation">,</span> random_seed<span class="token operator">=</span><span class="token number">42</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+    <span class="token triple-quoted-string string">"""
+    Generates synthetic data with a certain level of similarity between classes.
+    You can implement more complex stuff like distance between clusters, etc.
+    """</span>
+    np<span class="token punctuation">.</span>random<span class="token punctuation">.</span>seed<span class="token punctuation">(</span>random_seed<span class="token punctuation">)</span>
+
+    data <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token punctuation">]</span>
+    labels <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token punctuation">]</span>
+    class_centers <span class="token operator">=</span> np<span class="token punctuation">.</span>random<span class="token punctuation">.</span>rand<span class="token punctuation">(</span>num_classes<span class="token punctuation">,</span> num_features<span class="token punctuation">)</span>  <span class="token comment"># Random centers for each class</span>
+
+    <span class="token keyword">for</span> i <span class="token keyword">in</span> <span class="token builtin">range</span><span class="token punctuation">(</span>num_classes<span class="token punctuation">)</span><span class="token punctuation">:</span>
+        <span class="token comment"># Generate samples around the class center</span>
+        class_data <span class="token operator">=</span> class_centers<span class="token punctuation">[</span>i<span class="token punctuation">]</span> <span class="token operator">+</span> np<span class="token punctuation">.</span>random<span class="token punctuation">.</span>randn<span class="token punctuation">(</span>num_samples <span class="token operator">//</span> num_classes<span class="token punctuation">,</span> num_features<span class="token punctuation">)</span> <span class="token operator">*</span> <span class="token punctuation">(</span><span class="token number">1</span> <span class="token operator">-</span> similarity<span class="token punctuation">)</span>
+        data<span class="token punctuation">.</span>append<span class="token punctuation">(</span>class_data<span class="token punctuation">)</span>
+        labels <span class="token operator">+=</span> <span class="token punctuation">[</span>i<span class="token punctuation">]</span> <span class="token operator">*</span> <span class="token punctuation">(</span>num_samples <span class="token operator">//</span> num_classes<span class="token punctuation">)</span>
+
+    <span class="token comment"># Combine data and labels</span>
+    data <span class="token operator">=</span> np<span class="token punctuation">.</span>vstack<span class="token punctuation">(</span>data<span class="token punctuation">)</span>
+    labels <span class="token operator">=</span> np<span class="token punctuation">.</span>array<span class="token punctuation">(</span>labels<span class="token punctuation">)</span>
+    <span class="token keyword">return</span> data<span class="token punctuation">,</span> labels
+
+
+
+
+<span class="token keyword">def</span> <span class="token function">plot_umap_projections</span><span class="token punctuation">(</span>data1<span class="token punctuation">,</span> labels1<span class="token punctuation">,</span> data2<span class="token punctuation">,</span> labels2<span class="token punctuation">,</span> num_classes<span class="token punctuation">,</span> similarity1<span class="token punctuation">,</span> similarity2<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    <span class="token triple-quoted-string string">"""
+    Reduces both datasets to 2D using UMAP and plots them side by side.
+    """</span>
+    fig<span class="token punctuation">,</span> axes <span class="token operator">=</span> plt<span class="token punctuation">.</span>subplots<span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">,</span> <span class="token number">2</span><span class="token punctuation">,</span> figsize<span class="token operator">=</span>FIGSIZE<span class="token punctuation">)</span>
+
+    <span class="token comment"># UMAP projection for the first dataset</span>
+    umap1 <span class="token operator">=</span> UMAP<span class="token punctuation">(</span>n_components<span class="token operator">=</span><span class="token number">2</span><span class="token punctuation">,</span> random_state<span class="token operator">=</span><span class="token number">0</span><span class="token punctuation">)</span>
+    data1_2d <span class="token operator">=</span> umap1<span class="token punctuation">.</span>fit_transform<span class="token punctuation">(</span>data1<span class="token punctuation">)</span>
+    scatter1 <span class="token operator">=</span> axes<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">.</span>scatter<span class="token punctuation">(</span>data1_2d<span class="token punctuation">[</span><span class="token punctuation">:</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">,</span> data1_2d<span class="token punctuation">[</span><span class="token punctuation">:</span><span class="token punctuation">,</span> <span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">,</span> c<span class="token operator">=</span>labels1<span class="token punctuation">,</span> cmap<span class="token operator">=</span><span class="token string">"tab10"</span><span class="token punctuation">,</span> s<span class="token operator">=</span><span class="token number">10</span><span class="token punctuation">)</span>
+    axes<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">.</span>set_title<span class="token punctuation">(</span><span class="token string-interpolation"><span class="token string">f"UMAP Projection with Similarity </span><span class="token interpolation"><span class="token punctuation">{</span>similarity1<span class="token punctuation">}</span></span><span class="token string">"</span></span><span class="token punctuation">)</span>
+    axes<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">.</span>set_xlabel<span class="token punctuation">(</span><span class="token string">"UMAP Dimension 1"</span><span class="token punctuation">)</span>
+    axes<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">.</span>set_ylabel<span class="token punctuation">(</span><span class="token string">"UMAP Dimension 2"</span><span class="token punctuation">)</span>
+    plt<span class="token punctuation">.</span>colorbar<span class="token punctuation">(</span>scatter1<span class="token punctuation">,</span> ax<span class="token operator">=</span>axes<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">,</span> ticks<span class="token operator">=</span><span class="token builtin">range</span><span class="token punctuation">(</span>num_classes<span class="token punctuation">)</span><span class="token punctuation">)</span>
+
+    <span class="token comment"># UMAP projection for the second dataset</span>
+    umap2 <span class="token operator">=</span> UMAP<span class="token punctuation">(</span>n_components<span class="token operator">=</span><span class="token number">2</span><span class="token punctuation">,</span> random_state<span class="token operator">=</span><span class="token number">0</span><span class="token punctuation">)</span>
+    data2_2d <span class="token operator">=</span> umap2<span class="token punctuation">.</span>fit_transform<span class="token punctuation">(</span>data2<span class="token punctuation">)</span>
+    scatter2 <span class="token operator">=</span> axes<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">.</span>scatter<span class="token punctuation">(</span>data2_2d<span class="token punctuation">[</span><span class="token punctuation">:</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">,</span> data2_2d<span class="token punctuation">[</span><span class="token punctuation">:</span><span class="token punctuation">,</span> <span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">,</span> c<span class="token operator">=</span>labels2<span class="token punctuation">,</span> cmap<span class="token operator">=</span><span class="token string">"tab10"</span><span class="token punctuation">,</span> s<span class="token operator">=</span><span class="token number">10</span><span class="token punctuation">)</span>
+    axes<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">.</span>set_title<span class="token punctuation">(</span><span class="token string-interpolation"><span class="token string">f"UMAP Projection with Similarity </span><span class="token interpolation"><span class="token punctuation">{</span>similarity2<span class="token punctuation">}</span></span><span class="token string">"</span></span><span class="token punctuation">)</span>
+    axes<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">.</span>set_xlabel<span class="token punctuation">(</span><span class="token string">"UMAP Dimension 1"</span><span class="token punctuation">)</span>
+    axes<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">.</span>set_ylabel<span class="token punctuation">(</span><span class="token string">"UMAP Dimension 2"</span><span class="token punctuation">)</span>
+    plt<span class="token punctuation">.</span>colorbar<span class="token punctuation">(</span>scatter2<span class="token punctuation">,</span> ax<span class="token operator">=</span>axes<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">,</span> ticks<span class="token operator">=</span><span class="token builtin">range</span><span class="token punctuation">(</span>num_classes<span class="token punctuation">)</span><span class="token punctuation">)</span>
+
+    plt<span class="token punctuation">.</span>tight_layout<span class="token punctuation">(</span><span class="token punctuation">)</span>
+    plt<span class="token punctuation">.</span>show<span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+
+num_samples <span class="token operator">=</span> <span class="token number">300</span>
+num_features <span class="token operator">=</span> <span class="token number">10</span>
+num_classes <span class="token operator">=</span> <span class="token number">7</span>
+
+
+similarity1 <span class="token operator">=</span> <span class="token number">0.4</span>
+data1<span class="token punctuation">,</span> labels1 <span class="token operator">=</span> simulate_data<span class="token punctuation">(</span>num_samples<span class="token punctuation">,</span> num_features<span class="token punctuation">,</span> similarity1<span class="token punctuation">,</span> num_classes<span class="token punctuation">)</span>
+
+similarity2 <span class="token operator">=</span> <span class="token number">0.9</span>
+data2<span class="token punctuation">,</span> labels2 <span class="token operator">=</span> simulate_data<span class="token punctuation">(</span>num_samples<span class="token punctuation">,</span> num_features<span class="token punctuation">,</span> similarity2<span class="token punctuation">,</span> num_classes<span class="token punctuation">)</span>
+
+plot_umap_projections<span class="token punctuation">(</span>data1<span class="token punctuation">,</span> labels1<span class="token punctuation">,</span> data2<span class="token punctuation">,</span> labels2<span class="token punctuation">,</span> num_classes<span class="token punctuation">,</span> similarity1<span class="token punctuation">,</span> similarity2<span class="token punctuation">)</span></code></pre>
+<p><picture><source type="image/avif" srcset="/blog/jaccard-index-unsupervised/Jaccard_index_for_unsupervised_clustering/WxCZBTDUAQ-1002.avif 1002w"><source type="image/webp" srcset="/blog/jaccard-index-unsupervised/Jaccard_index_for_unsupervised_clustering/WxCZBTDUAQ-1002.webp 1002w"><img loading="lazy" decoding="async" src="/blog/jaccard-index-unsupervised/Jaccard_index_for_unsupervised_clustering/WxCZBTDUAQ-1002.png" alt="png" width="1002" height="340"></picture></p>
+<p>Nice! So we can now control on the similiarity between clusters and the number of clusters.
+Let's run a bigger simulation and measure the Jaccard measure:</p>
+<pre class="language-python" tabindex="0"><code class="language-python"><span class="token keyword">import</span> numpy <span class="token keyword">as</span> np
+<span class="token keyword">import</span> matplotlib<span class="token punctuation">.</span>pyplot <span class="token keyword">as</span> plt
+<span class="token keyword">from</span> sklearn<span class="token punctuation">.</span>metrics <span class="token keyword">import</span> jaccard_score
+<span class="token keyword">from</span> sklearn<span class="token punctuation">.</span>preprocessing <span class="token keyword">import</span> LabelBinarizer
+<span class="token keyword">from</span> sklearn<span class="token punctuation">.</span>cluster <span class="token keyword">import</span> KMeans
+<span class="token keyword">from</span> tqdm<span class="token punctuation">.</span>notebook <span class="token keyword">import</span> tqdm
+
+
+<span class="token keyword">def</span> <span class="token function">calculate_jaccard_sklearn</span><span class="token punctuation">(</span>labels_true<span class="token punctuation">,</span> labels_pred<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    <span class="token triple-quoted-string string">"""
+    Calculates the Jaccard index between true and predicted labels using sklearn.
+    """</span>
+    lb <span class="token operator">=</span> LabelBinarizer<span class="token punctuation">(</span><span class="token punctuation">)</span>
+    labels_true_bin <span class="token operator">=</span> lb<span class="token punctuation">.</span>fit_transform<span class="token punctuation">(</span>labels_true<span class="token punctuation">)</span>
+    labels_pred_bin <span class="token operator">=</span> lb<span class="token punctuation">.</span>transform<span class="token punctuation">(</span>labels_pred<span class="token punctuation">)</span>
+    <span class="token keyword">return</span> jaccard_score<span class="token punctuation">(</span>labels_true_bin<span class="token punctuation">,</span> labels_pred_bin<span class="token punctuation">,</span> average<span class="token operator">=</span><span class="token string">'weighted'</span><span class="token punctuation">)</span>
+
+<span class="token keyword">def</span> <span class="token function">calculate_jaccard_unsupervised</span><span class="token punctuation">(</span>labels_true<span class="token punctuation">,</span> labels_pred<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    <span class="token triple-quoted-string string">"""
+    Calculates the Jaccard index between true and predicted labels without sklearn.
+    """</span>
+    labels_true <span class="token operator">=</span> np<span class="token punctuation">.</span>array<span class="token punctuation">(</span>labels_true<span class="token punctuation">)</span>
+    labels_pred <span class="token operator">=</span> np<span class="token punctuation">.</span>array<span class="token punctuation">(</span>labels_pred<span class="token punctuation">)</span>
+
+    same_in_true <span class="token operator">=</span> labels_true<span class="token punctuation">[</span><span class="token punctuation">:</span><span class="token punctuation">,</span> <span class="token boolean">None</span><span class="token punctuation">]</span> <span class="token operator">==</span> labels_true<span class="token punctuation">[</span><span class="token boolean">None</span><span class="token punctuation">,</span> <span class="token punctuation">:</span><span class="token punctuation">]</span>
+    same_in_pred <span class="token operator">=</span> labels_pred<span class="token punctuation">[</span><span class="token punctuation">:</span><span class="token punctuation">,</span> <span class="token boolean">None</span><span class="token punctuation">]</span> <span class="token operator">==</span> labels_pred<span class="token punctuation">[</span><span class="token boolean">None</span><span class="token punctuation">,</span> <span class="token punctuation">:</span><span class="token punctuation">]</span>
+
+    intersection <span class="token operator">=</span> np<span class="token punctuation">.</span>logical_and<span class="token punctuation">(</span>same_in_true<span class="token punctuation">,</span> same_in_pred<span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token builtin">sum</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">-</span> <span class="token builtin">len</span><span class="token punctuation">(</span>labels_true<span class="token punctuation">)</span>
+    union <span class="token operator">=</span> np<span class="token punctuation">.</span>logical_or<span class="token punctuation">(</span>same_in_true<span class="token punctuation">,</span> same_in_pred<span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token builtin">sum</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">-</span> <span class="token builtin">len</span><span class="token punctuation">(</span>labels_true<span class="token punctuation">)</span>
+
+    <span class="token keyword">return</span> intersection <span class="token operator">/</span> union <span class="token keyword">if</span> union <span class="token operator">!=</span> <span class="token number">0</span> <span class="token keyword">else</span> <span class="token number">0.0</span>
+
+
+
+<span class="token keyword">def</span> <span class="token function">run_simulation</span><span class="token punctuation">(</span>num_samples<span class="token punctuation">,</span> num_features<span class="token punctuation">,</span> similarity<span class="token punctuation">,</span> class_counts<span class="token punctuation">,</span> random_seed<span class="token operator">=</span><span class="token number">42</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+    <span class="token triple-quoted-string string">"""
+    Runs the simulation for different numbers of classes and calculates both Jaccard indices for each case.
+    """</span>
+    np<span class="token punctuation">.</span>random<span class="token punctuation">.</span>seed<span class="token punctuation">(</span>random_seed<span class="token punctuation">)</span>
+    jaccard_sklearn_scores <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token punctuation">]</span>
+    jaccard_unsupervised_scores <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token punctuation">]</span>
+
+    <span class="token keyword">for</span> num_classes <span class="token keyword">in</span> class_counts<span class="token punctuation">:</span>
+        data<span class="token punctuation">,</span> labels_true <span class="token operator">=</span> simulate_data<span class="token punctuation">(</span>num_samples<span class="token punctuation">,</span> num_features<span class="token punctuation">,</span> similarity<span class="token punctuation">,</span> num_classes<span class="token punctuation">)</span>
+
+        kmeans <span class="token operator">=</span> KMeans<span class="token punctuation">(</span>n_clusters<span class="token operator">=</span>num_classes<span class="token punctuation">,</span> random_state<span class="token operator">=</span>random_seed<span class="token punctuation">)</span>
+        labels_pred <span class="token operator">=</span> kmeans<span class="token punctuation">.</span>fit_predict<span class="token punctuation">(</span>data<span class="token punctuation">)</span>
+
+        jaccard_sklearn <span class="token operator">=</span> calculate_jaccard_sklearn<span class="token punctuation">(</span>labels_true<span class="token punctuation">,</span> labels_pred<span class="token punctuation">)</span>
+        jaccard_unsupervised <span class="token operator">=</span> calculate_jaccard_unsupervised<span class="token punctuation">(</span>labels_true<span class="token punctuation">,</span> labels_pred<span class="token punctuation">)</span>
+
+        jaccard_sklearn_scores<span class="token punctuation">.</span>append<span class="token punctuation">(</span>jaccard_sklearn<span class="token punctuation">)</span>
+        jaccard_unsupervised_scores<span class="token punctuation">.</span>append<span class="token punctuation">(</span>jaccard_unsupervised<span class="token punctuation">)</span>
+
+    <span class="token keyword">return</span> jaccard_sklearn_scores<span class="token punctuation">,</span> jaccard_unsupervised_scores
+
+<span class="token keyword">def</span> <span class="token function">run_multiple_simulations</span><span class="token punctuation">(</span>num_samples<span class="token punctuation">,</span> num_features<span class="token punctuation">,</span> similarity<span class="token punctuation">,</span> class_counts<span class="token punctuation">,</span> n_runs<span class="token operator">=</span><span class="token number">10</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+    <span class="token triple-quoted-string string">"""
+    Runs multiple simulations and returns mean and std of the scores.
+    """</span>
+    sklearn_scores_all <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token punctuation">]</span>
+    unsupervised_scores_all <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token punctuation">]</span>
+
+    <span class="token keyword">for</span> run <span class="token keyword">in</span> tqdm<span class="token punctuation">(</span><span class="token builtin">range</span><span class="token punctuation">(</span>n_runs<span class="token punctuation">)</span><span class="token punctuation">,</span>desc<span class="token operator">=</span><span class="token string">"simulation"</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+        sklearn_scores<span class="token punctuation">,</span> unsupervised_scores <span class="token operator">=</span> run_simulation<span class="token punctuation">(</span>
+            num_samples<span class="token punctuation">,</span> num_features<span class="token punctuation">,</span> similarity<span class="token punctuation">,</span> class_counts<span class="token punctuation">,</span> random_seed<span class="token operator">=</span>run
+        <span class="token punctuation">)</span>
+        sklearn_scores_all<span class="token punctuation">.</span>append<span class="token punctuation">(</span>sklearn_scores<span class="token punctuation">)</span>
+        unsupervised_scores_all<span class="token punctuation">.</span>append<span class="token punctuation">(</span>unsupervised_scores<span class="token punctuation">)</span>
+
+    sklearn_scores_all <span class="token operator">=</span> np<span class="token punctuation">.</span>array<span class="token punctuation">(</span>sklearn_scores_all<span class="token punctuation">)</span>
+    unsupervised_scores_all <span class="token operator">=</span> np<span class="token punctuation">.</span>array<span class="token punctuation">(</span>unsupervised_scores_all<span class="token punctuation">)</span>
+
+    <span class="token keyword">return</span> <span class="token punctuation">{</span>
+        <span class="token string">'sklearn'</span><span class="token punctuation">:</span> <span class="token punctuation">{</span>
+            <span class="token string">'mean'</span><span class="token punctuation">:</span> np<span class="token punctuation">.</span>mean<span class="token punctuation">(</span>sklearn_scores_all<span class="token punctuation">,</span> axis<span class="token operator">=</span><span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+            <span class="token string">'std'</span><span class="token punctuation">:</span> np<span class="token punctuation">.</span>std<span class="token punctuation">(</span>sklearn_scores_all<span class="token punctuation">,</span> axis<span class="token operator">=</span><span class="token number">0</span><span class="token punctuation">)</span>
+        <span class="token punctuation">}</span><span class="token punctuation">,</span>
+        <span class="token string">'unsupervised'</span><span class="token punctuation">:</span> <span class="token punctuation">{</span>
+            <span class="token string">'mean'</span><span class="token punctuation">:</span> np<span class="token punctuation">.</span>mean<span class="token punctuation">(</span>unsupervised_scores_all<span class="token punctuation">,</span> axis<span class="token operator">=</span><span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+            <span class="token string">'std'</span><span class="token punctuation">:</span> np<span class="token punctuation">.</span>std<span class="token punctuation">(</span>unsupervised_scores_all<span class="token punctuation">,</span> axis<span class="token operator">=</span><span class="token number">0</span><span class="token punctuation">)</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+
+<span class="token comment"># Simulation parameters</span>
+num_samples <span class="token operator">=</span> <span class="token number">10000</span>
+num_features <span class="token operator">=</span> <span class="token number">10</span>
+class_counts <span class="token operator">=</span> <span class="token builtin">list</span><span class="token punctuation">(</span><span class="token builtin">range</span><span class="token punctuation">(</span><span class="token number">2</span><span class="token punctuation">,</span> <span class="token number">50</span><span class="token punctuation">,</span><span class="token number">2</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+similarities <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token number">0.25</span><span class="token punctuation">,</span> <span class="token number">0.5</span><span class="token punctuation">,</span> <span class="token number">0.75</span><span class="token punctuation">,</span> <span class="token number">0.99</span><span class="token punctuation">]</span>
+n_runs<span class="token operator">=</span><span class="token number">10</span>
+
+results <span class="token operator">=</span> <span class="token punctuation">{</span><span class="token punctuation">}</span>
+<span class="token keyword">for</span> similarity <span class="token keyword">in</span> tqdm<span class="token punctuation">(</span>similarities<span class="token punctuation">,</span> desc<span class="token operator">=</span><span class="token string">"Processing similarities"</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+    results<span class="token punctuation">[</span>similarity<span class="token punctuation">]</span> <span class="token operator">=</span> run_multiple_simulations<span class="token punctuation">(</span>
+        num_samples<span class="token operator">=</span>num_samples<span class="token punctuation">,</span>
+        num_features<span class="token operator">=</span>num_features<span class="token punctuation">,</span>
+        similarity<span class="token operator">=</span>similarity<span class="token punctuation">,</span>
+        class_counts<span class="token operator">=</span>class_counts<span class="token punctuation">,</span>
+        n_runs<span class="token operator">=</span>n_runs
+    <span class="token punctuation">)</span>
+
+
+</code></pre>
+<pre class="language-python" tabindex="0"><code class="language-python"><span class="token comment"># Create plots</span>
+fig<span class="token punctuation">,</span> <span class="token punctuation">(</span>ax1<span class="token punctuation">,</span> ax2<span class="token punctuation">)</span> <span class="token operator">=</span> plt<span class="token punctuation">.</span>subplots<span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">,</span> <span class="token number">2</span><span class="token punctuation">,</span> figsize<span class="token operator">=</span>FIGSIZE<span class="token punctuation">)</span>
+
+colors <span class="token operator">=</span> plt<span class="token punctuation">.</span>cm<span class="token punctuation">.</span>viridis<span class="token punctuation">(</span>np<span class="token punctuation">.</span>linspace<span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">1</span><span class="token punctuation">,</span> <span class="token builtin">len</span><span class="token punctuation">(</span>similarities<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+
+<span class="token comment"># Plot sklearn results</span>
+<span class="token keyword">for</span> similarity<span class="token punctuation">,</span> color <span class="token keyword">in</span> <span class="token builtin">zip</span><span class="token punctuation">(</span>similarities<span class="token punctuation">,</span> colors<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    mean <span class="token operator">=</span> results<span class="token punctuation">[</span>similarity<span class="token punctuation">]</span><span class="token punctuation">[</span><span class="token string">'sklearn'</span><span class="token punctuation">]</span><span class="token punctuation">[</span><span class="token string">'mean'</span><span class="token punctuation">]</span>
+    std <span class="token operator">=</span> results<span class="token punctuation">[</span>similarity<span class="token punctuation">]</span><span class="token punctuation">[</span><span class="token string">'sklearn'</span><span class="token punctuation">]</span><span class="token punctuation">[</span><span class="token string">'std'</span><span class="token punctuation">]</span>
+    ax1<span class="token punctuation">.</span>plot<span class="token punctuation">(</span>class_counts<span class="token punctuation">,</span> mean<span class="token punctuation">,</span> label<span class="token operator">=</span><span class="token string-interpolation"><span class="token string">f"Similarity=</span><span class="token interpolation"><span class="token punctuation">{</span>similarity<span class="token punctuation">}</span></span><span class="token string">"</span></span><span class="token punctuation">,</span> color<span class="token operator">=</span>color<span class="token punctuation">)</span>
+    ax1<span class="token punctuation">.</span>fill_between<span class="token punctuation">(</span>class_counts<span class="token punctuation">,</span> mean <span class="token operator">-</span> std<span class="token punctuation">,</span> mean <span class="token operator">+</span> std<span class="token punctuation">,</span> alpha<span class="token operator">=</span><span class="token number">0.2</span><span class="token punctuation">,</span> color<span class="token operator">=</span>color<span class="token punctuation">)</span>
+
+ax1<span class="token punctuation">.</span>set_xlabel<span class="token punctuation">(</span><span class="token string">"Number of Classes"</span><span class="token punctuation">)</span>
+ax1<span class="token punctuation">.</span>set_ylabel<span class="token punctuation">(</span><span class="token string">"Jaccard Index sklearn"</span><span class="token punctuation">)</span>
+ax1<span class="token punctuation">.</span>set_title<span class="token punctuation">(</span><span class="token string-interpolation"><span class="token string">f"Sklearn Jaccard Index\n(Average over </span><span class="token interpolation"><span class="token punctuation">{</span>n_runs<span class="token punctuation">}</span></span><span class="token string"> runs)"</span></span><span class="token punctuation">)</span>
+ax1<span class="token punctuation">.</span>legend<span class="token punctuation">(</span><span class="token punctuation">)</span>
+ax1<span class="token punctuation">.</span>grid<span class="token punctuation">(</span><span class="token boolean">True</span><span class="token punctuation">)</span>
+
+<span class="token comment"># Plot unsupervised results</span>
+<span class="token keyword">for</span> similarity<span class="token punctuation">,</span> color <span class="token keyword">in</span> <span class="token builtin">zip</span><span class="token punctuation">(</span>similarities<span class="token punctuation">,</span> colors<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    mean <span class="token operator">=</span> results<span class="token punctuation">[</span>similarity<span class="token punctuation">]</span><span class="token punctuation">[</span><span class="token string">'unsupervised'</span><span class="token punctuation">]</span><span class="token punctuation">[</span><span class="token string">'mean'</span><span class="token punctuation">]</span>
+    std <span class="token operator">=</span> results<span class="token punctuation">[</span>similarity<span class="token punctuation">]</span><span class="token punctuation">[</span><span class="token string">'unsupervised'</span><span class="token punctuation">]</span><span class="token punctuation">[</span><span class="token string">'std'</span><span class="token punctuation">]</span>
+    ax2<span class="token punctuation">.</span>plot<span class="token punctuation">(</span>class_counts<span class="token punctuation">,</span> mean<span class="token punctuation">,</span> label<span class="token operator">=</span><span class="token string-interpolation"><span class="token string">f"Similarity=</span><span class="token interpolation"><span class="token punctuation">{</span>similarity<span class="token punctuation">}</span></span><span class="token string">"</span></span><span class="token punctuation">,</span> color<span class="token operator">=</span>color<span class="token punctuation">)</span>
+    ax2<span class="token punctuation">.</span>fill_between<span class="token punctuation">(</span>class_counts<span class="token punctuation">,</span> mean <span class="token operator">-</span> std<span class="token punctuation">,</span> mean <span class="token operator">+</span> std<span class="token punctuation">,</span> alpha<span class="token operator">=</span><span class="token number">0.2</span><span class="token punctuation">,</span> color<span class="token operator">=</span>color<span class="token punctuation">)</span>
+
+ax2<span class="token punctuation">.</span>set_xlabel<span class="token punctuation">(</span><span class="token string">"Number of Classes"</span><span class="token punctuation">)</span>
+ax2<span class="token punctuation">.</span>set_ylabel<span class="token punctuation">(</span><span class="token string">"Jaccard Index by hand"</span><span class="token punctuation">)</span>
+ax2<span class="token punctuation">.</span>set_title<span class="token punctuation">(</span><span class="token string-interpolation"><span class="token string">f"Unsupervised Jaccard Index\n(Average over </span><span class="token interpolation"><span class="token punctuation">{</span>n_runs<span class="token punctuation">}</span></span><span class="token string"> runs)"</span></span><span class="token punctuation">)</span>
+ax2<span class="token punctuation">.</span>legend<span class="token punctuation">(</span><span class="token punctuation">)</span>
+ax2<span class="token punctuation">.</span>grid<span class="token punctuation">(</span><span class="token boolean">True</span><span class="token punctuation">)</span>
+
+plt<span class="token punctuation">.</span>tight_layout<span class="token punctuation">(</span><span class="token punctuation">)</span>
+plt<span class="token punctuation">.</span>show<span class="token punctuation">(</span><span class="token punctuation">)</span></code></pre>
+<p><picture><source type="image/avif" srcset="/blog/jaccard-index-unsupervised/Jaccard_index_for_unsupervised_clustering/c6jHoN4adD-1039.avif 1039w"><source type="image/webp" srcset="/blog/jaccard-index-unsupervised/Jaccard_index_for_unsupervised_clustering/c6jHoN4adD-1039.webp 1039w"><img loading="lazy" decoding="async" src="/blog/jaccard-index-unsupervised/Jaccard_index_for_unsupervised_clustering/c6jHoN4adD-1039.png" alt="png" width="1039" height="340"></picture></p>
+<p>What we will expect to see in this simulation?
+We will expect the data with high similiarity (clusters more dense), will get higher jaccard score.
+Because ive used the same number of samples, with different number of classes, the jaccard will decrease - but we still expect to see the data with the high similiarity with much better jaccard score then the low similiarity.</p>
+<p>The left plot it very very noisy, and we can't say if the which data setting is better.
+This is make sense, because the sklearn implementation expecting to get prediction labels that correspond the actual labels.</p>
+<p>That means that following setting will get 0 jaccard index:</p>
+<pre class="language-python" tabindex="0"><code class="language-python"><span class="token keyword">from</span> sklearn<span class="token punctuation">.</span>metric <span class="token keyword">import</span> jaccard_score
+a <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token number">2</span><span class="token punctuation">,</span><span class="token number">2</span><span class="token punctuation">,</span><span class="token number">3</span><span class="token punctuation">,</span><span class="token number">3</span><span class="token punctuation">,</span><span class="token number">3</span><span class="token punctuation">,</span><span class="token number">1</span><span class="token punctuation">,</span><span class="token number">1</span><span class="token punctuation">,</span><span class="token number">0</span><span class="token punctuation">]</span>
+b <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">,</span><span class="token number">1</span><span class="token punctuation">,</span><span class="token number">2</span><span class="token punctuation">,</span><span class="token number">2</span><span class="token punctuation">,</span><span class="token number">2</span><span class="token punctuation">,</span><span class="token number">0</span><span class="token punctuation">,</span><span class="token number">0</span><span class="token punctuation">,</span><span class="token number">3</span><span class="token punctuation">]</span>
+jaccard_score<span class="token punctuation">(</span>a<span class="token punctuation">,</span>b<span class="token punctuation">,</span>average<span class="token operator">=</span><span class="token string">"weighted"</span><span class="token punctuation">)</span>
+
+<span class="token comment">#0</span></code></pre>
+<p>Which is not what we want when we doing unsupervised clustering.</p>
+<h3 id="conclusion">Conclusion</h3>
+<p>When evaluating unsupervised clustering algorithms, it's crucial to use metrics that are robust to label permutations. The custom Jaccard Index implementation presented here provides a reliable way to assess the similarity between true and predicted cluster assignments. By understanding the limitations of scikit-learn's jaccard_score in this context, we can make more informed decisions about the performance of our clustering models.</p>
+
+<ul class="links-nextprev"><li class="links-nextprev-prev">← Previous<br> <a href="/blog/data-pipeline-for-qumran-scrolls/data-pipeline-for-the-qumran-scrolls-using-text-fabric/">How to use the Qumran scrolls for NLP tasks using text-fabric</a></li>
+</ul>
+
+            </heading-anchors>
+        </main>
+        <footer>
+            <div class="social-links">
+                <a href="https://www.goodreads.com/user/show/103722180-yonatan-lourie" target="_blank" title="Goodreads">
+                    <i class="fab fa-goodreads"></i>
+                </a>
+                <a href="https://www.imdb.com/user/ur88119677/ratings/" target="_blank" title="IMDb">
+                    <i class="fab fa-imdb"></i>
+                </a>
+                <a href="https://open.spotify.com/user/224udkuetwxsiqba7n4tums6q?si=_RD2kBO8QlSUYLfjBLjBEQ&nd=1" target="_blank" title="Spotify">
+                    <i class="fab fa-spotify"></i>
+                </a>
+                <a href="https://x.com/yonatanlou" target="_blank" title="Twitter">
+                    <i class="fab fa-twitter"></i>
+                </a>
+                <a href="https://www.linkedin.com/in/yonatanlourie/" target="_blank" title="LinkedIn">
+                    <i class="fab fa-linkedin"></i>
+                </a>
+                <a href="https://github.com/yonatanlou" target="_blank" title="GitHub">
+                    <i class="fab fa-github"></i>
+                </a>
+                <a href="mailto:yonatanlou@gmail.com" target="_blank" title="Email">
+                    <i class="fa-solid fa-envelope"></i>
+                </a>
+            </div>
+        </footer>
+        <!-- This page `/blog/jaccard-index-unsupervised/Jaccard_index_for_unsupervised_clustering/` was built on 2024-11-10T17:04:43.065Z -->
+        <script type="module" src="/dist/rJ3_G-2ArF.js"></script>
+    </body>
+</html>
