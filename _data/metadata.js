@@ -7,5 +7,9 @@ export default {
 		name: "Yonatan Lourie",
 		email: "yonatanlou@gmail.com",
 		url: "https://yonatanlou.github.io/about-me/"
-	}
+	},
+	gtag: "G-C6PG57BBFC"
+
+
 }
+
