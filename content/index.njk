@@ -1,29 +1,19 @@
----js
-const eleventyNavigation = {
-	key: "Home",
-	order: 1
-};
-
-const numberOfLatestPostsToShow = 3;
 ---
-{% set postsCount = collections.posts | length %}
-{% set latestPostsCount = postsCount | min(numberOfLatestPostsToShow) %}
-<h1>Latest {{ latestPostsCount }} Post{% if latestPostsCount != 1 %}s{% endif %}</h1>
+eleventyNavigation:
+  key: "Home"
+  order: 1
+numberOfLatestPostsToShow: 3
+---
 
-{% set postslist = collections.posts | head(-1 * numberOfLatestPostsToShow) %}
-{% set postslistCounter = postsCount %}
-{% include "postslist.njk" %}
-
-{% set morePosts = postsCount - numberOfLatestPostsToShow %}
-{% if morePosts > 0 %}
-<p>{{ morePosts }} more post{% if morePosts != 1 %}s{% endif %} can be found in <a href="blog.njk">the blog</a>.</p>
-{% endif %}
-
-{# List every content page in the project #}
-{#
-<ul>
-	{%- for entry in collections.all %}
-	<li><a href="{{ entry.url }}"><code>{{ entry.url }}</code></a></li>
-	{%- endfor %}
-</ul>
-#}
+<h2>Hi,I'm
+    <a href="{{ '/about/' | url }}">Yonatan</a>
+    .</h2>
+{# <div class="home-heading">
+    <h2>All Posts</h2>
+    <a href="{{ '/posts/' | url }}">All posts</a>
+</div> #}
+<h3>Latest posts</h3>
+{% set postslist = collections.posts | head(-2) %}
+{% set postslistCounter = collections.posts | length %}
+{% include "postslist.njk" %} More posts on
+<a href="{{ '/blog/' | url }}">All posts</a>
