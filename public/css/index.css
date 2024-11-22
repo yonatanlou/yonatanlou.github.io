@@ -180,7 +180,7 @@ header {
 }
 
 .home-link {
-	font-size: 1em;
+	font-size: 1.2em;
 	/* 16px /16 */
 	font-weight: 700;
 	margin-right: 2em;
@@ -312,4 +312,14 @@ footer {
 .social-links i {
 	font-size: 1.5em;
 	/* Adjust size as needed */
+}
+
+.site-logo {
+	max-width: 100px;
+	/* Adjust the size as needed */
+	height: auto;
+	/* Maintain aspect ratio */
+	display: block;
+	margin: 0 auto;
+	/* Center the logo */
 }
