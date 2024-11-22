@@ -8,6 +8,7 @@ import pluginFilters from "./_config/filters.js";
 
 
 
+
 /** @param {import("@11ty/eleventy").UserConfig} eleventyConfig */
 export default async function (eleventyConfig) {
 	// Drafts, see also _data/eleventyDataSchema.js
@@ -48,7 +49,7 @@ export default async function (eleventyConfig) {
 	eleventyConfig.addPlugin(pluginNavigation);
 	eleventyConfig.addPlugin(HtmlBasePlugin);
 	eleventyConfig.addPlugin(InputPathToUrlTransformPlugin);
-
+	eleventyConfig.addPassthroughCopy({ "./content/assets/favicon.io": "/" });
 	eleventyConfig.addPlugin(feedPlugin, {
 		type: "atom", // or "rss", "json"
 		outputPath: "/feed/feed.xml",
