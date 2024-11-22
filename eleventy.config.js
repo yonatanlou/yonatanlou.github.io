@@ -104,7 +104,7 @@ export default async function (eleventyConfig) {
 	eleventyConfig.addShortcode("currentBuildDate", () => {
 		return (new Date()).toISOString();
 	});
-
+	eleventyConfig.watchIgnores.add('public/img/icon-96x96.png')
 	// Features to make your build faster (when you need them)
 
 	// If your passthrough copy gets heavy and cumbersome, add this line
