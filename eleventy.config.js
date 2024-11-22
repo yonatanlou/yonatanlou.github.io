@@ -41,6 +41,7 @@ export default async function (eleventyConfig) {
 	eleventyConfig.addBundle("js", {
 		toFileDirectory: "dist",
 	});
+	eleventyConfig.addPassthroughCopy({ "./content/img/favicon": "/" });
 
 	// Official plugins
 	eleventyConfig.addPlugin(pluginSyntaxHighlight, {
@@ -49,7 +50,6 @@ export default async function (eleventyConfig) {
 	eleventyConfig.addPlugin(pluginNavigation);
 	eleventyConfig.addPlugin(HtmlBasePlugin);
 	eleventyConfig.addPlugin(InputPathToUrlTransformPlugin);
-	// eleventyConfig.addPassthroughCopy({ "./content/assets/favicon.io": "/" });
 	eleventyConfig.addPlugin(feedPlugin, {
 		type: "atom", // or "rss", "json"
 		outputPath: "/feed/feed.xml",
