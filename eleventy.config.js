@@ -41,7 +41,7 @@ export default async function (eleventyConfig) {
 	eleventyConfig.addBundle("js", {
 		toFileDirectory: "dist",
 	});
-	eleventyConfig.addPassthroughCopy({ "./content/img/favicon": "/" });
+	eleventyConfig.addPassthroughCopy({ "img/favicon": "/" });
 
 	// Official plugins
 	eleventyConfig.addPlugin(pluginSyntaxHighlight, {

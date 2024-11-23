@@ -2,8 +2,9 @@
 <html lang="{{ metadata.language }}">
     <head>
         <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="icon" type="image/x-icon" href="/img/favicon/favicon.ico">
+        <meta
+        name="viewport" content="width=device-width, initial-scale=1.0"> {# <link rel="icon" type="image/x-icon" href="/img/favicon/favicon.ico"> #}
+        <link rel="icon" href="{{ '/favicon.ico' | url }}"/>
         <title>{{ metadata.title }}</title>
         <meta name="description" content="{{ description or metadata.description }}">
         <link rel="alternate" href="feed/feed.xml" type="application/atom+xml" title="{{ metadata.title }}">
@@ -21,15 +22,15 @@
         </script>
         {#- <meta name="generator" content="{{ eleventy.generator }}"> #}
         {#-
-                                                                                                                                                                		Plain-text bundles are provided via the `eleventy-plugin-bundle` plugin:
-                                                                                                                                                                		1. CSS:
-                                                                                                                                                                			* Add to a per-page bundle using `{% css %}{% endcss %}`
-                                                                                                                                                                			* Retrieve bundle content using `{% getBundle "css" %}` or `{% getBundleFileUrl "css" %}`
-                                                                                                                                                                		2. Or for JavaScript:
-                                                                                                                                                                			* Add to a per-page bundle using `{% js %}{% endjs %}`
-                                                                                                                                                                			* Retrieve via `{% getBundle "js" %}` or `{% getBundleFileUrl "js" %}`
-                                                                                                                                                                		3. Learn more: https://github.com/11ty/eleventy-plugin-bundle
-                                                                                                                                                                		#}
+                                                                                                                                                                                                        		Plain-text bundles are provided via the `eleventy-plugin-bundle` plugin:
+                                                                                                                                                                                                        		1. CSS:
+                                                                                                                                                                                                        			* Add to a per-page bundle using `{% css %}{% endcss %}`
+                                                                                                                                                                                                        			* Retrieve bundle content using `{% getBundle "css" %}` or `{% getBundleFileUrl "css" %}`
+                                                                                                                                                                                                        		2. Or for JavaScript:
+                                                                                                                                                                                                        			* Add to a per-page bundle using `{% js %}{% endjs %}`
+                                                                                                                                                                                                        			* Retrieve via `{% getBundle "js" %}` or `{% getBundleFileUrl "js" %}`
+                                                                                                                                                                                                        		3. Learn more: https://github.com/11ty/eleventy-plugin-bundle
+                                                                                                                                                                                                        		#}
         {#- Add an arbitrary string to the bundle #} {%- css %} /* This is an arbitrary CSS string added to the bundle */
         {% endcss %}
         {#- Add the contents of a file to the bundle #}
