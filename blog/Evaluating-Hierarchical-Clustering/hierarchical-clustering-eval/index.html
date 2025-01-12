@@ -1,0 +1,1641 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+        <link rel="icon" href="/favicon.ico">
+        <title>Yonatan Lourie</title>
+        <meta name="description" content="Hierarchical clustering evaluation with the Dasgupta cost.">
+        <link rel="alternate" href="feed/feed.xml" type="application/atom+xml" title="Yonatan Lourie">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+        
+        <script async="" src="https://www.googletagmanager.com/gtag/js?id=G-C6PG57BBFC"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag() {
+                dataLayer.push(arguments);
+            }
+            gtag('js', new Date());
+            gtag('config', 'G-C6PG57BBFC');
+        </script>
+        
+        <style>
+        /**
+ * okaidia theme for JavaScript, CSS and HTML
+ * Loosely based on Monokai textmate theme by http://www.monokai.nl/
+ * @author ocodia
+ */
+
+code[class*="language-"],
+pre[class*="language-"] {
+	color: #f8f8f2;
+	background: none;
+	text-shadow: 0 1px rgba(0, 0, 0, 0.3);
+	font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+	font-size: 1em;
+	text-align: left;
+	white-space: pre;
+	word-spacing: normal;
+	word-break: normal;
+	word-wrap: normal;
+	line-height: 1.5;
+
+	-moz-tab-size: 4;
+	-o-tab-size: 4;
+	tab-size: 4;
+
+	-webkit-hyphens: none;
+	-moz-hyphens: none;
+	-ms-hyphens: none;
+	hyphens: none;
+}
+
+/* Code blocks */
+pre[class*="language-"] {
+	padding: 1em;
+	margin: .5em 0;
+	overflow: auto;
+	border-radius: 0.3em;
+}
+
+:not(pre) > code[class*="language-"],
+pre[class*="language-"] {
+	background: #272822;
+}
+
+/* Inline code */
+:not(pre) > code[class*="language-"] {
+	padding: .1em;
+	border-radius: .3em;
+	white-space: normal;
+}
+
+.token.comment,
+.token.prolog,
+.token.doctype,
+.token.cdata {
+	color: #8292a2;
+}
+
+.token.punctuation {
+	color: #f8f8f2;
+}
+
+.token.namespace {
+	opacity: .7;
+}
+
+.token.property,
+.token.tag,
+.token.constant,
+.token.symbol,
+.token.deleted {
+	color: #f92672;
+}
+
+.token.boolean,
+.token.number {
+	color: #ae81ff;
+}
+
+.token.selector,
+.token.attr-name,
+.token.string,
+.token.char,
+.token.builtin,
+.token.inserted {
+	color: #a6e22e;
+}
+
+.token.operator,
+.token.entity,
+.token.url,
+.language-css .token.string,
+.style .token.string,
+.token.variable {
+	color: #f8f8f2;
+}
+
+.token.atrule,
+.token.attr-value,
+.token.function,
+.token.class-name {
+	color: #e6db74;
+}
+
+.token.keyword {
+	color: #66d9ef;
+}
+
+.token.regex,
+.token.important {
+	color: #fd971f;
+}
+
+.token.important,
+.token.bold {
+	font-weight: bold;
+}
+.token.italic {
+	font-style: italic;
+}
+
+.token.entity {
+	cursor: help;
+}
+/*
+ * New diff- syntax
+ */
+
+pre[class*="language-diff-"] {
+	--eleventy-code-padding: 1.25em;
+	padding-left: var(--eleventy-code-padding);
+	padding-right: var(--eleventy-code-padding);
+}
+.token.deleted {
+	background-color: hsl(0, 51%, 37%);
+	color: inherit;
+}
+.token.inserted {
+	background-color: hsl(126, 31%, 39%);
+	color: inherit;
+}
+
+/* Make the + and - characters unselectable for copy/paste */
+.token.prefix.unchanged,
+.token.prefix.inserted,
+.token.prefix.deleted {
+	-webkit-user-select: none;
+	user-select: none;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding-top: 2px;
+	padding-bottom: 2px;
+}
+.token.prefix.inserted,
+.token.prefix.deleted {
+	width: var(--eleventy-code-padding);
+	background-color: rgba(0,0,0,.2);
+}
+
+/* Optional: full-width background color */
+.token.inserted:not(.prefix),
+.token.deleted:not(.prefix) {
+	display: block;
+	margin-left: calc(-1 * var(--eleventy-code-padding));
+	margin-right: calc(-1 * var(--eleventy-code-padding));
+	text-decoration: none; /* override del, ins, mark defaults */
+	color: inherit; /* override del, ins, mark defaults */
+}
+/* This is an arbitrary CSS string added to the bundle */
+/* Defaults */
+:root {
+	--font-family: -apple-system, system-ui, sans-serif;
+	--font-family-monospace: Consolas, Menlo, Monaco, Andale Mono WT, Andale Mono, Lucida Console, Lucida Sans Typewriter, DejaVu Sans Mono, Bitstream Vera Sans Mono, Liberation Mono, Nimbus Mono L, Courier New, Courier, monospace;
+}
+
+/* Theme colors */
+:root {
+	--color-gray-20: #e0e0e0;
+	--color-gray-50: #C0C0C0;
+	--color-gray-90: #333;
+	/* Change to a darker shade */
+
+	--background-color: #f5f5f5;
+	/* Lighter background */
+
+	--text-color: #333;
+	/* Change to a darker shade */
+	--text-color-link: #007bff;
+	--text-color-link-active: #0056b3;
+	--text-color-link-visited: #563d7c;
+}
+
+/* @media (prefers-color-scheme: light) {
+	:root {
+		--color-gray-20: #e0e0e0;
+		--color-gray-50: #C0C0C0;
+		--color-gray-90: #dad8d8;
+
+		--text-color-link: #1493fb;
+		--text-color-link-active: #6969f7;
+		--text-color-link-visited: #a6a6f8;
+
+		--background-color: #79bcff;
+	}
+} */
+
+
+/* Global stylesheet */
+* {
+	box-sizing: border-box;
+}
+
+@view-transition {
+	navigation: auto;
+}
+
+html,
+body {
+	padding: 0;
+	margin: 0 auto;
+	font-family: var(--font-family);
+	color: var(--text-color);
+	background-color: var(--background-color);
+}
+
+html {
+	overflow-y: scroll;
+}
+
+body {
+	max-width: 65em;
+}
+
+/* https://www.a11yproject.com/posts/how-to-hide-content/ */
+.visually-hidden {
+	clip: rect(0 0 0 0);
+	clip-path: inset(50%);
+	height: 1px;
+	overflow: hidden;
+	position: absolute;
+	white-space: nowrap;
+	width: 1px;
+}
+
+p:last-child {
+	margin-bottom: 0;
+}
+
+p {
+	line-height: 1.5;
+}
+
+li {
+	line-height: 1.5;
+}
+
+a[href] {
+	color: var(--text-color-link);
+}
+
+a[href]:visited {
+	color: var(--text-color-link-visited);
+}
+
+a[href]:hover,
+a[href]:active {
+	color: var(--text-color-link-active);
+}
+
+main,
+footer {
+	padding: 1rem;
+}
+
+main :first-child {
+	margin-top: 0;
+}
+
+header {
+	border-bottom: 1px dashed var(--color-gray-20);
+}
+
+header:after {
+	content: "";
+	display: table;
+	clear: both;
+}
+
+.links-nextprev {
+	display: flex;
+	justify-content: space-between;
+	gap: .5em 1em;
+	list-style: "";
+	border-top: 1px dashed var(--color-gray-20);
+	padding: 1em 0;
+}
+
+.links-nextprev>* {
+	flex-grow: 1;
+}
+
+.links-nextprev-next {
+	text-align: right;
+}
+
+table {
+	margin: 1em 0;
+}
+
+table td,
+table th {
+	padding-right: 1em;
+}
+
+pre,
+code {
+	font-family: var(--font-family-monospace);
+}
+
+pre:not([class*="language-"]) {
+	margin: .5em 0;
+	line-height: 1.375;
+	/* 22px /16 */
+	-moz-tab-size: var(--syntax-tab-size);
+	-o-tab-size: var(--syntax-tab-size);
+	tab-size: var(--syntax-tab-size);
+	-webkit-hyphens: none;
+	-ms-hyphens: none;
+	hyphens: none;
+	direction: ltr;
+	text-align: left;
+	white-space: pre;
+	word-spacing: normal;
+	word-break: normal;
+	overflow-x: auto;
+}
+
+code {
+	word-break: break-all;
+}
+
+/* Header */
+header {
+	display: flex;
+	gap: 1em .5em;
+	flex-wrap: wrap;
+	align-items: center;
+	padding: 1em;
+}
+
+.home-link {
+	font-size: 1.2em;
+	/* 16px /16 */
+	font-weight: 700;
+	margin-right: 2em;
+}
+
+.home-link:link:not(:hover) {
+	text-decoration: none;
+}
+
+/* Nav */
+.nav {
+	display: flex;
+	padding: 0;
+	margin: 0;
+	list-style: none;
+}
+
+.nav-item {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+.nav-item a[href]:not(:hover) {
+	text-decoration: none;
+}
+
+.nav a[href][aria-current="page"] {
+	text-decoration: underline;
+}
+
+/* Posts list */
+.postlist {
+	list-style: none;
+	padding: 0;
+	padding-left: 1.5rem;
+}
+
+.postlist-item {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: baseline;
+	counter-increment: start-from -1;
+	margin-bottom: 1em;
+}
+
+.postlist-item:before {
+	display: inline-block;
+	pointer-events: none;
+	content: "" counter(start-from, decimal-leading-zero) ". ";
+	line-height: 100%;
+	text-align: right;
+	margin-left: -1.5rem;
+}
+
+.postlist-date,
+.postlist-item:before {
+	font-size: 0.8125em;
+	/* 13px /16 */
+	color: var(--color-gray-90);
+}
+
+.postlist-date {
+	word-spacing: -0.5px;
+}
+
+.postlist-link {
+	font-size: 1.1875em;
+	/* 19px /16 */
+	font-weight: 700;
+	flex-basis: calc(100% - 1.5rem);
+	padding-left: .25em;
+	padding-right: .5em;
+	text-underline-position: from-font;
+	text-underline-offset: 0;
+	text-decoration-thickness: 1px;
+}
+
+.postlist-item-active .postlist-link {
+	font-weight: bold;
+}
+
+/* Tags */
+.post-tag {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	text-transform: capitalize;
+	font-style: italic;
+}
+
+.postlist-item>.post-tag {
+	align-self: center;
+}
+
+/* Tags list */
+.post-metadata {
+	display: inline-flex;
+	flex-wrap: wrap;
+	gap: .5em;
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+
+.post-metadata time {
+	margin-right: 1em;
+}
+
+footer {
+	text-align: center;
+	padding: 20px 0;
+}
+
+.social-links {
+	margin-top: 5px;
+}
+
+.social-links a {
+	margin: 0 3px;
+	text-decoration: none;
+	color: #333;
+}
+
+.social-links a:hover {
+	color: #cca4f4;
+	/* Customize this color as needed */
+}
+
+.social-links i {
+	font-size: 1.5em;
+	/* Adjust size as needed */
+}
+
+.site-logo {
+	max-width: 100px;
+	/* Adjust the size as needed */
+	height: auto;
+	/* Maintain aspect ratio */
+	display: block;
+	margin: 0 auto;
+	/* Center the logo */
+}</style>
+            </head><body><a href="#skip" class="visually-hidden">Skip to main content</a>
+            <header>
+                <a href="/" class="home-link">
+                    <picture><source type="image/avif" srcset="/img/hvv9SovzCh-512.avif 512w"><source type="image/webp" srcset="/img/hvv9SovzCh-512.webp 512w"><img loading="lazy" decoding="async" src="/img/hvv9SovzCh-512.png" alt="Yonatan Lourie logo" class="site-logo" width="512" height="512"></picture>
+                </a>
+            
+            <a href="/" class="home-link">Yonatan Lourie</a>
+            <nav>
+                <h2 class="visually-hidden" id="top-level-navigation-menu">Top level navigation menu</h2>
+                <ul class="nav">
+                        <li class="nav-item">
+                            <a href="/">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/blog/">Blog</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/about/">About</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/Links/">Links</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/feed/feed.xml">Feed</a>
+                        </li>
+                </ul>
+            </nav>
+        </header></body>
+    
+</html><main id="skip">
+<heading-anchors>
+    
+<h1 id="evaluating-hierarchical-clustering-beyond-the-leaves">Evaluating Hierarchical Clustering Beyond the Leaves 🌳</h1>
+
+<ul class="post-metadata">
+	<li><time datetime="2025-01-12">12 January 2025</time></li>
+</ul>
+
+<p>When working on hierarchical clustering tasks, evaluation is often limited to the <strong>leaves of the tree</strong> or relies on plots that look impressive but don't tell the whole story.What if we could assess the entire tree structure? Wouldn't that give us a more nuanced view of our clustering methods, linkage techniques, or embedding models?</p>
+<p>In this short article, I'll introduce you to a clever method invented by <strong>Sanjoy Dasgupta</strong> for evaluating hierarchical clustering—not just at the leaves but across the whole tree structure.</p>
+<p>Most people who implement hierarchical clustering tend to evaluate it using well-known unsupervised learning metrics (like the ones mentioned in <a href="https://scikit-learn.org/1.5/modules/clustering.html#clustering-performance-evaluation">scikit-learn's clustering evaluation</a>).<br>
+These metrics typically require you to &quot;flatten&quot; the clusters. In other words, they convert your hierarchical structure into a flat list of cluster assignments ( f(\hat{y}, y) ). When that happens, all the benefits of hierarchical clustering go straight out the window.</p>
+<p>Let's say you have a dataset organized into <strong>three levels of hierarchy</strong>. If an object ends up in the wrong cluster at the <strong>third level</strong> (the lowest), is it really wrong? What if it's correctly grouped at the <strong>second level</strong>? That's valuable information you lose when you flatten everything into a single level.</p>
+<p>If you're new to hierarchical clustering, I highly recommend checking out <a href="https://joernhees.de/blog/2015/08/26/scipy-hierarchical-clustering-and-dendrogram-tutorial/#Inconsistency-Method">Jörn's Blog</a></p>
+<h3 id="dasguptas-cost-function">Dasgupta's Cost Function</h3>
+<p>Dasgupta's cost function is designed to capture exactly that nuance. Instead of evaluating only the leaves, it evaluates the clustering across all levels of the hierarchy. In essence, it measures how well the structure of your tree reflects the underlying similarities in your data.</p>
+<h4 id="input"><strong>Input:</strong></h4>
+<p>In Dasgupta's formulation, the input to a clustering problem consists of similarity scores between certain pairs of elements, represented as an <strong>undirected graph</strong> ( G = (V, E) ), with the elements as its vertices and non-negative real weights on its edges.</p>
+<h4 id="cost-function-definition"><strong>Cost Function Definition:</strong></h4>
+<p>A hierarchical clustering can be described as a <strong>tree</strong> (not necessarily a binary tree) whose <strong>leaves</strong> are the elements to be clustered. The clusters are then the subsets of elements descending from each tree node.<br>
+The <strong>size</strong> ( |C| ) of any cluster ( C ) is the number of elements in the cluster.</p>
+<p>For each edge ( uv ) of the input graph:</p>
+<ul>
+<li>Let ( w(uv) ) denote the <strong>weight</strong> of edge ( uv ).</li>
+<li>Let ( C(uv) ) denote the <strong>smallest cluster</strong> of a given clustering that contains both ( u ) and ( v ).</li>
+</ul>
+<p>Then Dasgupta defines the <strong>cost of a clustering</strong> as:</p>
+<p>$$
+\sum_{uv \in E} w(uv) \cdot |C(uv)|
+$$</p>
+<h4 id="intuition"><strong>Intuition:</strong></h4>
+<p>It is better to cut a high-similarity edge at a lower level.</p>
+<p>For a clear example, check out this presentation from <a href="https://www.irif.fr/_media/users/claire/talkcolle_gedefrance7juin2018.pdf">IRIF</a>.</p>
+<p>Also, <a href="https://perso.esiee.fr/~perretb/">Benjamin Perret</a> has implemented this objective in an easy-to-use <a href="https://higra.readthedocs.io/en/stable/python/hierarchical_cost.html">Python package</a>. 🎉</p>
+<p>I will show here a nice example with hierarchial text clustering for items from Amazon.</p>
+<pre class="language-python" tabindex="0"><code class="language-python"><span class="token keyword">try</span><span class="token punctuation">:</span>
+  <span class="token keyword">import</span> sknetwork
+<span class="token keyword">except</span><span class="token punctuation">:</span>
+  !pip install scikit<span class="token operator">-</span>network
+
+<span class="token keyword">from</span> google<span class="token punctuation">.</span>colab <span class="token keyword">import</span> drive
+drive<span class="token punctuation">.</span>mount<span class="token punctuation">(</span><span class="token string">"/content/gdrive"</span><span class="token punctuation">,</span> force_remount<span class="token operator">=</span><span class="token boolean">True</span><span class="token punctuation">)</span></code></pre>
+<p>Mounted at /content/gdrive</p>
+<pre class="language-python" tabindex="0"><code class="language-python"><span class="token keyword">import</span> os
+<span class="token keyword">import</span> random
+
+<span class="token keyword">import</span> pandas <span class="token keyword">as</span> pd
+<span class="token keyword">from</span> tqdm<span class="token punctuation">.</span>notebook <span class="token keyword">import</span> tqdm
+<span class="token keyword">import</span> numpy <span class="token keyword">as</span> np
+
+
+<span class="token keyword">from</span> transformers <span class="token keyword">import</span> BertTokenizer<span class="token punctuation">,</span> BertModel
+<span class="token keyword">from</span> sentence_transformers <span class="token keyword">import</span> SentenceTransformer
+<span class="token keyword">import</span> kagglehub
+
+<span class="token keyword">from</span> sklearn<span class="token punctuation">.</span>feature_extraction<span class="token punctuation">.</span>text <span class="token keyword">import</span> CountVectorizer<span class="token punctuation">,</span> TfidfVectorizer
+<span class="token keyword">from</span> sklearn<span class="token punctuation">.</span>metrics<span class="token punctuation">.</span>pairwise <span class="token keyword">import</span> cosine_similarity
+<span class="token keyword">from</span> scipy<span class="token punctuation">.</span>cluster<span class="token punctuation">.</span>hierarchy <span class="token keyword">import</span> dendrogram<span class="token punctuation">,</span> linkage<span class="token punctuation">,</span> fcluster
+<span class="token keyword">from</span> sklearn<span class="token punctuation">.</span>cluster <span class="token keyword">import</span> KMeans
+<span class="token keyword">from</span> sknetwork<span class="token punctuation">.</span>hierarchy <span class="token keyword">import</span> dasgupta_score
+<span class="token keyword">from</span> sklearn<span class="token punctuation">.</span>metrics <span class="token keyword">import</span> confusion_matrix<span class="token punctuation">,</span> silhouette_score<span class="token punctuation">,</span> adjusted_rand_score
+<span class="token keyword">from</span> sklearn<span class="token punctuation">.</span>preprocessing <span class="token keyword">import</span> LabelEncoder
+<span class="token keyword">from</span> scipy<span class="token punctuation">.</span>optimize <span class="token keyword">import</span> linear_sum_assignment
+<span class="token keyword">import</span> matplotlib<span class="token punctuation">.</span>pyplot <span class="token keyword">as</span> plt
+<span class="token keyword">import</span> seaborn <span class="token keyword">as</span> sns
+<span class="token keyword">import</span> warnings
+<span class="token keyword">import</span> torch
+warnings<span class="token punctuation">.</span>filterwarnings<span class="token punctuation">(</span><span class="token string">"ignore"</span><span class="token punctuation">)</span>
+FIGS_PATH <span class="token operator">=</span> <span class="token string">"/content/gdrive/MyDrive/Colab Notebooks/hierarchical-clustering-eval_files"</span>
+os<span class="token punctuation">.</span>makedirs<span class="token punctuation">(</span>FIGS_PATH<span class="token punctuation">,</span> exist_ok<span class="token operator">=</span><span class="token boolean">True</span><span class="token punctuation">)</span>
+<span class="token keyword">def</span> <span class="token function">set_seed_globally</span><span class="token punctuation">(</span>seed<span class="token operator">=</span><span class="token number">42</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+    <span class="token comment"># Set seeds</span>
+    np<span class="token punctuation">.</span>random<span class="token punctuation">.</span>seed<span class="token punctuation">(</span>seed<span class="token punctuation">)</span>
+    random<span class="token punctuation">.</span>seed<span class="token punctuation">(</span>seed<span class="token punctuation">)</span>
+    torch<span class="token punctuation">.</span>manual_seed<span class="token punctuation">(</span>seed<span class="token punctuation">)</span>
+    <span class="token keyword">if</span> torch<span class="token punctuation">.</span>cuda<span class="token punctuation">.</span>is_available<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+        torch<span class="token punctuation">.</span>cuda<span class="token punctuation">.</span>manual_seed<span class="token punctuation">(</span>seed<span class="token punctuation">)</span>
+        torch<span class="token punctuation">.</span>cuda<span class="token punctuation">.</span>manual_seed_all<span class="token punctuation">(</span>seed<span class="token punctuation">)</span>
+
+set_seed_globally<span class="token punctuation">(</span><span class="token number">42</span><span class="token punctuation">)</span>
+device <span class="token operator">=</span> torch<span class="token punctuation">.</span>device<span class="token punctuation">(</span><span class="token string">"cuda"</span> <span class="token keyword">if</span> torch<span class="token punctuation">.</span>cuda<span class="token punctuation">.</span>is_available<span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token keyword">else</span> <span class="token string">"cpu"</span><span class="token punctuation">)</span></code></pre>
+<pre class="language-python" tabindex="0"><code class="language-python">
+path <span class="token operator">=</span> kagglehub<span class="token punctuation">.</span>dataset_download<span class="token punctuation">(</span><span class="token string">"lokeshparab/amazon-products-dataset"</span><span class="token punctuation">)</span>
+
+<span class="token comment"># print("Path to dataset files:", path)</span>
+
+csv_files <span class="token operator">=</span> <span class="token punctuation">[</span>f <span class="token keyword">for</span> f <span class="token keyword">in</span> os<span class="token punctuation">.</span>listdir<span class="token punctuation">(</span>path<span class="token punctuation">)</span> <span class="token keyword">if</span> f<span class="token punctuation">.</span>endswith<span class="token punctuation">(</span><span class="token string">'.csv'</span><span class="token punctuation">)</span><span class="token punctuation">]</span>
+dfs <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token punctuation">]</span>
+<span class="token keyword">for</span> <span class="token builtin">file</span> <span class="token keyword">in</span> csv_files<span class="token punctuation">:</span>
+    file_path <span class="token operator">=</span> os<span class="token punctuation">.</span>path<span class="token punctuation">.</span>join<span class="token punctuation">(</span>path<span class="token punctuation">,</span> <span class="token builtin">file</span><span class="token punctuation">)</span>
+    df <span class="token operator">=</span> pd<span class="token punctuation">.</span>read_csv<span class="token punctuation">(</span>file_path<span class="token punctuation">)</span>
+    dfs<span class="token punctuation">.</span>append<span class="token punctuation">(</span>df<span class="token punctuation">)</span>
+combined_df <span class="token operator">=</span> pd<span class="token punctuation">.</span>concat<span class="token punctuation">(</span>dfs<span class="token punctuation">,</span> ignore_index<span class="token operator">=</span><span class="token boolean">True</span><span class="token punctuation">)</span></code></pre>
+<p>This dataset contains only <strong>two levels</strong> of hierarchy, so I created an additional level to enrich the structure.</p>
+<p>By adding this third level, the hierarchy becomes more informative and allows for a deeper evaluation of clustering performance across multiple granularities.</p>
+<pre class="language-python" tabindex="0"><code class="language-python">categories <span class="token operator">=</span> <span class="token punctuation">{</span>
+    <span class="token string">"Fashion and Accessories"</span><span class="token punctuation">:</span> <span class="token punctuation">[</span>
+        <span class="token string">"men's shoes"</span><span class="token punctuation">,</span> <span class="token string">"men's clothing"</span><span class="token punctuation">,</span> <span class="token string">"women's shoes"</span><span class="token punctuation">,</span>
+        <span class="token string">"women's clothing"</span><span class="token punctuation">,</span> <span class="token string">"kids' fashion"</span><span class="token punctuation">,</span> <span class="token string">"bags &amp; luggage"</span><span class="token punctuation">,</span> <span class="token string">"accessories"</span>
+    <span class="token punctuation">]</span><span class="token punctuation">,</span>
+    <span class="token string">"Home and Lifestyle"</span><span class="token punctuation">:</span> <span class="token punctuation">[</span>
+        <span class="token string">"home, kitchen, pets"</span><span class="token punctuation">,</span> <span class="token string">"home &amp; kitchen"</span><span class="token punctuation">,</span> <span class="token string">"appliances"</span><span class="token punctuation">,</span> <span class="token string">"pet supplies"</span>
+    <span class="token punctuation">]</span><span class="token punctuation">,</span>
+    <span class="token string">"Health and Entertainment"</span><span class="token punctuation">:</span> <span class="token punctuation">[</span>
+        <span class="token string">"beauty &amp; health"</span><span class="token punctuation">,</span> <span class="token string">"music"</span><span class="token punctuation">,</span> <span class="token string">"tv, audio &amp; cameras"</span><span class="token punctuation">,</span> <span class="token string">"sports &amp; fitness"</span>
+    <span class="token punctuation">]</span><span class="token punctuation">,</span>
+    <span class="token string">"Family and General Supplies"</span><span class="token punctuation">:</span> <span class="token punctuation">[</span>
+        <span class="token string">"grocery &amp; gourmet foods"</span><span class="token punctuation">,</span> <span class="token string">"toys &amp; baby products"</span><span class="token punctuation">,</span> <span class="token string">"car &amp; motorbike"</span><span class="token punctuation">,</span>
+        <span class="token string">"industrial supplies"</span><span class="token punctuation">,</span> <span class="token string">"stores"</span>
+    <span class="token punctuation">]</span>
+<span class="token punctuation">}</span>
+mapping <span class="token operator">=</span> <span class="token punctuation">{</span>sub_cat<span class="token punctuation">:</span> main_cat <span class="token keyword">for</span> main_cat<span class="token punctuation">,</span> sub_cats <span class="token keyword">in</span> categories<span class="token punctuation">.</span>items<span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token keyword">for</span> sub_cat <span class="token keyword">in</span> sub_cats<span class="token punctuation">}</span>
+combined_df<span class="token punctuation">[</span><span class="token string">"1st_level_category"</span><span class="token punctuation">]</span> <span class="token operator">=</span> combined_df<span class="token punctuation">[</span><span class="token string">"main_category"</span><span class="token punctuation">]</span><span class="token punctuation">.</span><span class="token builtin">map</span><span class="token punctuation">(</span>mapping<span class="token punctuation">)</span><span class="token punctuation">.</span>fillna<span class="token punctuation">(</span><span class="token string">"Unknown"</span><span class="token punctuation">)</span>
+combined_df <span class="token operator">=</span> combined_df<span class="token punctuation">.</span>rename<span class="token punctuation">(</span>columns<span class="token operator">=</span><span class="token punctuation">{</span>
+    <span class="token string">"main_category"</span><span class="token punctuation">:</span> <span class="token string">"2nd_level_category"</span><span class="token punctuation">,</span>
+    <span class="token string">"sub_category"</span><span class="token punctuation">:</span> <span class="token string">"3rd_level_category"</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span>
+
+combined_df<span class="token punctuation">.</span>groupby<span class="token punctuation">(</span><span class="token punctuation">[</span><span class="token string">"1st_level_category"</span><span class="token punctuation">,</span> <span class="token string">"2nd_level_category"</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">[</span><span class="token string">"3rd_level_category"</span><span class="token punctuation">]</span><span class="token punctuation">.</span>nunique<span class="token punctuation">(</span><span class="token punctuation">)</span></code></pre>
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+<p>.dataframe tbody tr th {
+vertical-align: top;
+}</p>
+<p>.dataframe thead th {
+text-align: right;
+}
+</style><p></p>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th></th>
+      <th>3rd_level_category</th>
+    </tr>
+    <tr>
+      <th>1st_level_category</th>
+      <th>2nd_level_category</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th rowspan="5" valign="top">Family and General Supplies</th>
+      <th>car &amp; motorbike</th>
+      <td>6</td>
+    </tr>
+    <tr>
+      <th>grocery &amp; gourmet foods</th>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>industrial supplies</th>
+      <td>4</td>
+    </tr>
+    <tr>
+      <th>stores</th>
+      <td>6</td>
+    </tr>
+    <tr>
+      <th>toys &amp; baby products</th>
+      <td>9</td>
+    </tr>
+    <tr>
+      <th rowspan="7" valign="top">Fashion and Accessories</th>
+      <th>accessories</th>
+      <td>7</td>
+    </tr>
+    <tr>
+      <th>bags &amp; luggage</th>
+      <td>6</td>
+    </tr>
+    <tr>
+      <th>kids' fashion</th>
+      <td>6</td>
+    </tr>
+    <tr>
+      <th>men's clothing</th>
+      <td>4</td>
+    </tr>
+    <tr>
+      <th>men's shoes</th>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>women's clothing</th>
+      <td>4</td>
+    </tr>
+    <tr>
+      <th>women's shoes</th>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th rowspan="4" valign="top">Health and Entertainment</th>
+      <th>beauty &amp; health</th>
+      <td>8</td>
+    </tr>
+    <tr>
+      <th>music</th>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>sports &amp; fitness</th>
+      <td>12</td>
+    </tr>
+    <tr>
+      <th>tv, audio &amp; cameras</th>
+      <td>9</td>
+    </tr>
+    <tr>
+      <th rowspan="4" valign="top">Home and Lifestyle</th>
+      <th>appliances</th>
+      <td>6</td>
+    </tr>
+    <tr>
+      <th>home &amp; kitchen</th>
+      <td>12</td>
+    </tr>
+    <tr>
+      <th>home, kitchen, pets</th>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>pet supplies</th>
+      <td>2</td>
+    </tr>
+  </tbody>
+</table>
+</div><br><label><b>dtype:</b> int64</label>
+<pre class="language-python" tabindex="0"><code class="language-python">N_SAMPLES <span class="token operator">=</span> <span class="token number">100</span>
+df <span class="token operator">=</span> combined_df<span class="token punctuation">[</span><span class="token punctuation">[</span><span class="token string">"name"</span><span class="token punctuation">,</span> <span class="token string">"1st_level_category"</span><span class="token punctuation">,</span> <span class="token string">"2nd_level_category"</span><span class="token punctuation">,</span> <span class="token string">"3rd_level_category"</span><span class="token punctuation">]</span><span class="token punctuation">]</span>
+df <span class="token operator">=</span> df<span class="token punctuation">.</span>sample<span class="token punctuation">(</span>N_SAMPLES<span class="token punctuation">)</span>
+df<span class="token punctuation">.</span>head<span class="token punctuation">(</span><span class="token punctuation">)</span></code></pre>
+  <div id="df-e3aa984c-6ff7-418d-9e3e-d33c59c6ca2d" class="colab-df-container">
+    <div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+<p>.dataframe tbody tr th {
+vertical-align: top;
+}</p>
+<p>.dataframe thead th {
+text-align: right;
+}
+</style><p></p>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>name</th>
+      <th>1st_level_category</th>
+      <th>2nd_level_category</th>
+      <th>3rd_level_category</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>728311</th>
+      <td>Metro Womens Synthetic Antic Gold Slip Ons (Si...</td>
+      <td>Fashion and Accessories</td>
+      <td>women's shoes</td>
+      <td>Fashion Sandals</td>
+    </tr>
+    <tr>
+      <th>123190</th>
+      <td>Beingelegant - Pack of 100 Women's Organza Net...</td>
+      <td>Fashion and Accessories</td>
+      <td>accessories</td>
+      <td>Bags &amp; Luggage</td>
+    </tr>
+    <tr>
+      <th>772828</th>
+      <td>Wolven Handcrafted Men's Termoli Black Burnish...</td>
+      <td>Fashion and Accessories</td>
+      <td>men's shoes</td>
+      <td>Formal Shoes</td>
+    </tr>
+    <tr>
+      <th>979017</th>
+      <td>GROOT Party Wedding Analog Black Color Dial Me...</td>
+      <td>Fashion and Accessories</td>
+      <td>accessories</td>
+      <td>Watches</td>
+    </tr>
+    <tr>
+      <th>295506</th>
+      <td>Happy Cultures Girls and Women Handmade Croche...</td>
+      <td>Fashion and Accessories</td>
+      <td>accessories</td>
+      <td>Handbags &amp; Clutches</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+    <div class="colab-df-buttons">
+  <div class="colab-df-container">
+    <button class="colab-df-convert" onclick="convertToInteractive('df-e3aa984c-6ff7-418d-9e3e-d33c59c6ca2d')" title="Convert this dataframe to an interactive table." style="display:none;">
+  <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960">
+    <path d="M120-120v-720h720v720H120Zm60-500h600v-160H180v160Zm220 220h160v-160H400v160Zm0 220h160v-160H400v160ZM180-400h160v-160H180v160Zm440 0h160v-160H620v160ZM180-180h160v-160H180v160Zm440 0h160v-160H620v160Z"></path>
+  </svg>
+    </button>
+  <style>
+    .colab-df-container {
+      display:flex;
+      gap: 12px;
+    }
+
+    .colab-df-convert {
+      background-color: #E8F0FE;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      display: none;
+      fill: #1967D2;
+      height: 32px;
+      padding: 0 0 0 0;
+      width: 32px;
+    }
+
+    .colab-df-convert:hover {
+      background-color: #E2EBFA;
+      box-shadow: 0px 1px 2px rgba(60, 64, 67, 0.3), 0px 1px 3px 1px rgba(60, 64, 67, 0.15);
+      fill: #174EA6;
+    }
+
+    .colab-df-buttons div {
+      margin-bottom: 4px;
+    }
+
+    [theme=dark] .colab-df-convert {
+      background-color: #3B4455;
+      fill: #D2E3FC;
+    }
+
+    [theme=dark] .colab-df-convert:hover {
+      background-color: #434B5C;
+      box-shadow: 0px 1px 3px 1px rgba(0, 0, 0, 0.15);
+      filter: drop-shadow(0px 1px 2px rgba(0, 0, 0, 0.3));
+      fill: #FFFFFF;
+    }
+  </style>
+<p><script>
+const buttonEl =
+document.querySelector('#df-e3aa984c-6ff7-418d-9e3e-d33c59c6ca2d button.colab-df-convert');
+buttonEl.style.display =
+google.colab.kernel.accessAllowed ? 'block' : 'none';</p>
+<p>async function convertToInteractive(key) {
+const element = document.querySelector('#df-e3aa984c-6ff7-418d-9e3e-d33c59c6ca2d');
+const dataTable =
+await google.colab.kernel.invokeFunction('convertToInteractive',
+[key], {});
+if (!dataTable) return;</p>
+<p>const docLinkHtml = 'Like what you see? Visit the ' +
+'<a target="_blank" href=https://colab.research.google.com/notebooks/data_table.ipynb>data table notebook</a>'
++ ' to learn more about interactive tables.';
+element.innerHTML = '';
+dataTable['output_type'] = 'display_data';
+await google.colab.output.renderOutput(dataTable, element);
+const docLink = document.createElement('div');
+docLink.innerHTML = docLinkHtml;
+element.appendChild(docLink);
+}
+</script></p>
+  </div>
+<div id="df-f3c06226-a7bf-4d60-8a6c-c2d7f8da4da1">
+  <button class="colab-df-quickchart" onclick="quickchart('df-f3c06226-a7bf-4d60-8a6c-c2d7f8da4da1')" title="Suggest charts" style="display:none;">
+<p>&lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot; height=&quot;24px&quot;viewBox=&quot;0 0 24 24&quot;
+width=&quot;24px&quot;&gt;
+<g>
+<path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z">
+</path></g>
+
+</p></button><p></p>
+<style>
+  .colab-df-quickchart {
+      --bg-color: #E8F0FE;
+      --fill-color: #1967D2;
+      --hover-bg-color: #E2EBFA;
+      --hover-fill-color: #174EA6;
+      --disabled-fill-color: #AAA;
+      --disabled-bg-color: #DDD;
+  }
+
+  [theme=dark] .colab-df-quickchart {
+      --bg-color: #3B4455;
+      --fill-color: #D2E3FC;
+      --hover-bg-color: #434B5C;
+      --hover-fill-color: #FFFFFF;
+      --disabled-bg-color: #3B4455;
+      --disabled-fill-color: #666;
+  }
+
+  .colab-df-quickchart {
+    background-color: var(--bg-color);
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    display: none;
+    fill: var(--fill-color);
+    height: 32px;
+    padding: 0;
+    width: 32px;
+  }
+
+  .colab-df-quickchart:hover {
+    background-color: var(--hover-bg-color);
+    box-shadow: 0 1px 2px rgba(60, 64, 67, 0.3), 0 1px 3px 1px rgba(60, 64, 67, 0.15);
+    fill: var(--button-hover-fill-color);
+  }
+
+  .colab-df-quickchart-complete:disabled,
+  .colab-df-quickchart-complete:disabled:hover {
+    background-color: var(--disabled-bg-color);
+    fill: var(--disabled-fill-color);
+    box-shadow: none;
+  }
+
+  .colab-df-spinner {
+    border: 2px solid var(--fill-color);
+    border-color: transparent;
+    border-bottom-color: var(--fill-color);
+    animation:
+      spin 1s steps(1) infinite;
+  }
+
+  @keyframes spin {
+    0% {
+      border-color: transparent;
+      border-bottom-color: var(--fill-color);
+      border-left-color: var(--fill-color);
+    }
+    20% {
+      border-color: transparent;
+      border-left-color: var(--fill-color);
+      border-top-color: var(--fill-color);
+    }
+    30% {
+      border-color: transparent;
+      border-left-color: var(--fill-color);
+      border-top-color: var(--fill-color);
+      border-right-color: var(--fill-color);
+    }
+    40% {
+      border-color: transparent;
+      border-right-color: var(--fill-color);
+      border-top-color: var(--fill-color);
+    }
+    60% {
+      border-color: transparent;
+      border-right-color: var(--fill-color);
+    }
+    80% {
+      border-color: transparent;
+      border-right-color: var(--fill-color);
+      border-bottom-color: var(--fill-color);
+    }
+    90% {
+      border-color: transparent;
+      border-bottom-color: var(--fill-color);
+    }
+  }
+</style>
+  <script>
+    async function quickchart(key) {
+      const quickchartButtonEl =
+        document.querySelector('#' + key + ' button');
+      quickchartButtonEl.disabled = true;  // To prevent multiple clicks.
+      quickchartButtonEl.classList.add('colab-df-spinner');
+      try {
+        const charts = await google.colab.kernel.invokeFunction(
+            'suggestCharts', [key], {});
+      } catch (error) {
+        console.error('Error during call to suggestCharts:', error);
+      }
+      quickchartButtonEl.classList.remove('colab-df-spinner');
+      quickchartButtonEl.classList.add('colab-df-quickchart-complete');
+    }
+    (() => {
+      let quickchartButtonEl =
+        document.querySelector('#df-f3c06226-a7bf-4d60-8a6c-c2d7f8da4da1 button');
+      quickchartButtonEl.style.display =
+        google.colab.kernel.accessAllowed ? 'block' : 'none';
+    })();
+  </script>
+</div>
+<p></p></div><p></p>
+  </div>
+<p>So now, we have a nice dataset with three levels of hierarchy.</p>
+<p>For this experiment, I won't focus on text processing, but I believe that it could be beneficial for future improvements.</p>
+<p>There are two main choices we need to make for this task:</p>
+<ol>
+<li>
+<p><strong>How do we vectorize (embed) the item names?</strong>
+Should we use simple vectorizers like TF-IDF or more advanced embeddings like BERT (maybe compare multiple BERT models)? The choice of embedding can have a significant impact on the clustering quality.</p>
+</li>
+<li>
+<p><strong>How do we evaluate?</strong><br>
+Do we stick to standard metrics like silhouette score or adjusted Rand index, or should we use tree-aware methods like Dasgupta's cost function to assess the full hierarchy?</p>
+</li>
+</ol>
+<p>Actually, there are much more decisions to make, such as the right linkage method, parameters for the embedding method, etc, but we will stay lean in this article.</p>
+<h3 id="embeddings-generation">Embeddings Generation</h3>
+<p>For this experiment, I chose to use three simple embedding models:</p>
+<ol>
+<li><strong>Bag of Words (BOW)</strong> - a classic method that represents text by counting word occurrences.</li>
+<li><strong>BERT</strong> - specifically the <a href="https://huggingface.co/sentence-transformers/paraphrase-MiniLM-L6-v2">paraphrase-MiniLM-L6-v2</a> model, which provides contextual embeddings that capture semantic meaning.</li>
+<li><strong>TF-IDF</strong> - a method that balances word frequency by down-weighting common words and up-weighting more informative ones.</li>
+</ol>
+<pre class="language-python" tabindex="0"><code class="language-python">bert_model <span class="token operator">=</span> SentenceTransformer<span class="token punctuation">(</span><span class="token string">'paraphrase-MiniLM-L6-v2'</span><span class="token punctuation">)</span>
+bert_model<span class="token punctuation">.</span>to<span class="token punctuation">(</span>device<span class="token punctuation">)</span>
+
+<span class="token keyword">def</span> <span class="token function">generate_embeddings</span><span class="token punctuation">(</span>texts<span class="token punctuation">,</span> method<span class="token operator">=</span><span class="token string">"tf-idf"</span><span class="token punctuation">,</span> vectorizer_params<span class="token operator">=</span><span class="token boolean">None</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+    vectorizer_params <span class="token operator">=</span> vectorizer_params <span class="token keyword">or</span> <span class="token punctuation">{</span><span class="token punctuation">}</span>
+
+    <span class="token keyword">if</span> method <span class="token operator">==</span> <span class="token string">"n-gram"</span><span class="token punctuation">:</span>
+        vectorizer <span class="token operator">=</span> CountVectorizer<span class="token punctuation">(</span><span class="token operator">**</span>vectorizer_params<span class="token punctuation">)</span>
+        embeddings <span class="token operator">=</span> vectorizer<span class="token punctuation">.</span>fit_transform<span class="token punctuation">(</span>texts<span class="token punctuation">)</span><span class="token punctuation">.</span>toarray<span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+    <span class="token keyword">elif</span> method <span class="token operator">==</span> <span class="token string">"tf-idf"</span><span class="token punctuation">:</span>
+        vectorizer <span class="token operator">=</span> TfidfVectorizer<span class="token punctuation">(</span><span class="token operator">**</span>vectorizer_params<span class="token punctuation">)</span>
+        embeddings <span class="token operator">=</span> vectorizer<span class="token punctuation">.</span>fit_transform<span class="token punctuation">(</span>texts<span class="token punctuation">)</span><span class="token punctuation">.</span>toarray<span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+    <span class="token keyword">elif</span> method <span class="token operator">==</span> <span class="token string">"bert"</span><span class="token punctuation">:</span>
+        torch<span class="token punctuation">.</span>cuda<span class="token punctuation">.</span>empty_cache<span class="token punctuation">(</span><span class="token punctuation">)</span>
+        embeddings <span class="token operator">=</span> bert_model<span class="token punctuation">.</span>encode<span class="token punctuation">(</span>texts<span class="token punctuation">,</span> show_progress_bar<span class="token operator">=</span><span class="token boolean">False</span><span class="token punctuation">,</span> device<span class="token operator">=</span>device<span class="token punctuation">)</span>
+
+
+    <span class="token keyword">else</span><span class="token punctuation">:</span>
+        <span class="token keyword">raise</span> ValueError<span class="token punctuation">(</span><span class="token string">"Invalid method. Choose from 'n-gram', 'tf-idf', 'bert'."</span><span class="token punctuation">)</span>
+
+    <span class="token keyword">return</span> embeddings
+
+vectorizer_params <span class="token operator">=</span> <span class="token punctuation">{</span><span class="token string">"ngram_range"</span><span class="token punctuation">:</span> <span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">,</span> <span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token string">"max_features"</span><span class="token punctuation">:</span> <span class="token number">1000</span><span class="token punctuation">,</span> <span class="token string">"analyzer"</span><span class="token punctuation">:</span><span class="token string">"word"</span><span class="token punctuation">}</span>
+embeddings <span class="token operator">=</span> generate_embeddings<span class="token punctuation">(</span>df<span class="token punctuation">[</span><span class="token string">"name"</span><span class="token punctuation">]</span><span class="token punctuation">.</span>to_list<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span> method<span class="token operator">=</span><span class="token string">"n-gram"</span><span class="token punctuation">,</span> vectorizer_params<span class="token operator">=</span>vectorizer_params<span class="token punctuation">)</span></code></pre>
+<h3 id="hierarchical-clustering">Hierarchical clustering</h3>
+<pre class="language-python" tabindex="0"><code class="language-python"><span class="token keyword">def</span> <span class="token function">perform_hierarchical_clustering</span><span class="token punctuation">(</span>embeddings<span class="token punctuation">,</span> method<span class="token operator">=</span><span class="token string">"ward"</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+    <span class="token keyword">if</span> <span class="token keyword">not</span> <span class="token builtin">isinstance</span><span class="token punctuation">(</span>embeddings<span class="token punctuation">,</span> np<span class="token punctuation">.</span>ndarray<span class="token punctuation">)</span><span class="token punctuation">:</span>
+        <span class="token keyword">raise</span> ValueError<span class="token punctuation">(</span><span class="token string">"Embeddings must be a NumPy array."</span><span class="token punctuation">)</span>
+
+    linkage_matrix <span class="token operator">=</span> linkage<span class="token punctuation">(</span>embeddings<span class="token punctuation">,</span> method<span class="token operator">=</span>method<span class="token punctuation">)</span>
+    <span class="token keyword">return</span> linkage_matrix
+
+<span class="token keyword">def</span> <span class="token function">generate_predictions</span><span class="token punctuation">(</span>embeddings<span class="token punctuation">,</span> method<span class="token operator">=</span><span class="token string">"hierarchical"</span><span class="token punctuation">,</span> num_clusters<span class="token operator">=</span><span class="token number">20</span><span class="token punctuation">,</span> linkage_matrix<span class="token operator">=</span><span class="token boolean">None</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+    <span class="token keyword">if</span> method <span class="token operator">==</span> <span class="token string">"kmeans"</span><span class="token punctuation">:</span>
+        kmeans <span class="token operator">=</span> KMeans<span class="token punctuation">(</span>n_clusters<span class="token operator">=</span>num_clusters<span class="token punctuation">,</span> random_state<span class="token operator">=</span><span class="token number">42</span><span class="token punctuation">)</span>
+        labels <span class="token operator">=</span> kmeans<span class="token punctuation">.</span>fit_predict<span class="token punctuation">(</span>embeddings<span class="token punctuation">)</span>
+
+    <span class="token keyword">elif</span> method <span class="token operator">==</span> <span class="token string">"hierarchical"</span><span class="token punctuation">:</span>
+        <span class="token keyword">if</span> linkage_matrix <span class="token keyword">is</span> <span class="token boolean">None</span><span class="token punctuation">:</span>
+            <span class="token keyword">raise</span> ValueError<span class="token punctuation">(</span><span class="token string">"Linkage matrix must be provided for hierarchical clustering."</span><span class="token punctuation">)</span>
+        labels <span class="token operator">=</span> fcluster<span class="token punctuation">(</span>linkage_matrix<span class="token punctuation">,</span>num_clusters<span class="token punctuation">,</span>  criterion<span class="token operator">=</span><span class="token string">'maxclust'</span><span class="token punctuation">)</span>
+
+    <span class="token keyword">else</span><span class="token punctuation">:</span>
+        <span class="token keyword">raise</span> ValueError<span class="token punctuation">(</span><span class="token string">"Invalid method. Choose from 'kmeans' or 'hierarchical'."</span><span class="token punctuation">)</span>
+
+    <span class="token keyword">return</span> labels<span class="token punctuation">.</span>astype<span class="token punctuation">(</span><span class="token builtin">int</span><span class="token punctuation">)</span>
+
+</code></pre>
+<h3 id="evaluation">Evaluation</h3>
+<h4 id="classical-unsupervised-clustering-evaluation">Classical unsupervised clustering evaluation</h4>
+<pre class="language-python" tabindex="0"><code class="language-python"><span class="token keyword">def</span> <span class="token function">clustering_accuracy</span><span class="token punctuation">(</span>y_true<span class="token punctuation">,</span> y_pred<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    cm <span class="token operator">=</span> confusion_matrix<span class="token punctuation">(</span>y_true<span class="token punctuation">,</span> y_pred<span class="token punctuation">)</span>
+    row_ind<span class="token punctuation">,</span> col_ind <span class="token operator">=</span> linear_sum_assignment<span class="token punctuation">(</span><span class="token operator">-</span>cm<span class="token punctuation">)</span>
+    total_correct <span class="token operator">=</span> cm<span class="token punctuation">[</span>row_ind<span class="token punctuation">,</span> col_ind<span class="token punctuation">]</span><span class="token punctuation">.</span><span class="token builtin">sum</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+    total_samples <span class="token operator">=</span> cm<span class="token punctuation">.</span><span class="token builtin">sum</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+    accuracy <span class="token operator">=</span> total_correct <span class="token operator">/</span> total_samples
+
+    <span class="token keyword">return</span> accuracy
+
+<span class="token keyword">def</span> <span class="token function">evaluate_flat_clustering</span><span class="token punctuation">(</span>embeddings<span class="token punctuation">,</span> labels_true<span class="token punctuation">,</span> labels_pred<span class="token punctuation">,</span> metric<span class="token operator">=</span><span class="token string">"silhouette"</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+    <span class="token keyword">if</span> metric <span class="token operator">==</span> <span class="token string">"silhouette"</span><span class="token punctuation">:</span>
+        score <span class="token operator">=</span> silhouette_score<span class="token punctuation">(</span>embeddings<span class="token punctuation">,</span> labels_true<span class="token punctuation">)</span>
+    <span class="token keyword">elif</span> metric <span class="token operator">==</span> <span class="token string">"adjusted_rand"</span><span class="token punctuation">:</span>
+        <span class="token comment">#Requires ground truth labels for adjusted_rand_score</span>
+        <span class="token keyword">if</span> labels_true <span class="token keyword">is</span> <span class="token boolean">None</span><span class="token punctuation">:</span>
+            <span class="token keyword">raise</span> ValueError<span class="token punctuation">(</span><span class="token string">"Adjusted Rand Index requires ground truth labels."</span><span class="token punctuation">)</span>
+        score <span class="token operator">=</span> adjusted_rand_score<span class="token punctuation">(</span>labels_true<span class="token punctuation">,</span> labels_pred<span class="token punctuation">)</span>
+    <span class="token keyword">elif</span> metric <span class="token operator">==</span> <span class="token string">"clustering_accuracy"</span><span class="token punctuation">:</span>
+        score <span class="token operator">=</span> clustering_accuracy<span class="token punctuation">(</span>labels_true<span class="token punctuation">,</span> labels_pred<span class="token punctuation">)</span>
+    <span class="token keyword">else</span><span class="token punctuation">:</span>
+        <span class="token keyword">raise</span> ValueError<span class="token punctuation">(</span><span class="token string">"Invalid metric. Choose from 'silhouette', 'adjusted_rand'."</span><span class="token punctuation">)</span>
+
+    <span class="token keyword">return</span> score</code></pre>
+<h4 id="dasgupta-objective">Dasgupta Objective</h4>
+<p>For the Dasgupta objective, we need a linkage method and a similarity matrix between different items.</p>
+<p>This similarity matrix can be constructed in various ways. For this experiment, I decided to build it as follows:</p>
+<ul>
+<li>Items in the lowest level of the hierarchy get 1 point.</li>
+<li>Items in the middle level get 0.5 points.</li>
+<li>Items in the highest level get 0.25 points.</li>
+</ul>
+<p>This scoring reflects the idea that closely related items (at the lowest level) should have a higher similarity score than those grouped at broader levels.</p>
+<p>To better visualize this, here's the heatmap for the similarity matrix of the first 10 items:</p>
+<pre class="language-python" tabindex="0"><code class="language-python"><span class="token keyword">def</span> <span class="token function">create_adjacency_matrix</span><span class="token punctuation">(</span>df<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    <span class="token keyword">if</span> <span class="token keyword">not</span> <span class="token builtin">all</span><span class="token punctuation">(</span>col <span class="token keyword">in</span> df<span class="token punctuation">.</span>columns <span class="token keyword">for</span> col <span class="token keyword">in</span> <span class="token punctuation">[</span><span class="token string">'1st_level_category'</span><span class="token punctuation">,</span> <span class="token string">'2nd_level_category'</span><span class="token punctuation">,</span> <span class="token string">'3rd_level_category'</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+        <span class="token keyword">raise</span> ValueError<span class="token punctuation">(</span><span class="token string">"The DataFrame must contain '1st_level_category', '2nd_level_category', and '3rd_level_category' columns."</span><span class="token punctuation">)</span>
+
+    n <span class="token operator">=</span> <span class="token builtin">len</span><span class="token punctuation">(</span>df<span class="token punctuation">)</span>
+    adjacency_matrix <span class="token operator">=</span> np<span class="token punctuation">.</span>zeros<span class="token punctuation">(</span><span class="token punctuation">(</span>n<span class="token punctuation">,</span> n<span class="token punctuation">)</span><span class="token punctuation">)</span>
+
+    <span class="token comment"># Precompute category matches</span>
+    third_level_match <span class="token operator">=</span> <span class="token punctuation">(</span>df<span class="token punctuation">[</span><span class="token string">'3rd_level_category'</span><span class="token punctuation">]</span><span class="token punctuation">.</span>values<span class="token punctuation">[</span><span class="token punctuation">:</span><span class="token punctuation">,</span> <span class="token boolean">None</span><span class="token punctuation">]</span> <span class="token operator">==</span> df<span class="token punctuation">[</span><span class="token string">'3rd_level_category'</span><span class="token punctuation">]</span><span class="token punctuation">.</span>values<span class="token punctuation">)</span><span class="token punctuation">.</span>astype<span class="token punctuation">(</span><span class="token builtin">float</span><span class="token punctuation">)</span>
+    second_level_match <span class="token operator">=</span> <span class="token punctuation">(</span>df<span class="token punctuation">[</span><span class="token string">'2nd_level_category'</span><span class="token punctuation">]</span><span class="token punctuation">.</span>values<span class="token punctuation">[</span><span class="token punctuation">:</span><span class="token punctuation">,</span> <span class="token boolean">None</span><span class="token punctuation">]</span> <span class="token operator">==</span> df<span class="token punctuation">[</span><span class="token string">'2nd_level_category'</span><span class="token punctuation">]</span><span class="token punctuation">.</span>values<span class="token punctuation">)</span><span class="token punctuation">.</span>astype<span class="token punctuation">(</span><span class="token builtin">float</span><span class="token punctuation">)</span>
+    first_level_match <span class="token operator">=</span> <span class="token punctuation">(</span>df<span class="token punctuation">[</span><span class="token string">'1st_level_category'</span><span class="token punctuation">]</span><span class="token punctuation">.</span>values<span class="token punctuation">[</span><span class="token punctuation">:</span><span class="token punctuation">,</span> <span class="token boolean">None</span><span class="token punctuation">]</span> <span class="token operator">==</span> df<span class="token punctuation">[</span><span class="token string">'1st_level_category'</span><span class="token punctuation">]</span><span class="token punctuation">.</span>values<span class="token punctuation">)</span><span class="token punctuation">.</span>astype<span class="token punctuation">(</span><span class="token builtin">float</span><span class="token punctuation">)</span>
+
+    <span class="token comment"># Compute scores</span>
+    adjacency_matrix <span class="token operator">+=</span> third_level_match
+    adjacency_matrix <span class="token operator">+=</span> <span class="token number">0.5</span> <span class="token operator">*</span> second_level_match
+    adjacency_matrix <span class="token operator">+=</span> <span class="token number">0.25</span> <span class="token operator">*</span> first_level_match
+
+    np<span class="token punctuation">.</span>fill_diagonal<span class="token punctuation">(</span>adjacency_matrix<span class="token punctuation">,</span> <span class="token number">1.75</span><span class="token punctuation">)</span>
+    <span class="token keyword">assert</span> adjacency_matrix<span class="token punctuation">.</span>shape <span class="token operator">==</span> <span class="token punctuation">(</span>n<span class="token punctuation">,</span> n<span class="token punctuation">)</span>
+    <span class="token keyword">return</span> adjacency_matrix
+
+adjacency_matrix <span class="token operator">=</span> create_adjacency_matrix<span class="token punctuation">(</span>df<span class="token punctuation">)</span>
+fig <span class="token operator">=</span> sns<span class="token punctuation">.</span>heatmap<span class="token punctuation">(</span>adjacency_matrix<span class="token punctuation">[</span><span class="token punctuation">:</span><span class="token number">10</span><span class="token punctuation">,</span><span class="token punctuation">:</span><span class="token number">10</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
+plt<span class="token punctuation">.</span>savefig<span class="token punctuation">(</span><span class="token string-interpolation"><span class="token string">f"</span><span class="token interpolation"><span class="token punctuation">{</span>FIGS_PATH<span class="token punctuation">}</span></span><span class="token string">/adj_mat.png"</span></span><span class="token punctuation">,</span> transparent<span class="token operator">=</span><span class="token boolean">True</span><span class="token punctuation">)</span>
+</code></pre>
+<p><picture><source type="image/avif" srcset="/blog/Evaluating-Hierarchical-Clustering/hierarchical-clustering-eval/nuhY2ExpUH-640.avif 640w"><source type="image/webp" srcset="/blog/Evaluating-Hierarchical-Clustering/hierarchical-clustering-eval/nuhY2ExpUH-640.webp 640w"><img loading="lazy" decoding="async" src="/blog/Evaluating-Hierarchical-Clustering/hierarchical-clustering-eval/nuhY2ExpUH-640.png" alt="png" width="640" height="480"></picture></p>
+<pre class="language-python" tabindex="0"><code class="language-python">df<span class="token punctuation">.</span>reset_index<span class="token punctuation">(</span>drop<span class="token operator">=</span><span class="token boolean">True</span><span class="token punctuation">)</span><span class="token punctuation">.</span>head<span class="token punctuation">(</span><span class="token number">10</span><span class="token punctuation">)</span></code></pre>
+  <div id="df-9ddc9fa2-05ea-45f8-ae6d-5235f9435ee4" class="colab-df-container">
+    <div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+<p>.dataframe tbody tr th {
+vertical-align: top;
+}</p>
+<p>.dataframe thead th {
+text-align: right;
+}
+</style><p></p>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>name</th>
+      <th>1st_level_category</th>
+      <th>2nd_level_category</th>
+      <th>3rd_level_category</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>Metro Womens Synthetic Antic Gold Slip Ons (Si...</td>
+      <td>Fashion and Accessories</td>
+      <td>women's shoes</td>
+      <td>Fashion Sandals</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>Beingelegant - Pack of 100 Women's Organza Net...</td>
+      <td>Fashion and Accessories</td>
+      <td>accessories</td>
+      <td>Bags &amp; Luggage</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>Wolven Handcrafted Men's Termoli Black Burnish...</td>
+      <td>Fashion and Accessories</td>
+      <td>men's shoes</td>
+      <td>Formal Shoes</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>GROOT Party Wedding Analog Black Color Dial Me...</td>
+      <td>Fashion and Accessories</td>
+      <td>accessories</td>
+      <td>Watches</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>Happy Cultures Girls and Women Handmade Croche...</td>
+      <td>Fashion and Accessories</td>
+      <td>accessories</td>
+      <td>Handbags &amp; Clutches</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>ZOUK Women's Handcrafted Ikat Shoulder Tote Ba...</td>
+      <td>Fashion and Accessories</td>
+      <td>accessories</td>
+      <td>Handbags &amp; Clutches</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>NEUTRON Present Analog Orange and Blue Color D...</td>
+      <td>Fashion and Accessories</td>
+      <td>accessories</td>
+      <td>Watches</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>PC Jeweller The Giancarlo 18KT White Gold and ...</td>
+      <td>Fashion and Accessories</td>
+      <td>accessories</td>
+      <td>Gold &amp; Diamond Jewellery</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>Blue/Black Light wash 5-Pocket Slim Fit high-R...</td>
+      <td>Fashion and Accessories</td>
+      <td>men's clothing</td>
+      <td>Jeans</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>KBNBJ Women's Pure Cotton Regular Nighty</td>
+      <td>Fashion and Accessories</td>
+      <td>women's clothing</td>
+      <td>Lingerie &amp; Nightwear</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+    <div class="colab-df-buttons">
+  <div class="colab-df-container">
+    <button class="colab-df-convert" onclick="convertToInteractive('df-9ddc9fa2-05ea-45f8-ae6d-5235f9435ee4')" title="Convert this dataframe to an interactive table." style="display:none;">
+  <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960">
+    <path d="M120-120v-720h720v720H120Zm60-500h600v-160H180v160Zm220 220h160v-160H400v160Zm0 220h160v-160H400v160ZM180-400h160v-160H180v160Zm440 0h160v-160H620v160ZM180-180h160v-160H180v160Zm440 0h160v-160H620v160Z"></path>
+  </svg>
+    </button>
+  <style>
+    .colab-df-container {
+      display:flex;
+      gap: 12px;
+    }
+
+    .colab-df-convert {
+      background-color: #E8F0FE;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      display: none;
+      fill: #1967D2;
+      height: 32px;
+      padding: 0 0 0 0;
+      width: 32px;
+    }
+
+    .colab-df-convert:hover {
+      background-color: #E2EBFA;
+      box-shadow: 0px 1px 2px rgba(60, 64, 67, 0.3), 0px 1px 3px 1px rgba(60, 64, 67, 0.15);
+      fill: #174EA6;
+    }
+
+    .colab-df-buttons div {
+      margin-bottom: 4px;
+    }
+
+    [theme=dark] .colab-df-convert {
+      background-color: #3B4455;
+      fill: #D2E3FC;
+    }
+
+    [theme=dark] .colab-df-convert:hover {
+      background-color: #434B5C;
+      box-shadow: 0px 1px 3px 1px rgba(0, 0, 0, 0.15);
+      filter: drop-shadow(0px 1px 2px rgba(0, 0, 0, 0.3));
+      fill: #FFFFFF;
+    }
+  </style>
+<p><script>
+const buttonEl =
+document.querySelector('#df-9ddc9fa2-05ea-45f8-ae6d-5235f9435ee4 button.colab-df-convert');
+buttonEl.style.display =
+google.colab.kernel.accessAllowed ? 'block' : 'none';</p>
+<p>async function convertToInteractive(key) {
+const element = document.querySelector('#df-9ddc9fa2-05ea-45f8-ae6d-5235f9435ee4');
+const dataTable =
+await google.colab.kernel.invokeFunction('convertToInteractive',
+[key], {});
+if (!dataTable) return;</p>
+<p>const docLinkHtml = 'Like what you see? Visit the ' +
+'<a target="_blank" href=https://colab.research.google.com/notebooks/data_table.ipynb>data table notebook</a>'
++ ' to learn more about interactive tables.';
+element.innerHTML = '';
+dataTable['output_type'] = 'display_data';
+await google.colab.output.renderOutput(dataTable, element);
+const docLink = document.createElement('div');
+docLink.innerHTML = docLinkHtml;
+element.appendChild(docLink);
+}
+</script></p>
+  </div>
+<div id="df-536a2b15-29d9-4f9e-8b8f-0ded85f1a798">
+  <button class="colab-df-quickchart" onclick="quickchart('df-536a2b15-29d9-4f9e-8b8f-0ded85f1a798')" title="Suggest charts" style="display:none;">
+<p>&lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot; height=&quot;24px&quot;viewBox=&quot;0 0 24 24&quot;
+width=&quot;24px&quot;&gt;
+<g>
+<path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z">
+</path></g>
+
+</p></button><p></p>
+<style>
+  .colab-df-quickchart {
+      --bg-color: #E8F0FE;
+      --fill-color: #1967D2;
+      --hover-bg-color: #E2EBFA;
+      --hover-fill-color: #174EA6;
+      --disabled-fill-color: #AAA;
+      --disabled-bg-color: #DDD;
+  }
+
+  [theme=dark] .colab-df-quickchart {
+      --bg-color: #3B4455;
+      --fill-color: #D2E3FC;
+      --hover-bg-color: #434B5C;
+      --hover-fill-color: #FFFFFF;
+      --disabled-bg-color: #3B4455;
+      --disabled-fill-color: #666;
+  }
+
+  .colab-df-quickchart {
+    background-color: var(--bg-color);
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    display: none;
+    fill: var(--fill-color);
+    height: 32px;
+    padding: 0;
+    width: 32px;
+  }
+
+  .colab-df-quickchart:hover {
+    background-color: var(--hover-bg-color);
+    box-shadow: 0 1px 2px rgba(60, 64, 67, 0.3), 0 1px 3px 1px rgba(60, 64, 67, 0.15);
+    fill: var(--button-hover-fill-color);
+  }
+
+  .colab-df-quickchart-complete:disabled,
+  .colab-df-quickchart-complete:disabled:hover {
+    background-color: var(--disabled-bg-color);
+    fill: var(--disabled-fill-color);
+    box-shadow: none;
+  }
+
+  .colab-df-spinner {
+    border: 2px solid var(--fill-color);
+    border-color: transparent;
+    border-bottom-color: var(--fill-color);
+    animation:
+      spin 1s steps(1) infinite;
+  }
+
+  @keyframes spin {
+    0% {
+      border-color: transparent;
+      border-bottom-color: var(--fill-color);
+      border-left-color: var(--fill-color);
+    }
+    20% {
+      border-color: transparent;
+      border-left-color: var(--fill-color);
+      border-top-color: var(--fill-color);
+    }
+    30% {
+      border-color: transparent;
+      border-left-color: var(--fill-color);
+      border-top-color: var(--fill-color);
+      border-right-color: var(--fill-color);
+    }
+    40% {
+      border-color: transparent;
+      border-right-color: var(--fill-color);
+      border-top-color: var(--fill-color);
+    }
+    60% {
+      border-color: transparent;
+      border-right-color: var(--fill-color);
+    }
+    80% {
+      border-color: transparent;
+      border-right-color: var(--fill-color);
+      border-bottom-color: var(--fill-color);
+    }
+    90% {
+      border-color: transparent;
+      border-bottom-color: var(--fill-color);
+    }
+  }
+</style>
+  <script>
+    async function quickchart(key) {
+      const quickchartButtonEl =
+        document.querySelector('#' + key + ' button');
+      quickchartButtonEl.disabled = true;  // To prevent multiple clicks.
+      quickchartButtonEl.classList.add('colab-df-spinner');
+      try {
+        const charts = await google.colab.kernel.invokeFunction(
+            'suggestCharts', [key], {});
+      } catch (error) {
+        console.error('Error during call to suggestCharts:', error);
+      }
+      quickchartButtonEl.classList.remove('colab-df-spinner');
+      quickchartButtonEl.classList.add('colab-df-quickchart-complete');
+    }
+    (() => {
+      let quickchartButtonEl =
+        document.querySelector('#df-536a2b15-29d9-4f9e-8b8f-0ded85f1a798 button');
+      quickchartButtonEl.style.display =
+        google.colab.kernel.accessAllowed ? 'block' : 'none';
+    })();
+  </script>
+</div>
+<p></p></div><p></p>
+  </div>
+<p>We can see that some of the items share exactly the same clusters across all levels of the hierarchy. These items receive the maximum score of 1.</p>
+<p>Some items differ in only one or two levels, resulting in intermediate scores like 0.5 or 0.25.</p>
+<p>Finally, there are pairs of items that have nothing in common across all levels, so their similarity score is 0.</p>
+<h4 id="comparison">Comparison</h4>
+<p>Let's compare the different embedding models by analyzing their dendrograms and the corresponding scores we calculated.</p>
+<pre class="language-python" tabindex="0"><code class="language-python"><span class="token keyword">from</span> scipy<span class="token punctuation">.</span>cluster<span class="token punctuation">.</span>hierarchy <span class="token keyword">import</span> cophenet
+<span class="token keyword">from</span> scipy<span class="token punctuation">.</span>spatial<span class="token punctuation">.</span>distance <span class="token keyword">import</span> pdist
+<span class="token keyword">def</span> <span class="token function">evaluate_clustering</span><span class="token punctuation">(</span>df<span class="token punctuation">,</span> vectorizer<span class="token punctuation">,</span> vectorizer_params<span class="token punctuation">,</span> level_for_eval<span class="token punctuation">)</span><span class="token punctuation">:</span>
+
+  embeddings <span class="token operator">=</span> generate_embeddings<span class="token punctuation">(</span>df<span class="token punctuation">[</span><span class="token string">"name"</span><span class="token punctuation">]</span><span class="token punctuation">.</span>to_list<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span> method<span class="token operator">=</span>vectorizer<span class="token punctuation">,</span> vectorizer_params<span class="token operator">=</span>vectorizer_params<span class="token punctuation">)</span>
+  linkage_matrix <span class="token operator">=</span> perform_hierarchical_clustering<span class="token punctuation">(</span>embeddings<span class="token punctuation">,</span> method<span class="token operator">=</span><span class="token string">"ward"</span><span class="token punctuation">)</span>
+  pred_labels <span class="token operator">=</span> generate_predictions<span class="token punctuation">(</span>embeddings<span class="token punctuation">,</span> method<span class="token operator">=</span><span class="token string">"hierarchical"</span><span class="token punctuation">,</span>
+                                      num_clusters<span class="token operator">=</span>df<span class="token punctuation">[</span>level_for_eval<span class="token punctuation">]</span><span class="token punctuation">.</span>nunique<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+                                      linkage_matrix<span class="token operator">=</span>linkage_matrix<span class="token punctuation">)</span>
+
+  le <span class="token operator">=</span> LabelEncoder<span class="token punctuation">(</span><span class="token punctuation">)</span>
+  true_labels <span class="token operator">=</span> le<span class="token punctuation">.</span>fit_transform<span class="token punctuation">(</span>df<span class="token punctuation">[</span>level_for_eval<span class="token punctuation">]</span><span class="token punctuation">.</span>to_list<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+
+  silhouette <span class="token operator">=</span> evaluate_flat_clustering<span class="token punctuation">(</span>embeddings<span class="token punctuation">,</span> true_labels<span class="token punctuation">,</span> pred_labels<span class="token punctuation">,</span> metric<span class="token operator">=</span><span class="token string">"silhouette"</span><span class="token punctuation">)</span>
+  clustering_accuracy_score <span class="token operator">=</span> evaluate_flat_clustering<span class="token punctuation">(</span>embeddings<span class="token punctuation">,</span> true_labels<span class="token punctuation">,</span> pred_labels<span class="token punctuation">,</span> metric<span class="token operator">=</span><span class="token string">"clustering_accuracy"</span><span class="token punctuation">)</span>
+  ari <span class="token operator">=</span> evaluate_flat_clustering<span class="token punctuation">(</span>embeddings<span class="token punctuation">,</span> true_labels<span class="token punctuation">,</span> pred_labels<span class="token punctuation">,</span> metric<span class="token operator">=</span><span class="token string">"adjusted_rand"</span><span class="token punctuation">)</span>
+
+  adjacency_matrix <span class="token operator">=</span> create_adjacency_matrix<span class="token punctuation">(</span>df<span class="token punctuation">)</span>
+  dasgupta <span class="token operator">=</span> dasgupta_score<span class="token punctuation">(</span>adjacency_matrix<span class="token punctuation">,</span> linkage_matrix<span class="token punctuation">)</span>
+  c<span class="token punctuation">,</span> coph_dists <span class="token operator">=</span> cophenet<span class="token punctuation">(</span>linkage_matrix<span class="token punctuation">,</span> pdist<span class="token punctuation">(</span>embeddings<span class="token punctuation">)</span><span class="token punctuation">)</span>
+  metrics <span class="token operator">=</span> <span class="token punctuation">{</span><span class="token string">"silhouette"</span><span class="token punctuation">:</span> silhouette<span class="token punctuation">,</span> <span class="token string">"clustering_accuracy_score"</span><span class="token punctuation">:</span> clustering_accuracy_score<span class="token punctuation">,</span> <span class="token string">"ari"</span><span class="token punctuation">:</span> ari<span class="token punctuation">,</span> <span class="token string">"dasgupta"</span><span class="token punctuation">:</span> dasgupta<span class="token punctuation">,</span> <span class="token string">"cophenet"</span><span class="token punctuation">:</span> c<span class="token punctuation">}</span>
+  <span class="token keyword">return</span> metrics<span class="token punctuation">,</span> linkage_matrix
+
+<span class="token keyword">def</span> <span class="token function">round_metrics</span><span class="token punctuation">(</span>metrics<span class="token punctuation">,</span> n<span class="token operator">=</span><span class="token number">3</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+  <span class="token keyword">for</span> key<span class="token punctuation">,</span> value <span class="token keyword">in</span> metrics<span class="token punctuation">.</span>items<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+    metrics<span class="token punctuation">[</span>key<span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token builtin">round</span><span class="token punctuation">(</span>value<span class="token punctuation">,</span> n<span class="token punctuation">)</span>
+  <span class="token keyword">return</span> metrics
+
+</code></pre>
+<pre class="language-python" tabindex="0"><code class="language-python">df <span class="token operator">=</span> combined_df<span class="token punctuation">[</span><span class="token punctuation">[</span><span class="token string">"name"</span><span class="token punctuation">,</span> <span class="token string">"1st_level_category"</span><span class="token punctuation">,</span> <span class="token string">"2nd_level_category"</span><span class="token punctuation">,</span> <span class="token string">"3rd_level_category"</span><span class="token punctuation">]</span><span class="token punctuation">]</span>
+
+n_iters <span class="token operator">=</span> <span class="token number">20</span>
+N_SAMPLES_EVAL <span class="token operator">=</span> <span class="token number">1000</span>
+results <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token punctuation">]</span>
+vectorizers <span class="token operator">=</span> <span class="token punctuation">{</span><span class="token string">"n-gram"</span><span class="token punctuation">:</span> <span class="token punctuation">{</span><span class="token string">"ngram_range"</span><span class="token punctuation">:</span> <span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">,</span> <span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token string">"max_features"</span><span class="token punctuation">:</span> <span class="token number">10000</span><span class="token punctuation">,</span> <span class="token string">"analyzer"</span><span class="token punctuation">:</span><span class="token string">"word"</span><span class="token punctuation">}</span><span class="token punctuation">,</span>
+               <span class="token string">"bert"</span><span class="token punctuation">:</span> <span class="token boolean">None</span><span class="token punctuation">,</span>
+               <span class="token string">"tf-idf"</span><span class="token punctuation">:</span> <span class="token punctuation">{</span><span class="token string">"max_features"</span><span class="token punctuation">:</span> <span class="token number">10000</span><span class="token punctuation">}</span><span class="token punctuation">}</span>
+
+<span class="token keyword">for</span> vectorizer<span class="token punctuation">,</span> vectorizer_params <span class="token keyword">in</span> tqdm<span class="token punctuation">(</span>vectorizers<span class="token punctuation">.</span>items<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span> desc<span class="token operator">=</span><span class="token string">"vectorizers"</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+  <span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string-interpolation"><span class="token string">f"Evaluating </span><span class="token interpolation"><span class="token punctuation">{</span>vectorizer<span class="token punctuation">}</span></span><span class="token string">"</span></span><span class="token punctuation">)</span>
+  <span class="token keyword">for</span> i <span class="token keyword">in</span> tqdm<span class="token punctuation">(</span><span class="token builtin">range</span><span class="token punctuation">(</span>n_iters<span class="token punctuation">)</span><span class="token punctuation">,</span> desc<span class="token operator">=</span><span class="token string">"iters"</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+
+    df_sampled <span class="token operator">=</span> df<span class="token punctuation">.</span>sample<span class="token punctuation">(</span>N_SAMPLES_EVAL<span class="token punctuation">,</span>random_state<span class="token operator">=</span>i<span class="token punctuation">)</span>
+    metrics_1st<span class="token punctuation">,</span> linkage_matrix <span class="token operator">=</span> evaluate_clustering<span class="token punctuation">(</span>df_sampled<span class="token punctuation">,</span> vectorizer<span class="token punctuation">,</span> vectorizer_params<span class="token punctuation">,</span> <span class="token string">"1st_level_category"</span><span class="token punctuation">)</span>
+    metrics_2nd<span class="token punctuation">,</span> linkage_matrix <span class="token operator">=</span> evaluate_clustering<span class="token punctuation">(</span>df_sampled<span class="token punctuation">,</span> vectorizer<span class="token punctuation">,</span> vectorizer_params<span class="token punctuation">,</span> <span class="token string">"2nd_level_category"</span><span class="token punctuation">)</span>
+    metrics_3rd<span class="token punctuation">,</span> linkage_matrix <span class="token operator">=</span> evaluate_clustering<span class="token punctuation">(</span>df_sampled<span class="token punctuation">,</span> vectorizer<span class="token punctuation">,</span> vectorizer_params<span class="token punctuation">,</span> <span class="token string">"3rd_level_category"</span><span class="token punctuation">)</span>
+
+    results<span class="token punctuation">.</span>append<span class="token punctuation">(</span><span class="token punctuation">{</span><span class="token string">"vectorizer"</span><span class="token punctuation">:</span> vectorizer<span class="token punctuation">,</span> <span class="token string">"i"</span><span class="token punctuation">:</span> i<span class="token punctuation">,</span> <span class="token string">"eval_level"</span><span class="token punctuation">:</span> <span class="token string">"1st"</span><span class="token punctuation">,</span> <span class="token operator">**</span>metrics_1st<span class="token punctuation">}</span><span class="token punctuation">)</span>
+    results<span class="token punctuation">.</span>append<span class="token punctuation">(</span><span class="token punctuation">{</span><span class="token string">"vectorizer"</span><span class="token punctuation">:</span> vectorizer<span class="token punctuation">,</span> <span class="token string">"i"</span><span class="token punctuation">:</span> i<span class="token punctuation">,</span> <span class="token string">"eval_level"</span><span class="token punctuation">:</span> <span class="token string">"2nd"</span><span class="token punctuation">,</span> <span class="token operator">**</span>metrics_2nd<span class="token punctuation">}</span><span class="token punctuation">)</span>
+    results<span class="token punctuation">.</span>append<span class="token punctuation">(</span><span class="token punctuation">{</span><span class="token string">"vectorizer"</span><span class="token punctuation">:</span> vectorizer<span class="token punctuation">,</span> <span class="token string">"i"</span><span class="token punctuation">:</span> i<span class="token punctuation">,</span> <span class="token string">"eval_level"</span><span class="token punctuation">:</span> <span class="token string">"3rd"</span><span class="token punctuation">,</span> <span class="token operator">**</span>metrics_3rd<span class="token punctuation">}</span><span class="token punctuation">)</span>
+
+comparison_df <span class="token operator">=</span> pd<span class="token punctuation">.</span>DataFrame<span class="token punctuation">(</span>results<span class="token punctuation">)</span>
+</code></pre>
+<pre class="language-python" tabindex="0"><code class="language-python">sns<span class="token punctuation">.</span>set_theme<span class="token punctuation">(</span>style<span class="token operator">=</span><span class="token string">"white"</span><span class="token punctuation">)</span>
+sns<span class="token punctuation">.</span>boxplot<span class="token punctuation">(</span>data<span class="token operator">=</span>comparison_df<span class="token punctuation">,</span> x<span class="token operator">=</span><span class="token string">"vectorizer"</span><span class="token punctuation">,</span> y<span class="token operator">=</span><span class="token string">"clustering_accuracy_score"</span><span class="token punctuation">,</span> hue<span class="token operator">=</span><span class="token string">"eval_level"</span><span class="token punctuation">)</span>
+plt<span class="token punctuation">.</span>xlabel<span class="token punctuation">(</span><span class="token string">"Vectorizer"</span><span class="token punctuation">)</span>
+plt<span class="token punctuation">.</span>ylabel<span class="token punctuation">(</span><span class="token string">"clustering_accuracy_score"</span><span class="token punctuation">.</span>replace<span class="token punctuation">(</span><span class="token string">"_"</span><span class="token punctuation">,</span> <span class="token string">" "</span><span class="token punctuation">)</span><span class="token punctuation">.</span>capitalize<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+plt<span class="token punctuation">.</span>title<span class="token punctuation">(</span><span class="token string">"Score by clustering acccuracy"</span><span class="token punctuation">)</span>
+plt<span class="token punctuation">.</span>tight_layout<span class="token punctuation">(</span><span class="token punctuation">)</span>
+plt<span class="token punctuation">.</span>savefig<span class="token punctuation">(</span><span class="token string-interpolation"><span class="token string">f"</span><span class="token interpolation"><span class="token punctuation">{</span>FIGS_PATH<span class="token punctuation">}</span></span><span class="token string">/clustering_accuracy.png"</span></span><span class="token punctuation">,</span> transparent<span class="token operator">=</span><span class="token boolean">True</span><span class="token punctuation">)</span>
+plt<span class="token punctuation">.</span>show<span class="token punctuation">(</span><span class="token punctuation">)</span></code></pre>
+<p><picture><source type="image/avif" srcset="/blog/Evaluating-Hierarchical-Clustering/hierarchical-clustering-eval/aOIMg_qJqd-640.avif 640w"><source type="image/webp" srcset="/blog/Evaluating-Hierarchical-Clustering/hierarchical-clustering-eval/aOIMg_qJqd-640.webp 640w"><img loading="lazy" decoding="async" src="/blog/Evaluating-Hierarchical-Clustering/hierarchical-clustering-eval/aOIMg_qJqd-640.png" alt="png" width="640" height="480"></picture></p>
+<p>Yes, it's pretty hard to make sense of everything at first glance.<br>
+First of all, we can see that the BERT model performs the best across all evaluation levels.</p>
+<p>But what if we want to compare n-grams and TF-IDF?<br>
+For the accuracy metric, it seems that TF-IDF performs better at the 1st level, but performs worse at the other levels.</p>
+<p>The Dasgupta score provides a single score for all levels by taking into account the overall cost we defined earlier. This allows us to evaluate the entire hierarchy in a more holistic way, rather than focusing on individual levels.</p>
+<p>This approach makes it easier to compare different embedding models and understand how they perform across the full tree structure.</p>
+<pre class="language-python" tabindex="0"><code class="language-python">
+sns<span class="token punctuation">.</span>boxplot<span class="token punctuation">(</span>data<span class="token operator">=</span>comparison_df<span class="token punctuation">,</span> x<span class="token operator">=</span><span class="token string">"vectorizer"</span><span class="token punctuation">,</span> y<span class="token operator">=</span><span class="token string">"dasgupta"</span><span class="token punctuation">,</span> hue<span class="token operator">=</span><span class="token string">"eval_level"</span><span class="token punctuation">)</span>
+plt<span class="token punctuation">.</span>savefig<span class="token punctuation">(</span><span class="token string-interpolation"><span class="token string">f"</span><span class="token interpolation"><span class="token punctuation">{</span>FIGS_PATH<span class="token punctuation">}</span></span><span class="token string">/dasgupta.png"</span></span><span class="token punctuation">,</span> transparent<span class="token operator">=</span><span class="token boolean">True</span><span class="token punctuation">)</span>
+plt<span class="token punctuation">.</span>title<span class="token punctuation">(</span><span class="token string">"Score by dasgupta"</span><span class="token punctuation">)</span></code></pre>
+<p><picture><source type="image/avif" srcset="/blog/Evaluating-Hierarchical-Clustering/hierarchical-clustering-eval/eiS0S-DYas-640.avif 640w"><source type="image/webp" srcset="/blog/Evaluating-Hierarchical-Clustering/hierarchical-clustering-eval/eiS0S-DYas-640.webp 640w"><img loading="lazy" decoding="async" src="/blog/Evaluating-Hierarchical-Clustering/hierarchical-clustering-eval/eiS0S-DYas-640.png" alt="png" width="640" height="480"></picture></p>
+<h4 id="dendrogram">Dendrogram</h4>
+<p>While it's really hard to read a dendrogram with more than ~100 points, it remains an important tool for evaluation and for ensuring that the clustering results align with our expectations.</p>
+<p>Dendrograms allow us to visually inspect how items are grouped at different levels of the hierarchy, which can reveal unexpected patterns or potential issues.</p>
+<p>Let's try to compare the dendrograms of BERT and TF-IDF side-by-side to see how they differ. By observing them &quot;by eye,&quot; we can get a sense of how the embedding models influence the structure of the hierarchy.</p>
+<pre class="language-python" tabindex="0"><code class="language-python"><span class="token keyword">import</span> matplotlib<span class="token punctuation">.</span>pyplot <span class="token keyword">as</span> plt
+<span class="token keyword">from</span> matplotlib <span class="token keyword">import</span> cm
+<span class="token keyword">from</span> scipy<span class="token punctuation">.</span>cluster<span class="token punctuation">.</span>hierarchy <span class="token keyword">import</span> dendrogram
+
+
+<span class="token keyword">def</span> <span class="token function">colored_dendrogram</span><span class="token punctuation">(</span>df<span class="token punctuation">,</span> linkage_matrix<span class="token punctuation">,</span> label_level<span class="token punctuation">,</span> color_level<span class="token punctuation">)</span><span class="token punctuation">:</span>
+
+    unique_categories <span class="token operator">=</span> df<span class="token punctuation">[</span>color_level<span class="token punctuation">]</span><span class="token punctuation">.</span>unique<span class="token punctuation">(</span><span class="token punctuation">)</span>
+    num_colors <span class="token operator">=</span> <span class="token builtin">len</span><span class="token punctuation">(</span>unique_categories<span class="token punctuation">)</span>
+    colormap <span class="token operator">=</span> cm<span class="token punctuation">.</span>get_cmap<span class="token punctuation">(</span><span class="token string">'tab20c'</span><span class="token punctuation">,</span> num_colors<span class="token punctuation">)</span>  <span class="token comment"># Use HSV colormap for vibrant colors</span>
+
+        <span class="token comment"># Map each category to a color</span>
+    category_colors <span class="token operator">=</span> <span class="token punctuation">{</span>category<span class="token punctuation">:</span> colormap<span class="token punctuation">(</span>i<span class="token punctuation">)</span> <span class="token keyword">for</span> i<span class="token punctuation">,</span> category <span class="token keyword">in</span> <span class="token builtin">enumerate</span><span class="token punctuation">(</span>unique_categories<span class="token punctuation">)</span><span class="token punctuation">}</span>
+    labels <span class="token operator">=</span> df<span class="token punctuation">[</span>label_level<span class="token punctuation">]</span><span class="token punctuation">.</span>tolist<span class="token punctuation">(</span><span class="token punctuation">)</span>
+    fig <span class="token operator">=</span> plt<span class="token punctuation">.</span>figure<span class="token punctuation">(</span>figsize<span class="token operator">=</span><span class="token punctuation">(</span><span class="token number">10</span><span class="token punctuation">,</span> <span class="token number">15</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+
+    <span class="token comment"># Plot the dendrogram</span>
+    dendro <span class="token operator">=</span> dendrogram<span class="token punctuation">(</span>
+        linkage_matrix<span class="token punctuation">,</span>
+        labels<span class="token operator">=</span>labels<span class="token punctuation">,</span>
+        leaf_rotation<span class="token operator">=</span><span class="token number">0</span><span class="token punctuation">,</span>  <span class="token comment"># Rotate leaf labels</span>
+        orientation<span class="token operator">=</span><span class="token string">"left"</span><span class="token punctuation">,</span>  <span class="token comment"># Horizontal layout</span>
+        leaf_font_size<span class="token operator">=</span><span class="token number">10.</span><span class="token punctuation">,</span>
+        color_threshold<span class="token operator">=</span><span class="token number">0.7</span> <span class="token operator">*</span> <span class="token builtin">max</span><span class="token punctuation">(</span>linkage_matrix<span class="token punctuation">[</span><span class="token punctuation">:</span><span class="token punctuation">,</span> <span class="token number">2</span><span class="token punctuation">]</span><span class="token punctuation">)</span>  <span class="token comment"># Threshold for branch coloring</span>
+    <span class="token punctuation">)</span>
+
+    <span class="token comment"># Get leaf labels and color them</span>
+    ax <span class="token operator">=</span> plt<span class="token punctuation">.</span>gca<span class="token punctuation">(</span><span class="token punctuation">)</span>
+    y_labels <span class="token operator">=</span> ax<span class="token punctuation">.</span>get_yticklabels<span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+    <span class="token keyword">for</span> label <span class="token keyword">in</span> y_labels<span class="token punctuation">:</span>
+        label_text <span class="token operator">=</span> label<span class="token punctuation">.</span>get_text<span class="token punctuation">(</span><span class="token punctuation">)</span>
+        <span class="token comment"># Find the category corresponding to this label</span>
+        category <span class="token operator">=</span> df<span class="token punctuation">[</span>df<span class="token punctuation">[</span>label_level<span class="token punctuation">]</span> <span class="token operator">==</span> label_text<span class="token punctuation">]</span><span class="token punctuation">[</span>color_level<span class="token punctuation">]</span><span class="token punctuation">.</span>values<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span>
+        color <span class="token operator">=</span> category_colors<span class="token punctuation">[</span>category<span class="token punctuation">]</span>
+        label<span class="token punctuation">.</span>set_color<span class="token punctuation">(</span>color<span class="token punctuation">)</span>
+
+    <span class="token comment"># Add legend for main categories</span>
+    handles <span class="token operator">=</span> <span class="token punctuation">[</span>plt<span class="token punctuation">.</span>Line2D<span class="token punctuation">(</span><span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">,</span> <span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">,</span> color<span class="token operator">=</span>color<span class="token punctuation">,</span> lw<span class="token operator">=</span><span class="token number">4</span><span class="token punctuation">,</span> label<span class="token operator">=</span>category<span class="token punctuation">)</span>
+               <span class="token keyword">for</span> category<span class="token punctuation">,</span> color <span class="token keyword">in</span> category_colors<span class="token punctuation">.</span>items<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">]</span>
+    plt<span class="token punctuation">.</span>legend<span class="token punctuation">(</span>handles<span class="token operator">=</span>handles<span class="token punctuation">,</span> title<span class="token operator">=</span>color_level<span class="token punctuation">.</span>replace<span class="token punctuation">(</span><span class="token string">"_"</span><span class="token punctuation">,</span> <span class="token string">" "</span><span class="token punctuation">)</span><span class="token punctuation">.</span>title<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span> loc<span class="token operator">=</span><span class="token string">"upper left"</span><span class="token punctuation">,</span><span class="token punctuation">)</span>
+
+    <span class="token comment"># Final plot adjustments</span>
+    plt<span class="token punctuation">.</span>title<span class="token punctuation">(</span><span class="token string">'Dendrogram of Hierarchical Clustering with Colored Leaves'</span><span class="token punctuation">)</span>
+    plt<span class="token punctuation">.</span>xlabel<span class="token punctuation">(</span><span class="token string">'Distance'</span><span class="token punctuation">)</span>
+    plt<span class="token punctuation">.</span>ylabel<span class="token punctuation">(</span><span class="token string">'Product Names'</span><span class="token punctuation">)</span>
+    <span class="token keyword">return</span> fig
+
+df_sampled <span class="token operator">=</span> df<span class="token punctuation">.</span>sample<span class="token punctuation">(</span><span class="token number">50</span><span class="token punctuation">)</span>
+<span class="token comment">#We can state on which level we want to see colors, and on which level we want to see the text</span>
+metrics<span class="token punctuation">,</span> linkage_matrix <span class="token operator">=</span> evaluate_clustering<span class="token punctuation">(</span>df_sampled<span class="token punctuation">,</span> <span class="token string">"bert"</span><span class="token punctuation">,</span> <span class="token boolean">None</span><span class="token punctuation">,</span> <span class="token string">"3rd_level_category"</span><span class="token punctuation">)</span>
+
+text_by_level <span class="token operator">=</span> <span class="token string">"3rd_level_category"</span>
+color_by_level <span class="token operator">=</span> <span class="token string">"2nd_level_category"</span>
+
+fig <span class="token operator">=</span> colored_dendrogram<span class="token punctuation">(</span>df_sampled<span class="token punctuation">,</span> linkage_matrix<span class="token punctuation">,</span> text_by_level<span class="token punctuation">,</span> color_by_level<span class="token punctuation">)</span>
+plt<span class="token punctuation">.</span>savefig<span class="token punctuation">(</span><span class="token string-interpolation"><span class="token string">f"</span><span class="token interpolation"><span class="token punctuation">{</span>FIGS_PATH<span class="token punctuation">}</span></span><span class="token string">/dend_bert.png"</span></span><span class="token punctuation">,</span> transparent<span class="token operator">=</span><span class="token boolean">True</span><span class="token punctuation">)</span>
+plt<span class="token punctuation">.</span>show<span class="token punctuation">(</span><span class="token punctuation">)</span></code></pre>
+<p><picture><source type="image/avif" srcset="/blog/Evaluating-Hierarchical-Clustering/hierarchical-clustering-eval/YSLALxcm1a-1040.avif 1040w"><source type="image/webp" srcset="/blog/Evaluating-Hierarchical-Clustering/hierarchical-clustering-eval/YSLALxcm1a-1040.webp 1040w"><img loading="lazy" decoding="async" src="/blog/Evaluating-Hierarchical-Clustering/hierarchical-clustering-eval/YSLALxcm1a-1040.png" alt="png" width="1040" height="1249"></picture></p>
+<pre class="language-python" tabindex="0"><code class="language-python">metrics<span class="token punctuation">,</span> linkage_matrix <span class="token operator">=</span> evaluate_clustering<span class="token punctuation">(</span>df_sampled<span class="token punctuation">,</span> <span class="token string">"tf-idf"</span><span class="token punctuation">,</span> <span class="token boolean">None</span><span class="token punctuation">,</span> <span class="token string">"3rd_level_category"</span><span class="token punctuation">)</span>
+
+text_by_level <span class="token operator">=</span> <span class="token string">"3rd_level_category"</span>
+color_by_level <span class="token operator">=</span> <span class="token string">"2nd_level_category"</span>
+
+
+fig <span class="token operator">=</span> colored_dendrogram<span class="token punctuation">(</span>df_sampled<span class="token punctuation">,</span> linkage_matrix<span class="token punctuation">,</span> text_by_level<span class="token punctuation">,</span> color_by_level<span class="token punctuation">)</span>
+plt<span class="token punctuation">.</span>savefig<span class="token punctuation">(</span><span class="token string-interpolation"><span class="token string">f"</span><span class="token interpolation"><span class="token punctuation">{</span>FIGS_PATH<span class="token punctuation">}</span></span><span class="token string">/dend_tf_idf.png"</span></span><span class="token punctuation">,</span> transparent<span class="token operator">=</span><span class="token boolean">True</span><span class="token punctuation">)</span>
+plt<span class="token punctuation">.</span>show<span class="token punctuation">(</span><span class="token punctuation">)</span>
+</code></pre>
+<p><picture><source type="image/avif" srcset="/blog/Evaluating-Hierarchical-Clustering/hierarchical-clustering-eval/ejt_WjjIxq-1040.avif 1040w"><source type="image/webp" srcset="/blog/Evaluating-Hierarchical-Clustering/hierarchical-clustering-eval/ejt_WjjIxq-1040.webp 1040w"><img loading="lazy" decoding="async" src="/blog/Evaluating-Hierarchical-Clustering/hierarchical-clustering-eval/ejt_WjjIxq-1040.png" alt="png" width="1040" height="1249"></picture></p>
+<p>We can clearly see that indeed the bert model have much better clustering results.</p>
+
+<ul class="links-nextprev"><li class="links-nextprev-prev">← Previous<br> <a href="/blog/jaccard-index-unsupervised/Jaccard_index_for_unsupervised_clustering/">Jaccard index for unsupervised clustering</a></li>
+</ul>
+
+</heading-anchors></main><footer>
+<div class="social-links">
+    <a href="https://www.goodreads.com/user/show/103722180-yonatan-lourie" target="_blank" title="Goodreads">
+        <i class="fab fa-goodreads"></i>
+    </a>
+    <a href="https://www.imdb.com/user/ur88119677/ratings/" target="_blank" title="IMDb">
+        <i class="fab fa-imdb"></i>
+    </a>
+    <a href="https://open.spotify.com/user/224udkuetwxsiqba7n4tums6q?si=_RD2kBO8QlSUYLfjBLjBEQ&nd=1" target="_blank" title="Spotify">
+        <i class="fab fa-spotify"></i>
+    </a>
+    <a href="https://x.com/yonatanlou" target="_blank" title="Twitter">
+        <i class="fab fa-twitter"></i>
+    </a>
+    <a href="https://www.linkedin.com/in/yonatanlourie/" target="_blank" title="LinkedIn">
+        <i class="fab fa-linkedin"></i>
+    </a>
+    <a href="https://github.com/yonatanlou" target="_blank" title="GitHub">
+        <i class="fab fa-github"></i>
+    </a>
+    <a href="mailto:yonatanlou@gmail.com" target="_blank" title="Email">
+        <i class="fa-solid fa-envelope"></i>
+    </a>
+</div></footer><!-- This page `/blog/Evaluating-Hierarchical-Clustering/hierarchical-clustering-eval/` was built on 2025-01-12T11:59:47.817Z --><script type="module" src="/dist/rJ3_G-2ArF.js"></script>

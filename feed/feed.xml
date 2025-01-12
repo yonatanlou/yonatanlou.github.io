@@ -5,11 +5,1077 @@
   <subtitle>Just a solid place to have a proper virtual identity.</subtitle>
   <link href="https://yonatanlou.github.io/feed/feed.xml" rel="self" />
   <link href="https://yonatanlou.github.io/" />
-  <updated>2024-11-10T00:00:00Z</updated>
+  <updated>2025-01-12T00:00:00Z</updated>
   <id>https://yonatanlou.github.io/</id>
   <author>
     <name>Yonatan Lourie</name>
   </author>
+  <entry>
+    <title>Evaluating Hierarchical Clustering Beyond the Leaves 🌳</title>
+    <link href="https://yonatanlou.github.io/blog/Evaluating-Hierarchical-Clustering/hierarchical-clustering-eval/" />
+    <updated>2025-01-12T00:00:00Z</updated>
+    <id>https://yonatanlou.github.io/blog/Evaluating-Hierarchical-Clustering/hierarchical-clustering-eval/</id>
+    <content type="html">&lt;p&gt;When working on hierarchical clustering tasks, evaluation is often limited to the &lt;strong&gt;leaves of the tree&lt;/strong&gt; or relies on plots that look impressive but don&#39;t tell the whole story.What if we could assess the entire tree structure? Wouldn&#39;t that give us a more nuanced view of our clustering methods, linkage techniques, or embedding models?&lt;/p&gt;
+&lt;p&gt;In this short article, I&#39;ll introduce you to a clever method invented by &lt;strong&gt;Sanjoy Dasgupta&lt;/strong&gt; for evaluating hierarchical clustering—not just at the leaves but across the whole tree structure.&lt;/p&gt;
+&lt;p&gt;Most people who implement hierarchical clustering tend to evaluate it using well-known unsupervised learning metrics (like the ones mentioned in &lt;a href=&quot;https://scikit-learn.org/1.5/modules/clustering.html#clustering-performance-evaluation&quot;&gt;scikit-learn&#39;s clustering evaluation&lt;/a&gt;).&lt;br&gt;
+These metrics typically require you to &amp;quot;flatten&amp;quot; the clusters. In other words, they convert your hierarchical structure into a flat list of cluster assignments ( f(&#92;hat{y}, y) ). When that happens, all the benefits of hierarchical clustering go straight out the window.&lt;/p&gt;
+&lt;p&gt;Let&#39;s say you have a dataset organized into &lt;strong&gt;three levels of hierarchy&lt;/strong&gt;. If an object ends up in the wrong cluster at the &lt;strong&gt;third level&lt;/strong&gt; (the lowest), is it really wrong? What if it&#39;s correctly grouped at the &lt;strong&gt;second level&lt;/strong&gt;? That&#39;s valuable information you lose when you flatten everything into a single level.&lt;/p&gt;
+&lt;p&gt;If you&#39;re new to hierarchical clustering, I highly recommend checking out &lt;a href=&quot;https://joernhees.de/blog/2015/08/26/scipy-hierarchical-clustering-and-dendrogram-tutorial/#Inconsistency-Method&quot;&gt;Jörn&#39;s Blog&lt;/a&gt;&lt;/p&gt;
+&lt;h3 id=&quot;dasguptas-cost-function&quot;&gt;Dasgupta&#39;s Cost Function&lt;/h3&gt;
+&lt;p&gt;Dasgupta&#39;s cost function is designed to capture exactly that nuance. Instead of evaluating only the leaves, it evaluates the clustering across all levels of the hierarchy. In essence, it measures how well the structure of your tree reflects the underlying similarities in your data.&lt;/p&gt;
+&lt;h4 id=&quot;input&quot;&gt;&lt;strong&gt;Input:&lt;/strong&gt;&lt;/h4&gt;
+&lt;p&gt;In Dasgupta&#39;s formulation, the input to a clustering problem consists of similarity scores between certain pairs of elements, represented as an &lt;strong&gt;undirected graph&lt;/strong&gt; ( G = (V, E) ), with the elements as its vertices and non-negative real weights on its edges.&lt;/p&gt;
+&lt;h4 id=&quot;cost-function-definition&quot;&gt;&lt;strong&gt;Cost Function Definition:&lt;/strong&gt;&lt;/h4&gt;
+&lt;p&gt;A hierarchical clustering can be described as a &lt;strong&gt;tree&lt;/strong&gt; (not necessarily a binary tree) whose &lt;strong&gt;leaves&lt;/strong&gt; are the elements to be clustered. The clusters are then the subsets of elements descending from each tree node.&lt;br&gt;
+The &lt;strong&gt;size&lt;/strong&gt; ( |C| ) of any cluster ( C ) is the number of elements in the cluster.&lt;/p&gt;
+&lt;p&gt;For each edge ( uv ) of the input graph:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Let ( w(uv) ) denote the &lt;strong&gt;weight&lt;/strong&gt; of edge ( uv ).&lt;/li&gt;
+&lt;li&gt;Let ( C(uv) ) denote the &lt;strong&gt;smallest cluster&lt;/strong&gt; of a given clustering that contains both ( u ) and ( v ).&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Then Dasgupta defines the &lt;strong&gt;cost of a clustering&lt;/strong&gt; as:&lt;/p&gt;
+&lt;p&gt;$$
+&#92;sum_{uv &#92;in E} w(uv) &#92;cdot |C(uv)|
+$$&lt;/p&gt;
+&lt;h4 id=&quot;intuition&quot;&gt;&lt;strong&gt;Intuition:&lt;/strong&gt;&lt;/h4&gt;
+&lt;p&gt;It is better to cut a high-similarity edge at a lower level.&lt;/p&gt;
+&lt;p&gt;For a clear example, check out this presentation from &lt;a href=&quot;https://www.irif.fr/_media/users/claire/talkcolle_gedefrance7juin2018.pdf&quot;&gt;IRIF&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Also, &lt;a href=&quot;https://perso.esiee.fr/~perretb/&quot;&gt;Benjamin Perret&lt;/a&gt; has implemented this objective in an easy-to-use &lt;a href=&quot;https://higra.readthedocs.io/en/stable/python/hierarchical_cost.html&quot;&gt;Python package&lt;/a&gt;. 🎉&lt;/p&gt;
+&lt;p&gt;I will show here a nice example with hierarchial text clustering for items from Amazon.&lt;/p&gt;
+&lt;pre class=&quot;language-python&quot; tabindex=&quot;0&quot;&gt;&lt;code class=&quot;language-python&quot;&gt;&lt;span class=&quot;token keyword&quot;&gt;try&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;token keyword&quot;&gt;import&lt;/span&gt; sknetwork
+&lt;span class=&quot;token keyword&quot;&gt;except&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
+  !pip install scikit&lt;span class=&quot;token operator&quot;&gt;-&lt;/span&gt;network
+
+&lt;span class=&quot;token keyword&quot;&gt;from&lt;/span&gt; google&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;colab &lt;span class=&quot;token keyword&quot;&gt;import&lt;/span&gt; drive
+drive&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;mount&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot;/content/gdrive&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; force_remount&lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;token boolean&quot;&gt;True&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Mounted at /content/gdrive&lt;/p&gt;
+&lt;pre class=&quot;language-python&quot; tabindex=&quot;0&quot;&gt;&lt;code class=&quot;language-python&quot;&gt;&lt;span class=&quot;token keyword&quot;&gt;import&lt;/span&gt; os
+&lt;span class=&quot;token keyword&quot;&gt;import&lt;/span&gt; random
+
+&lt;span class=&quot;token keyword&quot;&gt;import&lt;/span&gt; pandas &lt;span class=&quot;token keyword&quot;&gt;as&lt;/span&gt; pd
+&lt;span class=&quot;token keyword&quot;&gt;from&lt;/span&gt; tqdm&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;notebook &lt;span class=&quot;token keyword&quot;&gt;import&lt;/span&gt; tqdm
+&lt;span class=&quot;token keyword&quot;&gt;import&lt;/span&gt; numpy &lt;span class=&quot;token keyword&quot;&gt;as&lt;/span&gt; np
+
+
+&lt;span class=&quot;token keyword&quot;&gt;from&lt;/span&gt; transformers &lt;span class=&quot;token keyword&quot;&gt;import&lt;/span&gt; BertTokenizer&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; BertModel
+&lt;span class=&quot;token keyword&quot;&gt;from&lt;/span&gt; sentence_transformers &lt;span class=&quot;token keyword&quot;&gt;import&lt;/span&gt; SentenceTransformer
+&lt;span class=&quot;token keyword&quot;&gt;import&lt;/span&gt; kagglehub
+
+&lt;span class=&quot;token keyword&quot;&gt;from&lt;/span&gt; sklearn&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;feature_extraction&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;text &lt;span class=&quot;token keyword&quot;&gt;import&lt;/span&gt; CountVectorizer&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; TfidfVectorizer
+&lt;span class=&quot;token keyword&quot;&gt;from&lt;/span&gt; sklearn&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;metrics&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;pairwise &lt;span class=&quot;token keyword&quot;&gt;import&lt;/span&gt; cosine_similarity
+&lt;span class=&quot;token keyword&quot;&gt;from&lt;/span&gt; scipy&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;cluster&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;hierarchy &lt;span class=&quot;token keyword&quot;&gt;import&lt;/span&gt; dendrogram&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; linkage&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; fcluster
+&lt;span class=&quot;token keyword&quot;&gt;from&lt;/span&gt; sklearn&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;cluster &lt;span class=&quot;token keyword&quot;&gt;import&lt;/span&gt; KMeans
+&lt;span class=&quot;token keyword&quot;&gt;from&lt;/span&gt; sknetwork&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;hierarchy &lt;span class=&quot;token keyword&quot;&gt;import&lt;/span&gt; dasgupta_score
+&lt;span class=&quot;token keyword&quot;&gt;from&lt;/span&gt; sklearn&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;metrics &lt;span class=&quot;token keyword&quot;&gt;import&lt;/span&gt; confusion_matrix&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; silhouette_score&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; adjusted_rand_score
+&lt;span class=&quot;token keyword&quot;&gt;from&lt;/span&gt; sklearn&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;preprocessing &lt;span class=&quot;token keyword&quot;&gt;import&lt;/span&gt; LabelEncoder
+&lt;span class=&quot;token keyword&quot;&gt;from&lt;/span&gt; scipy&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;optimize &lt;span class=&quot;token keyword&quot;&gt;import&lt;/span&gt; linear_sum_assignment
+&lt;span class=&quot;token keyword&quot;&gt;import&lt;/span&gt; matplotlib&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;pyplot &lt;span class=&quot;token keyword&quot;&gt;as&lt;/span&gt; plt
+&lt;span class=&quot;token keyword&quot;&gt;import&lt;/span&gt; seaborn &lt;span class=&quot;token keyword&quot;&gt;as&lt;/span&gt; sns
+&lt;span class=&quot;token keyword&quot;&gt;import&lt;/span&gt; warnings
+&lt;span class=&quot;token keyword&quot;&gt;import&lt;/span&gt; torch
+warnings&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;filterwarnings&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot;ignore&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+FIGS_PATH &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;/content/gdrive/MyDrive/Colab Notebooks/hierarchical-clustering-eval_files&quot;&lt;/span&gt;
+os&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;makedirs&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;FIGS_PATH&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; exist_ok&lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;token boolean&quot;&gt;True&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;token keyword&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;token function&quot;&gt;set_seed_globally&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;seed&lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;token number&quot;&gt;42&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;token comment&quot;&gt;# Set seeds&lt;/span&gt;
+    np&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;random&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;seed&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;seed&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+    random&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;seed&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;seed&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+    torch&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;manual_seed&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;seed&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;token keyword&quot;&gt;if&lt;/span&gt; torch&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;cuda&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;is_available&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
+        torch&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;cuda&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;manual_seed&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;seed&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+        torch&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;cuda&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;manual_seed_all&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;seed&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+
+set_seed_globally&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token number&quot;&gt;42&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+device &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; torch&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;device&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot;cuda&quot;&lt;/span&gt; &lt;span class=&quot;token keyword&quot;&gt;if&lt;/span&gt; torch&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;cuda&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;is_available&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;token keyword&quot;&gt;else&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;cpu&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&quot;language-python&quot; tabindex=&quot;0&quot;&gt;&lt;code class=&quot;language-python&quot;&gt;
+path &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; kagglehub&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;dataset_download&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot;lokeshparab/amazon-products-dataset&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;token comment&quot;&gt;# print(&quot;Path to dataset files:&quot;, path)&lt;/span&gt;
+
+csv_files &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;[&lt;/span&gt;f &lt;span class=&quot;token keyword&quot;&gt;for&lt;/span&gt; f &lt;span class=&quot;token keyword&quot;&gt;in&lt;/span&gt; os&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;listdir&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;path&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;token keyword&quot;&gt;if&lt;/span&gt; f&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;endswith&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&#39;.csv&#39;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;]&lt;/span&gt;
+dfs &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;]&lt;/span&gt;
+&lt;span class=&quot;token keyword&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;token builtin&quot;&gt;file&lt;/span&gt; &lt;span class=&quot;token keyword&quot;&gt;in&lt;/span&gt; csv_files&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
+    file_path &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; os&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;path&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;join&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;path&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;token builtin&quot;&gt;file&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+    df &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; pd&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;read_csv&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;file_path&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+    dfs&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;append&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;df&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+combined_df &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; pd&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;concat&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;dfs&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; ignore_index&lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;token boolean&quot;&gt;True&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;This dataset contains only &lt;strong&gt;two levels&lt;/strong&gt; of hierarchy, so I created an additional level to enrich the structure.&lt;/p&gt;
+&lt;p&gt;By adding this third level, the hierarchy becomes more informative and allows for a deeper evaluation of clustering performance across multiple granularities.&lt;/p&gt;
+&lt;pre class=&quot;language-python&quot; tabindex=&quot;0&quot;&gt;&lt;code class=&quot;language-python&quot;&gt;categories &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;token string&quot;&gt;&quot;Fashion and Accessories&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;[&lt;/span&gt;
+        &lt;span class=&quot;token string&quot;&gt;&quot;men&#39;s shoes&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;men&#39;s clothing&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;women&#39;s shoes&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt;
+        &lt;span class=&quot;token string&quot;&gt;&quot;women&#39;s clothing&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;kids&#39; fashion&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;bags &amp;amp; luggage&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;accessories&quot;&lt;/span&gt;
+    &lt;span class=&quot;token punctuation&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt;
+    &lt;span class=&quot;token string&quot;&gt;&quot;Home and Lifestyle&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;[&lt;/span&gt;
+        &lt;span class=&quot;token string&quot;&gt;&quot;home, kitchen, pets&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;home &amp;amp; kitchen&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;appliances&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;pet supplies&quot;&lt;/span&gt;
+    &lt;span class=&quot;token punctuation&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt;
+    &lt;span class=&quot;token string&quot;&gt;&quot;Health and Entertainment&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;[&lt;/span&gt;
+        &lt;span class=&quot;token string&quot;&gt;&quot;beauty &amp;amp; health&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;music&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;tv, audio &amp;amp; cameras&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;sports &amp;amp; fitness&quot;&lt;/span&gt;
+    &lt;span class=&quot;token punctuation&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt;
+    &lt;span class=&quot;token string&quot;&gt;&quot;Family and General Supplies&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;[&lt;/span&gt;
+        &lt;span class=&quot;token string&quot;&gt;&quot;grocery &amp;amp; gourmet foods&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;toys &amp;amp; baby products&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;car &amp;amp; motorbike&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt;
+        &lt;span class=&quot;token string&quot;&gt;&quot;industrial supplies&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;stores&quot;&lt;/span&gt;
+    &lt;span class=&quot;token punctuation&quot;&gt;]&lt;/span&gt;
+&lt;span class=&quot;token punctuation&quot;&gt;}&lt;/span&gt;
+mapping &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;{&lt;/span&gt;sub_cat&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; main_cat &lt;span class=&quot;token keyword&quot;&gt;for&lt;/span&gt; main_cat&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; sub_cats &lt;span class=&quot;token keyword&quot;&gt;in&lt;/span&gt; categories&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;items&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;token keyword&quot;&gt;for&lt;/span&gt; sub_cat &lt;span class=&quot;token keyword&quot;&gt;in&lt;/span&gt; sub_cats&lt;span class=&quot;token punctuation&quot;&gt;}&lt;/span&gt;
+combined_df&lt;span class=&quot;token punctuation&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot;1st_level_category&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; combined_df&lt;span class=&quot;token punctuation&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot;main_category&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;token builtin&quot;&gt;map&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;mapping&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;fillna&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot;Unknown&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+combined_df &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; combined_df&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;rename&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;columns&lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;token string&quot;&gt;&quot;main_category&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;2nd_level_category&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt;
+    &lt;span class=&quot;token string&quot;&gt;&quot;sub_category&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;3rd_level_category&quot;&lt;/span&gt;
+&lt;span class=&quot;token punctuation&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+
+combined_df&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;groupby&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot;1st_level_category&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;2nd_level_category&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot;3rd_level_category&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;nunique&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;div&gt;
+&lt;style scoped=&quot;&quot;&gt;
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+&lt;p&gt;.dataframe tbody tr th {
+vertical-align: top;
+}&lt;/p&gt;
+&lt;p&gt;.dataframe thead th {
+text-align: right;
+}
+&lt;/style&gt;&lt;p&gt;&lt;/p&gt;
+&lt;table border=&quot;1&quot; class=&quot;dataframe&quot;&gt;
+  &lt;thead&gt;
+    &lt;tr style=&quot;text-align: right;&quot;&gt;
+      &lt;th&gt;&lt;/th&gt;
+      &lt;th&gt;&lt;/th&gt;
+      &lt;th&gt;3rd_level_category&lt;/th&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;th&gt;1st_level_category&lt;/th&gt;
+      &lt;th&gt;2nd_level_category&lt;/th&gt;
+      &lt;th&gt;&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;th rowspan=&quot;5&quot; valign=&quot;top&quot;&gt;Family and General Supplies&lt;/th&gt;
+      &lt;th&gt;car &amp;amp; motorbike&lt;/th&gt;
+      &lt;td&gt;6&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;th&gt;grocery &amp;amp; gourmet foods&lt;/th&gt;
+      &lt;td&gt;3&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;th&gt;industrial supplies&lt;/th&gt;
+      &lt;td&gt;4&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;th&gt;stores&lt;/th&gt;
+      &lt;td&gt;6&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;th&gt;toys &amp;amp; baby products&lt;/th&gt;
+      &lt;td&gt;9&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;th rowspan=&quot;7&quot; valign=&quot;top&quot;&gt;Fashion and Accessories&lt;/th&gt;
+      &lt;th&gt;accessories&lt;/th&gt;
+      &lt;td&gt;7&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;th&gt;bags &amp;amp; luggage&lt;/th&gt;
+      &lt;td&gt;6&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;th&gt;kids&#39; fashion&lt;/th&gt;
+      &lt;td&gt;6&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;th&gt;men&#39;s clothing&lt;/th&gt;
+      &lt;td&gt;4&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;th&gt;men&#39;s shoes&lt;/th&gt;
+      &lt;td&gt;3&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;th&gt;women&#39;s clothing&lt;/th&gt;
+      &lt;td&gt;4&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;th&gt;women&#39;s shoes&lt;/th&gt;
+      &lt;td&gt;3&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;th rowspan=&quot;4&quot; valign=&quot;top&quot;&gt;Health and Entertainment&lt;/th&gt;
+      &lt;th&gt;beauty &amp;amp; health&lt;/th&gt;
+      &lt;td&gt;8&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;th&gt;music&lt;/th&gt;
+      &lt;td&gt;1&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;th&gt;sports &amp;amp; fitness&lt;/th&gt;
+      &lt;td&gt;12&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;th&gt;tv, audio &amp;amp; cameras&lt;/th&gt;
+      &lt;td&gt;9&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;th rowspan=&quot;4&quot; valign=&quot;top&quot;&gt;Home and Lifestyle&lt;/th&gt;
+      &lt;th&gt;appliances&lt;/th&gt;
+      &lt;td&gt;6&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;th&gt;home &amp;amp; kitchen&lt;/th&gt;
+      &lt;td&gt;12&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;th&gt;home, kitchen, pets&lt;/th&gt;
+      &lt;td&gt;1&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;th&gt;pet supplies&lt;/th&gt;
+      &lt;td&gt;2&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;/div&gt;&lt;br&gt;&lt;label&gt;&lt;b&gt;dtype:&lt;/b&gt; int64&lt;/label&gt;
+&lt;pre class=&quot;language-python&quot; tabindex=&quot;0&quot;&gt;&lt;code class=&quot;language-python&quot;&gt;N_SAMPLES &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;token number&quot;&gt;100&lt;/span&gt;
+df &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; combined_df&lt;span class=&quot;token punctuation&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot;name&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;1st_level_category&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;2nd_level_category&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;3rd_level_category&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;]&lt;/span&gt;
+df &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; df&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;sample&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;N_SAMPLES&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+df&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;head&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+  &lt;div id=&quot;df-e3aa984c-6ff7-418d-9e3e-d33c59c6ca2d&quot; class=&quot;colab-df-container&quot;&gt;
+    &lt;div&gt;
+&lt;style scoped=&quot;&quot;&gt;
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+&lt;p&gt;.dataframe tbody tr th {
+vertical-align: top;
+}&lt;/p&gt;
+&lt;p&gt;.dataframe thead th {
+text-align: right;
+}
+&lt;/style&gt;&lt;p&gt;&lt;/p&gt;
+&lt;table border=&quot;1&quot; class=&quot;dataframe&quot;&gt;
+  &lt;thead&gt;
+    &lt;tr style=&quot;text-align: right;&quot;&gt;
+      &lt;th&gt;&lt;/th&gt;
+      &lt;th&gt;name&lt;/th&gt;
+      &lt;th&gt;1st_level_category&lt;/th&gt;
+      &lt;th&gt;2nd_level_category&lt;/th&gt;
+      &lt;th&gt;3rd_level_category&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;th&gt;728311&lt;/th&gt;
+      &lt;td&gt;Metro Womens Synthetic Antic Gold Slip Ons (Si...&lt;/td&gt;
+      &lt;td&gt;Fashion and Accessories&lt;/td&gt;
+      &lt;td&gt;women&#39;s shoes&lt;/td&gt;
+      &lt;td&gt;Fashion Sandals&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;th&gt;123190&lt;/th&gt;
+      &lt;td&gt;Beingelegant - Pack of 100 Women&#39;s Organza Net...&lt;/td&gt;
+      &lt;td&gt;Fashion and Accessories&lt;/td&gt;
+      &lt;td&gt;accessories&lt;/td&gt;
+      &lt;td&gt;Bags &amp;amp; Luggage&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;th&gt;772828&lt;/th&gt;
+      &lt;td&gt;Wolven Handcrafted Men&#39;s Termoli Black Burnish...&lt;/td&gt;
+      &lt;td&gt;Fashion and Accessories&lt;/td&gt;
+      &lt;td&gt;men&#39;s shoes&lt;/td&gt;
+      &lt;td&gt;Formal Shoes&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;th&gt;979017&lt;/th&gt;
+      &lt;td&gt;GROOT Party Wedding Analog Black Color Dial Me...&lt;/td&gt;
+      &lt;td&gt;Fashion and Accessories&lt;/td&gt;
+      &lt;td&gt;accessories&lt;/td&gt;
+      &lt;td&gt;Watches&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;th&gt;295506&lt;/th&gt;
+      &lt;td&gt;Happy Cultures Girls and Women Handmade Croche...&lt;/td&gt;
+      &lt;td&gt;Fashion and Accessories&lt;/td&gt;
+      &lt;td&gt;accessories&lt;/td&gt;
+      &lt;td&gt;Handbags &amp;amp; Clutches&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;/div&gt;
+    &lt;div class=&quot;colab-df-buttons&quot;&gt;
+  &lt;div class=&quot;colab-df-container&quot;&gt;
+    &lt;button class=&quot;colab-df-convert&quot; onclick=&quot;convertToInteractive(&#39;df-e3aa984c-6ff7-418d-9e3e-d33c59c6ca2d&#39;)&quot; title=&quot;Convert this dataframe to an interactive table.&quot; style=&quot;display:none;&quot;&gt;
+  &lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot; height=&quot;24px&quot; viewBox=&quot;0 -960 960 960&quot;&gt;
+    &lt;path d=&quot;M120-120v-720h720v720H120Zm60-500h600v-160H180v160Zm220 220h160v-160H400v160Zm0 220h160v-160H400v160ZM180-400h160v-160H180v160Zm440 0h160v-160H620v160ZM180-180h160v-160H180v160Zm440 0h160v-160H620v160Z&quot;&gt;&lt;/path&gt;
+  &lt;/svg&gt;
+    &lt;/button&gt;
+  &lt;style&gt;
+    .colab-df-container {
+      display:flex;
+      gap: 12px;
+    }
+
+    .colab-df-convert {
+      background-color: #E8F0FE;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      display: none;
+      fill: #1967D2;
+      height: 32px;
+      padding: 0 0 0 0;
+      width: 32px;
+    }
+
+    .colab-df-convert:hover {
+      background-color: #E2EBFA;
+      box-shadow: 0px 1px 2px rgba(60, 64, 67, 0.3), 0px 1px 3px 1px rgba(60, 64, 67, 0.15);
+      fill: #174EA6;
+    }
+
+    .colab-df-buttons div {
+      margin-bottom: 4px;
+    }
+
+    [theme=dark] .colab-df-convert {
+      background-color: #3B4455;
+      fill: #D2E3FC;
+    }
+
+    [theme=dark] .colab-df-convert:hover {
+      background-color: #434B5C;
+      box-shadow: 0px 1px 3px 1px rgba(0, 0, 0, 0.15);
+      filter: drop-shadow(0px 1px 2px rgba(0, 0, 0, 0.3));
+      fill: #FFFFFF;
+    }
+  &lt;/style&gt;
+&lt;p&gt;&lt;script&gt;
+const buttonEl =
+document.querySelector(&#39;#df-e3aa984c-6ff7-418d-9e3e-d33c59c6ca2d button.colab-df-convert&#39;);
+buttonEl.style.display =
+google.colab.kernel.accessAllowed ? &#39;block&#39; : &#39;none&#39;;&lt;/p&gt;
+&lt;p&gt;async function convertToInteractive(key) {
+const element = document.querySelector(&#39;#df-e3aa984c-6ff7-418d-9e3e-d33c59c6ca2d&#39;);
+const dataTable =
+await google.colab.kernel.invokeFunction(&#39;convertToInteractive&#39;,
+[key], {});
+if (!dataTable) return;&lt;/p&gt;
+&lt;p&gt;const docLinkHtml = &#39;Like what you see? Visit the &#39; +
+&#39;&lt;a target=&quot;_blank&quot; href=https://colab.research.google.com/notebooks/data_table.ipynb&gt;data table notebook&lt;/a&gt;&#39;
++ &#39; to learn more about interactive tables.&#39;;
+element.innerHTML = &#39;&#39;;
+dataTable[&#39;output_type&#39;] = &#39;display_data&#39;;
+await google.colab.output.renderOutput(dataTable, element);
+const docLink = document.createElement(&#39;div&#39;);
+docLink.innerHTML = docLinkHtml;
+element.appendChild(docLink);
+}
+&lt;/script&gt;&lt;/p&gt;
+  &lt;/div&gt;
+&lt;div id=&quot;df-f3c06226-a7bf-4d60-8a6c-c2d7f8da4da1&quot;&gt;
+  &lt;button class=&quot;colab-df-quickchart&quot; onclick=&quot;quickchart(&#39;df-f3c06226-a7bf-4d60-8a6c-c2d7f8da4da1&#39;)&quot; title=&quot;Suggest charts&quot; style=&quot;display:none;&quot;&gt;
+&lt;p&gt;&amp;lt;svg xmlns=&amp;quot;http://www.w3.org/2000/svg&amp;quot; height=&amp;quot;24px&amp;quot;viewBox=&amp;quot;0 0 24 24&amp;quot;
+width=&amp;quot;24px&amp;quot;&amp;gt;
+&lt;g&gt;
+&lt;path d=&quot;M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z&quot;&gt;
+&lt;/path&gt;&lt;/g&gt;
+
+&lt;/p&gt;&lt;/button&gt;&lt;p&gt;&lt;/p&gt;
+&lt;style&gt;
+  .colab-df-quickchart {
+      --bg-color: #E8F0FE;
+      --fill-color: #1967D2;
+      --hover-bg-color: #E2EBFA;
+      --hover-fill-color: #174EA6;
+      --disabled-fill-color: #AAA;
+      --disabled-bg-color: #DDD;
+  }
+
+  [theme=dark] .colab-df-quickchart {
+      --bg-color: #3B4455;
+      --fill-color: #D2E3FC;
+      --hover-bg-color: #434B5C;
+      --hover-fill-color: #FFFFFF;
+      --disabled-bg-color: #3B4455;
+      --disabled-fill-color: #666;
+  }
+
+  .colab-df-quickchart {
+    background-color: var(--bg-color);
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    display: none;
+    fill: var(--fill-color);
+    height: 32px;
+    padding: 0;
+    width: 32px;
+  }
+
+  .colab-df-quickchart:hover {
+    background-color: var(--hover-bg-color);
+    box-shadow: 0 1px 2px rgba(60, 64, 67, 0.3), 0 1px 3px 1px rgba(60, 64, 67, 0.15);
+    fill: var(--button-hover-fill-color);
+  }
+
+  .colab-df-quickchart-complete:disabled,
+  .colab-df-quickchart-complete:disabled:hover {
+    background-color: var(--disabled-bg-color);
+    fill: var(--disabled-fill-color);
+    box-shadow: none;
+  }
+
+  .colab-df-spinner {
+    border: 2px solid var(--fill-color);
+    border-color: transparent;
+    border-bottom-color: var(--fill-color);
+    animation:
+      spin 1s steps(1) infinite;
+  }
+
+  @keyframes spin {
+    0% {
+      border-color: transparent;
+      border-bottom-color: var(--fill-color);
+      border-left-color: var(--fill-color);
+    }
+    20% {
+      border-color: transparent;
+      border-left-color: var(--fill-color);
+      border-top-color: var(--fill-color);
+    }
+    30% {
+      border-color: transparent;
+      border-left-color: var(--fill-color);
+      border-top-color: var(--fill-color);
+      border-right-color: var(--fill-color);
+    }
+    40% {
+      border-color: transparent;
+      border-right-color: var(--fill-color);
+      border-top-color: var(--fill-color);
+    }
+    60% {
+      border-color: transparent;
+      border-right-color: var(--fill-color);
+    }
+    80% {
+      border-color: transparent;
+      border-right-color: var(--fill-color);
+      border-bottom-color: var(--fill-color);
+    }
+    90% {
+      border-color: transparent;
+      border-bottom-color: var(--fill-color);
+    }
+  }
+&lt;/style&gt;
+  &lt;script&gt;
+    async function quickchart(key) {
+      const quickchartButtonEl =
+        document.querySelector(&#39;#&#39; + key + &#39; button&#39;);
+      quickchartButtonEl.disabled = true;  // To prevent multiple clicks.
+      quickchartButtonEl.classList.add(&#39;colab-df-spinner&#39;);
+      try {
+        const charts = await google.colab.kernel.invokeFunction(
+            &#39;suggestCharts&#39;, [key], {});
+      } catch (error) {
+        console.error(&#39;Error during call to suggestCharts:&#39;, error);
+      }
+      quickchartButtonEl.classList.remove(&#39;colab-df-spinner&#39;);
+      quickchartButtonEl.classList.add(&#39;colab-df-quickchart-complete&#39;);
+    }
+    (() =&gt; {
+      let quickchartButtonEl =
+        document.querySelector(&#39;#df-f3c06226-a7bf-4d60-8a6c-c2d7f8da4da1 button&#39;);
+      quickchartButtonEl.style.display =
+        google.colab.kernel.accessAllowed ? &#39;block&#39; : &#39;none&#39;;
+    })();
+  &lt;/script&gt;
+&lt;/div&gt;
+&lt;p&gt;&lt;/p&gt;&lt;/div&gt;&lt;p&gt;&lt;/p&gt;
+  &lt;/div&gt;
+&lt;p&gt;So now, we have a nice dataset with three levels of hierarchy.&lt;/p&gt;
+&lt;p&gt;For this experiment, I won&#39;t focus on text processing, but I believe that it could be beneficial for future improvements.&lt;/p&gt;
+&lt;p&gt;There are two main choices we need to make for this task:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;How do we vectorize (embed) the item names?&lt;/strong&gt;
+Should we use simple vectorizers like TF-IDF or more advanced embeddings like BERT (maybe compare multiple BERT models)? The choice of embedding can have a significant impact on the clustering quality.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;How do we evaluate?&lt;/strong&gt;&lt;br&gt;
+Do we stick to standard metrics like silhouette score or adjusted Rand index, or should we use tree-aware methods like Dasgupta&#39;s cost function to assess the full hierarchy?&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Actually, there are much more decisions to make, such as the right linkage method, parameters for the embedding method, etc, but we will stay lean in this article.&lt;/p&gt;
+&lt;h3 id=&quot;embeddings-generation&quot;&gt;Embeddings Generation&lt;/h3&gt;
+&lt;p&gt;For this experiment, I chose to use three simple embedding models:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;Bag of Words (BOW)&lt;/strong&gt; - a classic method that represents text by counting word occurrences.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;BERT&lt;/strong&gt; - specifically the &lt;a href=&quot;https://huggingface.co/sentence-transformers/paraphrase-MiniLM-L6-v2&quot;&gt;paraphrase-MiniLM-L6-v2&lt;/a&gt; model, which provides contextual embeddings that capture semantic meaning.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;TF-IDF&lt;/strong&gt; - a method that balances word frequency by down-weighting common words and up-weighting more informative ones.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre class=&quot;language-python&quot; tabindex=&quot;0&quot;&gt;&lt;code class=&quot;language-python&quot;&gt;bert_model &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; SentenceTransformer&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&#39;paraphrase-MiniLM-L6-v2&#39;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+bert_model&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;to&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;device&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;token keyword&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;token function&quot;&gt;generate_embeddings&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;texts&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; method&lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot;tf-idf&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; vectorizer_params&lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;token boolean&quot;&gt;None&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
+    vectorizer_params &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; vectorizer_params &lt;span class=&quot;token keyword&quot;&gt;or&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;}&lt;/span&gt;
+
+    &lt;span class=&quot;token keyword&quot;&gt;if&lt;/span&gt; method &lt;span class=&quot;token operator&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;n-gram&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
+        vectorizer &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; CountVectorizer&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token operator&quot;&gt;**&lt;/span&gt;vectorizer_params&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+        embeddings &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; vectorizer&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;fit_transform&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;texts&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;toarray&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+
+    &lt;span class=&quot;token keyword&quot;&gt;elif&lt;/span&gt; method &lt;span class=&quot;token operator&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;tf-idf&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
+        vectorizer &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; TfidfVectorizer&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token operator&quot;&gt;**&lt;/span&gt;vectorizer_params&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+        embeddings &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; vectorizer&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;fit_transform&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;texts&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;toarray&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+
+    &lt;span class=&quot;token keyword&quot;&gt;elif&lt;/span&gt; method &lt;span class=&quot;token operator&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;bert&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
+        torch&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;cuda&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;empty_cache&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+        embeddings &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; bert_model&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;encode&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;texts&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; show_progress_bar&lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;token boolean&quot;&gt;False&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; device&lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt;device&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+
+
+    &lt;span class=&quot;token keyword&quot;&gt;else&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
+        &lt;span class=&quot;token keyword&quot;&gt;raise&lt;/span&gt; ValueError&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot;Invalid method. Choose from &#39;n-gram&#39;, &#39;tf-idf&#39;, &#39;bert&#39;.&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+
+    &lt;span class=&quot;token keyword&quot;&gt;return&lt;/span&gt; embeddings
+
+vectorizer_params &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot;ngram_range&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token number&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;token number&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;max_features&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;token number&quot;&gt;1000&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;analyzer&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot;word&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;}&lt;/span&gt;
+embeddings &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; generate_embeddings&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;df&lt;span class=&quot;token punctuation&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot;name&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;to_list&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; method&lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot;n-gram&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; vectorizer_params&lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt;vectorizer_params&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;h3 id=&quot;hierarchical-clustering&quot;&gt;Hierarchical clustering&lt;/h3&gt;
+&lt;pre class=&quot;language-python&quot; tabindex=&quot;0&quot;&gt;&lt;code class=&quot;language-python&quot;&gt;&lt;span class=&quot;token keyword&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;token function&quot;&gt;perform_hierarchical_clustering&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;embeddings&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; method&lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot;ward&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;token keyword&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;token keyword&quot;&gt;not&lt;/span&gt; &lt;span class=&quot;token builtin&quot;&gt;isinstance&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;embeddings&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; np&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;ndarray&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
+        &lt;span class=&quot;token keyword&quot;&gt;raise&lt;/span&gt; ValueError&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot;Embeddings must be a NumPy array.&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+
+    linkage_matrix &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; linkage&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;embeddings&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; method&lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt;method&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;token keyword&quot;&gt;return&lt;/span&gt; linkage_matrix
+
+&lt;span class=&quot;token keyword&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;token function&quot;&gt;generate_predictions&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;embeddings&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; method&lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot;hierarchical&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; num_clusters&lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;token number&quot;&gt;20&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; linkage_matrix&lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;token boolean&quot;&gt;None&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;token keyword&quot;&gt;if&lt;/span&gt; method &lt;span class=&quot;token operator&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;kmeans&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
+        kmeans &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; KMeans&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;n_clusters&lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt;num_clusters&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; random_state&lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;token number&quot;&gt;42&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+        labels &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; kmeans&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;fit_predict&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;embeddings&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+
+    &lt;span class=&quot;token keyword&quot;&gt;elif&lt;/span&gt; method &lt;span class=&quot;token operator&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;hierarchical&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
+        &lt;span class=&quot;token keyword&quot;&gt;if&lt;/span&gt; linkage_matrix &lt;span class=&quot;token keyword&quot;&gt;is&lt;/span&gt; &lt;span class=&quot;token boolean&quot;&gt;None&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
+            &lt;span class=&quot;token keyword&quot;&gt;raise&lt;/span&gt; ValueError&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot;Linkage matrix must be provided for hierarchical clustering.&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+        labels &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; fcluster&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;linkage_matrix&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt;num_clusters&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt;  criterion&lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&#39;maxclust&#39;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+
+    &lt;span class=&quot;token keyword&quot;&gt;else&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
+        &lt;span class=&quot;token keyword&quot;&gt;raise&lt;/span&gt; ValueError&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot;Invalid method. Choose from &#39;kmeans&#39; or &#39;hierarchical&#39;.&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+
+    &lt;span class=&quot;token keyword&quot;&gt;return&lt;/span&gt; labels&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;astype&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token builtin&quot;&gt;int&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3 id=&quot;evaluation&quot;&gt;Evaluation&lt;/h3&gt;
+&lt;h4 id=&quot;classical-unsupervised-clustering-evaluation&quot;&gt;Classical unsupervised clustering evaluation&lt;/h4&gt;
+&lt;pre class=&quot;language-python&quot; tabindex=&quot;0&quot;&gt;&lt;code class=&quot;language-python&quot;&gt;&lt;span class=&quot;token keyword&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;token function&quot;&gt;clustering_accuracy&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;y_true&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; y_pred&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
+    cm &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; confusion_matrix&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;y_true&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; y_pred&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+    row_ind&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; col_ind &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; linear_sum_assignment&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token operator&quot;&gt;-&lt;/span&gt;cm&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+    total_correct &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; cm&lt;span class=&quot;token punctuation&quot;&gt;[&lt;/span&gt;row_ind&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; col_ind&lt;span class=&quot;token punctuation&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;token builtin&quot;&gt;sum&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+    total_samples &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; cm&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;token builtin&quot;&gt;sum&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+    accuracy &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; total_correct &lt;span class=&quot;token operator&quot;&gt;/&lt;/span&gt; total_samples
+
+    &lt;span class=&quot;token keyword&quot;&gt;return&lt;/span&gt; accuracy
+
+&lt;span class=&quot;token keyword&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;token function&quot;&gt;evaluate_flat_clustering&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;embeddings&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; labels_true&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; labels_pred&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; metric&lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot;silhouette&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;token keyword&quot;&gt;if&lt;/span&gt; metric &lt;span class=&quot;token operator&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;silhouette&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
+        score &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; silhouette_score&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;embeddings&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; labels_true&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;token keyword&quot;&gt;elif&lt;/span&gt; metric &lt;span class=&quot;token operator&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;adjusted_rand&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
+        &lt;span class=&quot;token comment&quot;&gt;#Requires ground truth labels for adjusted_rand_score&lt;/span&gt;
+        &lt;span class=&quot;token keyword&quot;&gt;if&lt;/span&gt; labels_true &lt;span class=&quot;token keyword&quot;&gt;is&lt;/span&gt; &lt;span class=&quot;token boolean&quot;&gt;None&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
+            &lt;span class=&quot;token keyword&quot;&gt;raise&lt;/span&gt; ValueError&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot;Adjusted Rand Index requires ground truth labels.&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+        score &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; adjusted_rand_score&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;labels_true&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; labels_pred&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;token keyword&quot;&gt;elif&lt;/span&gt; metric &lt;span class=&quot;token operator&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;clustering_accuracy&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
+        score &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; clustering_accuracy&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;labels_true&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; labels_pred&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;token keyword&quot;&gt;else&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
+        &lt;span class=&quot;token keyword&quot;&gt;raise&lt;/span&gt; ValueError&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot;Invalid metric. Choose from &#39;silhouette&#39;, &#39;adjusted_rand&#39;.&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+
+    &lt;span class=&quot;token keyword&quot;&gt;return&lt;/span&gt; score&lt;/code&gt;&lt;/pre&gt;
+&lt;h4 id=&quot;dasgupta-objective&quot;&gt;Dasgupta Objective&lt;/h4&gt;
+&lt;p&gt;For the Dasgupta objective, we need a linkage method and a similarity matrix between different items.&lt;/p&gt;
+&lt;p&gt;This similarity matrix can be constructed in various ways. For this experiment, I decided to build it as follows:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Items in the lowest level of the hierarchy get 1 point.&lt;/li&gt;
+&lt;li&gt;Items in the middle level get 0.5 points.&lt;/li&gt;
+&lt;li&gt;Items in the highest level get 0.25 points.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;This scoring reflects the idea that closely related items (at the lowest level) should have a higher similarity score than those grouped at broader levels.&lt;/p&gt;
+&lt;p&gt;To better visualize this, here&#39;s the heatmap for the similarity matrix of the first 10 items:&lt;/p&gt;
+&lt;pre class=&quot;language-python&quot; tabindex=&quot;0&quot;&gt;&lt;code class=&quot;language-python&quot;&gt;&lt;span class=&quot;token keyword&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;token function&quot;&gt;create_adjacency_matrix&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;df&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;token keyword&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;token keyword&quot;&gt;not&lt;/span&gt; &lt;span class=&quot;token builtin&quot;&gt;all&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;col &lt;span class=&quot;token keyword&quot;&gt;in&lt;/span&gt; df&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;columns &lt;span class=&quot;token keyword&quot;&gt;for&lt;/span&gt; col &lt;span class=&quot;token keyword&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&#39;1st_level_category&#39;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&#39;2nd_level_category&#39;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&#39;3rd_level_category&#39;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
+        &lt;span class=&quot;token keyword&quot;&gt;raise&lt;/span&gt; ValueError&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot;The DataFrame must contain &#39;1st_level_category&#39;, &#39;2nd_level_category&#39;, and &#39;3rd_level_category&#39; columns.&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+
+    n &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;token builtin&quot;&gt;len&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;df&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+    adjacency_matrix &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; np&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;zeros&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;n&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; n&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+
+    &lt;span class=&quot;token comment&quot;&gt;# Precompute category matches&lt;/span&gt;
+    third_level_match &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;df&lt;span class=&quot;token punctuation&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&#39;3rd_level_category&#39;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;values&lt;span class=&quot;token punctuation&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;token boolean&quot;&gt;None&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;token operator&quot;&gt;==&lt;/span&gt; df&lt;span class=&quot;token punctuation&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&#39;3rd_level_category&#39;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;values&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;astype&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token builtin&quot;&gt;float&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+    second_level_match &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;df&lt;span class=&quot;token punctuation&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&#39;2nd_level_category&#39;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;values&lt;span class=&quot;token punctuation&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;token boolean&quot;&gt;None&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;token operator&quot;&gt;==&lt;/span&gt; df&lt;span class=&quot;token punctuation&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&#39;2nd_level_category&#39;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;values&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;astype&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token builtin&quot;&gt;float&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+    first_level_match &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;df&lt;span class=&quot;token punctuation&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&#39;1st_level_category&#39;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;values&lt;span class=&quot;token punctuation&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;token boolean&quot;&gt;None&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;token operator&quot;&gt;==&lt;/span&gt; df&lt;span class=&quot;token punctuation&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&#39;1st_level_category&#39;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;values&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;astype&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token builtin&quot;&gt;float&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+
+    &lt;span class=&quot;token comment&quot;&gt;# Compute scores&lt;/span&gt;
+    adjacency_matrix &lt;span class=&quot;token operator&quot;&gt;+=&lt;/span&gt; third_level_match
+    adjacency_matrix &lt;span class=&quot;token operator&quot;&gt;+=&lt;/span&gt; &lt;span class=&quot;token number&quot;&gt;0.5&lt;/span&gt; &lt;span class=&quot;token operator&quot;&gt;*&lt;/span&gt; second_level_match
+    adjacency_matrix &lt;span class=&quot;token operator&quot;&gt;+=&lt;/span&gt; &lt;span class=&quot;token number&quot;&gt;0.25&lt;/span&gt; &lt;span class=&quot;token operator&quot;&gt;*&lt;/span&gt; first_level_match
+
+    np&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;fill_diagonal&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;adjacency_matrix&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;token number&quot;&gt;1.75&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;token keyword&quot;&gt;assert&lt;/span&gt; adjacency_matrix&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;shape &lt;span class=&quot;token operator&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;n&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; n&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;token keyword&quot;&gt;return&lt;/span&gt; adjacency_matrix
+
+adjacency_matrix &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; create_adjacency_matrix&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;df&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+fig &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; sns&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;heatmap&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;adjacency_matrix&lt;span class=&quot;token punctuation&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;token number&quot;&gt;10&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;token number&quot;&gt;10&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+plt&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;savefig&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token string-interpolation&quot;&gt;&lt;span class=&quot;token string&quot;&gt;f&quot;&lt;/span&gt;&lt;span class=&quot;token interpolation&quot;&gt;&lt;span class=&quot;token punctuation&quot;&gt;{&lt;/span&gt;FIGS_PATH&lt;span class=&quot;token punctuation&quot;&gt;}&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;/adj_mat.png&quot;&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; transparent&lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;token boolean&quot;&gt;True&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;picture&gt;&lt;source type=&quot;image/avif&quot; srcset=&quot;https://yonatanlou.github.io/blog/Evaluating-Hierarchical-Clustering/hierarchical-clustering-eval/nuhY2ExpUH-640.avif 640w&quot;&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://yonatanlou.github.io/blog/Evaluating-Hierarchical-Clustering/hierarchical-clustering-eval/nuhY2ExpUH-640.webp 640w&quot;&gt;&lt;img loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://yonatanlou.github.io/blog/Evaluating-Hierarchical-Clustering/hierarchical-clustering-eval/nuhY2ExpUH-640.png&quot; alt=&quot;png&quot; width=&quot;640&quot; height=&quot;480&quot;&gt;&lt;/picture&gt;&lt;/p&gt;
+&lt;pre class=&quot;language-python&quot; tabindex=&quot;0&quot;&gt;&lt;code class=&quot;language-python&quot;&gt;df&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;reset_index&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;drop&lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;token boolean&quot;&gt;True&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;head&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token number&quot;&gt;10&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+  &lt;div id=&quot;df-9ddc9fa2-05ea-45f8-ae6d-5235f9435ee4&quot; class=&quot;colab-df-container&quot;&gt;
+    &lt;div&gt;
+&lt;style scoped=&quot;&quot;&gt;
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+&lt;p&gt;.dataframe tbody tr th {
+vertical-align: top;
+}&lt;/p&gt;
+&lt;p&gt;.dataframe thead th {
+text-align: right;
+}
+&lt;/style&gt;&lt;p&gt;&lt;/p&gt;
+&lt;table border=&quot;1&quot; class=&quot;dataframe&quot;&gt;
+  &lt;thead&gt;
+    &lt;tr style=&quot;text-align: right;&quot;&gt;
+      &lt;th&gt;&lt;/th&gt;
+      &lt;th&gt;name&lt;/th&gt;
+      &lt;th&gt;1st_level_category&lt;/th&gt;
+      &lt;th&gt;2nd_level_category&lt;/th&gt;
+      &lt;th&gt;3rd_level_category&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;th&gt;0&lt;/th&gt;
+      &lt;td&gt;Metro Womens Synthetic Antic Gold Slip Ons (Si...&lt;/td&gt;
+      &lt;td&gt;Fashion and Accessories&lt;/td&gt;
+      &lt;td&gt;women&#39;s shoes&lt;/td&gt;
+      &lt;td&gt;Fashion Sandals&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;th&gt;1&lt;/th&gt;
+      &lt;td&gt;Beingelegant - Pack of 100 Women&#39;s Organza Net...&lt;/td&gt;
+      &lt;td&gt;Fashion and Accessories&lt;/td&gt;
+      &lt;td&gt;accessories&lt;/td&gt;
+      &lt;td&gt;Bags &amp;amp; Luggage&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;th&gt;2&lt;/th&gt;
+      &lt;td&gt;Wolven Handcrafted Men&#39;s Termoli Black Burnish...&lt;/td&gt;
+      &lt;td&gt;Fashion and Accessories&lt;/td&gt;
+      &lt;td&gt;men&#39;s shoes&lt;/td&gt;
+      &lt;td&gt;Formal Shoes&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;th&gt;3&lt;/th&gt;
+      &lt;td&gt;GROOT Party Wedding Analog Black Color Dial Me...&lt;/td&gt;
+      &lt;td&gt;Fashion and Accessories&lt;/td&gt;
+      &lt;td&gt;accessories&lt;/td&gt;
+      &lt;td&gt;Watches&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;th&gt;4&lt;/th&gt;
+      &lt;td&gt;Happy Cultures Girls and Women Handmade Croche...&lt;/td&gt;
+      &lt;td&gt;Fashion and Accessories&lt;/td&gt;
+      &lt;td&gt;accessories&lt;/td&gt;
+      &lt;td&gt;Handbags &amp;amp; Clutches&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;th&gt;5&lt;/th&gt;
+      &lt;td&gt;ZOUK Women&#39;s Handcrafted Ikat Shoulder Tote Ba...&lt;/td&gt;
+      &lt;td&gt;Fashion and Accessories&lt;/td&gt;
+      &lt;td&gt;accessories&lt;/td&gt;
+      &lt;td&gt;Handbags &amp;amp; Clutches&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;th&gt;6&lt;/th&gt;
+      &lt;td&gt;NEUTRON Present Analog Orange and Blue Color D...&lt;/td&gt;
+      &lt;td&gt;Fashion and Accessories&lt;/td&gt;
+      &lt;td&gt;accessories&lt;/td&gt;
+      &lt;td&gt;Watches&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;th&gt;7&lt;/th&gt;
+      &lt;td&gt;PC Jeweller The Giancarlo 18KT White Gold and ...&lt;/td&gt;
+      &lt;td&gt;Fashion and Accessories&lt;/td&gt;
+      &lt;td&gt;accessories&lt;/td&gt;
+      &lt;td&gt;Gold &amp;amp; Diamond Jewellery&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;th&gt;8&lt;/th&gt;
+      &lt;td&gt;Blue/Black Light wash 5-Pocket Slim Fit high-R...&lt;/td&gt;
+      &lt;td&gt;Fashion and Accessories&lt;/td&gt;
+      &lt;td&gt;men&#39;s clothing&lt;/td&gt;
+      &lt;td&gt;Jeans&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;th&gt;9&lt;/th&gt;
+      &lt;td&gt;KBNBJ Women&#39;s Pure Cotton Regular Nighty&lt;/td&gt;
+      &lt;td&gt;Fashion and Accessories&lt;/td&gt;
+      &lt;td&gt;women&#39;s clothing&lt;/td&gt;
+      &lt;td&gt;Lingerie &amp;amp; Nightwear&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;/div&gt;
+    &lt;div class=&quot;colab-df-buttons&quot;&gt;
+  &lt;div class=&quot;colab-df-container&quot;&gt;
+    &lt;button class=&quot;colab-df-convert&quot; onclick=&quot;convertToInteractive(&#39;df-9ddc9fa2-05ea-45f8-ae6d-5235f9435ee4&#39;)&quot; title=&quot;Convert this dataframe to an interactive table.&quot; style=&quot;display:none;&quot;&gt;
+  &lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot; height=&quot;24px&quot; viewBox=&quot;0 -960 960 960&quot;&gt;
+    &lt;path d=&quot;M120-120v-720h720v720H120Zm60-500h600v-160H180v160Zm220 220h160v-160H400v160Zm0 220h160v-160H400v160ZM180-400h160v-160H180v160Zm440 0h160v-160H620v160ZM180-180h160v-160H180v160Zm440 0h160v-160H620v160Z&quot;&gt;&lt;/path&gt;
+  &lt;/svg&gt;
+    &lt;/button&gt;
+  &lt;style&gt;
+    .colab-df-container {
+      display:flex;
+      gap: 12px;
+    }
+
+    .colab-df-convert {
+      background-color: #E8F0FE;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      display: none;
+      fill: #1967D2;
+      height: 32px;
+      padding: 0 0 0 0;
+      width: 32px;
+    }
+
+    .colab-df-convert:hover {
+      background-color: #E2EBFA;
+      box-shadow: 0px 1px 2px rgba(60, 64, 67, 0.3), 0px 1px 3px 1px rgba(60, 64, 67, 0.15);
+      fill: #174EA6;
+    }
+
+    .colab-df-buttons div {
+      margin-bottom: 4px;
+    }
+
+    [theme=dark] .colab-df-convert {
+      background-color: #3B4455;
+      fill: #D2E3FC;
+    }
+
+    [theme=dark] .colab-df-convert:hover {
+      background-color: #434B5C;
+      box-shadow: 0px 1px 3px 1px rgba(0, 0, 0, 0.15);
+      filter: drop-shadow(0px 1px 2px rgba(0, 0, 0, 0.3));
+      fill: #FFFFFF;
+    }
+  &lt;/style&gt;
+&lt;p&gt;&lt;script&gt;
+const buttonEl =
+document.querySelector(&#39;#df-9ddc9fa2-05ea-45f8-ae6d-5235f9435ee4 button.colab-df-convert&#39;);
+buttonEl.style.display =
+google.colab.kernel.accessAllowed ? &#39;block&#39; : &#39;none&#39;;&lt;/p&gt;
+&lt;p&gt;async function convertToInteractive(key) {
+const element = document.querySelector(&#39;#df-9ddc9fa2-05ea-45f8-ae6d-5235f9435ee4&#39;);
+const dataTable =
+await google.colab.kernel.invokeFunction(&#39;convertToInteractive&#39;,
+[key], {});
+if (!dataTable) return;&lt;/p&gt;
+&lt;p&gt;const docLinkHtml = &#39;Like what you see? Visit the &#39; +
+&#39;&lt;a target=&quot;_blank&quot; href=https://colab.research.google.com/notebooks/data_table.ipynb&gt;data table notebook&lt;/a&gt;&#39;
++ &#39; to learn more about interactive tables.&#39;;
+element.innerHTML = &#39;&#39;;
+dataTable[&#39;output_type&#39;] = &#39;display_data&#39;;
+await google.colab.output.renderOutput(dataTable, element);
+const docLink = document.createElement(&#39;div&#39;);
+docLink.innerHTML = docLinkHtml;
+element.appendChild(docLink);
+}
+&lt;/script&gt;&lt;/p&gt;
+  &lt;/div&gt;
+&lt;div id=&quot;df-536a2b15-29d9-4f9e-8b8f-0ded85f1a798&quot;&gt;
+  &lt;button class=&quot;colab-df-quickchart&quot; onclick=&quot;quickchart(&#39;df-536a2b15-29d9-4f9e-8b8f-0ded85f1a798&#39;)&quot; title=&quot;Suggest charts&quot; style=&quot;display:none;&quot;&gt;
+&lt;p&gt;&amp;lt;svg xmlns=&amp;quot;http://www.w3.org/2000/svg&amp;quot; height=&amp;quot;24px&amp;quot;viewBox=&amp;quot;0 0 24 24&amp;quot;
+width=&amp;quot;24px&amp;quot;&amp;gt;
+&lt;g&gt;
+&lt;path d=&quot;M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z&quot;&gt;
+&lt;/path&gt;&lt;/g&gt;
+
+&lt;/p&gt;&lt;/button&gt;&lt;p&gt;&lt;/p&gt;
+&lt;style&gt;
+  .colab-df-quickchart {
+      --bg-color: #E8F0FE;
+      --fill-color: #1967D2;
+      --hover-bg-color: #E2EBFA;
+      --hover-fill-color: #174EA6;
+      --disabled-fill-color: #AAA;
+      --disabled-bg-color: #DDD;
+  }
+
+  [theme=dark] .colab-df-quickchart {
+      --bg-color: #3B4455;
+      --fill-color: #D2E3FC;
+      --hover-bg-color: #434B5C;
+      --hover-fill-color: #FFFFFF;
+      --disabled-bg-color: #3B4455;
+      --disabled-fill-color: #666;
+  }
+
+  .colab-df-quickchart {
+    background-color: var(--bg-color);
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    display: none;
+    fill: var(--fill-color);
+    height: 32px;
+    padding: 0;
+    width: 32px;
+  }
+
+  .colab-df-quickchart:hover {
+    background-color: var(--hover-bg-color);
+    box-shadow: 0 1px 2px rgba(60, 64, 67, 0.3), 0 1px 3px 1px rgba(60, 64, 67, 0.15);
+    fill: var(--button-hover-fill-color);
+  }
+
+  .colab-df-quickchart-complete:disabled,
+  .colab-df-quickchart-complete:disabled:hover {
+    background-color: var(--disabled-bg-color);
+    fill: var(--disabled-fill-color);
+    box-shadow: none;
+  }
+
+  .colab-df-spinner {
+    border: 2px solid var(--fill-color);
+    border-color: transparent;
+    border-bottom-color: var(--fill-color);
+    animation:
+      spin 1s steps(1) infinite;
+  }
+
+  @keyframes spin {
+    0% {
+      border-color: transparent;
+      border-bottom-color: var(--fill-color);
+      border-left-color: var(--fill-color);
+    }
+    20% {
+      border-color: transparent;
+      border-left-color: var(--fill-color);
+      border-top-color: var(--fill-color);
+    }
+    30% {
+      border-color: transparent;
+      border-left-color: var(--fill-color);
+      border-top-color: var(--fill-color);
+      border-right-color: var(--fill-color);
+    }
+    40% {
+      border-color: transparent;
+      border-right-color: var(--fill-color);
+      border-top-color: var(--fill-color);
+    }
+    60% {
+      border-color: transparent;
+      border-right-color: var(--fill-color);
+    }
+    80% {
+      border-color: transparent;
+      border-right-color: var(--fill-color);
+      border-bottom-color: var(--fill-color);
+    }
+    90% {
+      border-color: transparent;
+      border-bottom-color: var(--fill-color);
+    }
+  }
+&lt;/style&gt;
+  &lt;script&gt;
+    async function quickchart(key) {
+      const quickchartButtonEl =
+        document.querySelector(&#39;#&#39; + key + &#39; button&#39;);
+      quickchartButtonEl.disabled = true;  // To prevent multiple clicks.
+      quickchartButtonEl.classList.add(&#39;colab-df-spinner&#39;);
+      try {
+        const charts = await google.colab.kernel.invokeFunction(
+            &#39;suggestCharts&#39;, [key], {});
+      } catch (error) {
+        console.error(&#39;Error during call to suggestCharts:&#39;, error);
+      }
+      quickchartButtonEl.classList.remove(&#39;colab-df-spinner&#39;);
+      quickchartButtonEl.classList.add(&#39;colab-df-quickchart-complete&#39;);
+    }
+    (() =&gt; {
+      let quickchartButtonEl =
+        document.querySelector(&#39;#df-536a2b15-29d9-4f9e-8b8f-0ded85f1a798 button&#39;);
+      quickchartButtonEl.style.display =
+        google.colab.kernel.accessAllowed ? &#39;block&#39; : &#39;none&#39;;
+    })();
+  &lt;/script&gt;
+&lt;/div&gt;
+&lt;p&gt;&lt;/p&gt;&lt;/div&gt;&lt;p&gt;&lt;/p&gt;
+  &lt;/div&gt;
+&lt;p&gt;We can see that some of the items share exactly the same clusters across all levels of the hierarchy. These items receive the maximum score of 1.&lt;/p&gt;
+&lt;p&gt;Some items differ in only one or two levels, resulting in intermediate scores like 0.5 or 0.25.&lt;/p&gt;
+&lt;p&gt;Finally, there are pairs of items that have nothing in common across all levels, so their similarity score is 0.&lt;/p&gt;
+&lt;h4 id=&quot;comparison&quot;&gt;Comparison&lt;/h4&gt;
+&lt;p&gt;Let&#39;s compare the different embedding models by analyzing their dendrograms and the corresponding scores we calculated.&lt;/p&gt;
+&lt;pre class=&quot;language-python&quot; tabindex=&quot;0&quot;&gt;&lt;code class=&quot;language-python&quot;&gt;&lt;span class=&quot;token keyword&quot;&gt;from&lt;/span&gt; scipy&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;cluster&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;hierarchy &lt;span class=&quot;token keyword&quot;&gt;import&lt;/span&gt; cophenet
+&lt;span class=&quot;token keyword&quot;&gt;from&lt;/span&gt; scipy&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;spatial&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;distance &lt;span class=&quot;token keyword&quot;&gt;import&lt;/span&gt; pdist
+&lt;span class=&quot;token keyword&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;token function&quot;&gt;evaluate_clustering&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;df&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; vectorizer&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; vectorizer_params&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; level_for_eval&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
+
+  embeddings &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; generate_embeddings&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;df&lt;span class=&quot;token punctuation&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot;name&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;to_list&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; method&lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt;vectorizer&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; vectorizer_params&lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt;vectorizer_params&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+  linkage_matrix &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; perform_hierarchical_clustering&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;embeddings&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; method&lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot;ward&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+  pred_labels &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; generate_predictions&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;embeddings&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; method&lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot;hierarchical&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt;
+                                      num_clusters&lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt;df&lt;span class=&quot;token punctuation&quot;&gt;[&lt;/span&gt;level_for_eval&lt;span class=&quot;token punctuation&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;nunique&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt;
+                                      linkage_matrix&lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt;linkage_matrix&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+
+  le &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; LabelEncoder&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+  true_labels &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; le&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;fit_transform&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;df&lt;span class=&quot;token punctuation&quot;&gt;[&lt;/span&gt;level_for_eval&lt;span class=&quot;token punctuation&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;to_list&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+
+  silhouette &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; evaluate_flat_clustering&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;embeddings&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; true_labels&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; pred_labels&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; metric&lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot;silhouette&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+  clustering_accuracy_score &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; evaluate_flat_clustering&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;embeddings&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; true_labels&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; pred_labels&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; metric&lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot;clustering_accuracy&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+  ari &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; evaluate_flat_clustering&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;embeddings&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; true_labels&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; pred_labels&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; metric&lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot;adjusted_rand&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+
+  adjacency_matrix &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; create_adjacency_matrix&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;df&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+  dasgupta &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; dasgupta_score&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;adjacency_matrix&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; linkage_matrix&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+  c&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; coph_dists &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; cophenet&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;linkage_matrix&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; pdist&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;embeddings&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+  metrics &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot;silhouette&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; silhouette&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;clustering_accuracy_score&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; clustering_accuracy_score&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;ari&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; ari&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;dasgupta&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; dasgupta&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;cophenet&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; c&lt;span class=&quot;token punctuation&quot;&gt;}&lt;/span&gt;
+  &lt;span class=&quot;token keyword&quot;&gt;return&lt;/span&gt; metrics&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; linkage_matrix
+
+&lt;span class=&quot;token keyword&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;token function&quot;&gt;round_metrics&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;metrics&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; n&lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;token number&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;token keyword&quot;&gt;for&lt;/span&gt; key&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; value &lt;span class=&quot;token keyword&quot;&gt;in&lt;/span&gt; metrics&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;items&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
+    metrics&lt;span class=&quot;token punctuation&quot;&gt;[&lt;/span&gt;key&lt;span class=&quot;token punctuation&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;token builtin&quot;&gt;round&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;value&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; n&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+  &lt;span class=&quot;token keyword&quot;&gt;return&lt;/span&gt; metrics
+
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&quot;language-python&quot; tabindex=&quot;0&quot;&gt;&lt;code class=&quot;language-python&quot;&gt;df &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; combined_df&lt;span class=&quot;token punctuation&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot;name&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;1st_level_category&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;2nd_level_category&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;3rd_level_category&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;]&lt;/span&gt;
+
+n_iters &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;token number&quot;&gt;20&lt;/span&gt;
+N_SAMPLES_EVAL &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;token number&quot;&gt;1000&lt;/span&gt;
+results &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;]&lt;/span&gt;
+vectorizers &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot;n-gram&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot;ngram_range&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token number&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;token number&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;max_features&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;token number&quot;&gt;10000&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;analyzer&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot;word&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt;
+               &lt;span class=&quot;token string&quot;&gt;&quot;bert&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;token boolean&quot;&gt;None&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt;
+               &lt;span class=&quot;token string&quot;&gt;&quot;tf-idf&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot;max_features&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;token number&quot;&gt;10000&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;token keyword&quot;&gt;for&lt;/span&gt; vectorizer&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; vectorizer_params &lt;span class=&quot;token keyword&quot;&gt;in&lt;/span&gt; tqdm&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;vectorizers&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;items&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; desc&lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot;vectorizers&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;token keyword&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token string-interpolation&quot;&gt;&lt;span class=&quot;token string&quot;&gt;f&quot;Evaluating &lt;/span&gt;&lt;span class=&quot;token interpolation&quot;&gt;&lt;span class=&quot;token punctuation&quot;&gt;{&lt;/span&gt;vectorizer&lt;span class=&quot;token punctuation&quot;&gt;}&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot;&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+  &lt;span class=&quot;token keyword&quot;&gt;for&lt;/span&gt; i &lt;span class=&quot;token keyword&quot;&gt;in&lt;/span&gt; tqdm&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token builtin&quot;&gt;range&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;n_iters&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; desc&lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot;iters&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
+
+    df_sampled &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; df&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;sample&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;N_SAMPLES_EVAL&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt;random_state&lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt;i&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+    metrics_1st&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; linkage_matrix &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; evaluate_clustering&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;df_sampled&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; vectorizer&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; vectorizer_params&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;1st_level_category&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+    metrics_2nd&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; linkage_matrix &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; evaluate_clustering&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;df_sampled&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; vectorizer&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; vectorizer_params&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;2nd_level_category&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+    metrics_3rd&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; linkage_matrix &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; evaluate_clustering&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;df_sampled&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; vectorizer&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; vectorizer_params&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;3rd_level_category&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+
+    results&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;append&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot;vectorizer&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; vectorizer&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;i&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; i&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;eval_level&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;1st&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;token operator&quot;&gt;**&lt;/span&gt;metrics_1st&lt;span class=&quot;token punctuation&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+    results&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;append&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot;vectorizer&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; vectorizer&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;i&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; i&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;eval_level&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;2nd&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;token operator&quot;&gt;**&lt;/span&gt;metrics_2nd&lt;span class=&quot;token punctuation&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+    results&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;append&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot;vectorizer&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; vectorizer&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;i&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; i&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;eval_level&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;3rd&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;token operator&quot;&gt;**&lt;/span&gt;metrics_3rd&lt;span class=&quot;token punctuation&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+
+comparison_df &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; pd&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;DataFrame&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;results&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&quot;language-python&quot; tabindex=&quot;0&quot;&gt;&lt;code class=&quot;language-python&quot;&gt;sns&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;set_theme&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;style&lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot;white&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+sns&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;boxplot&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;data&lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt;comparison_df&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; x&lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot;vectorizer&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; y&lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot;clustering_accuracy_score&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; hue&lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot;eval_level&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+plt&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;xlabel&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot;Vectorizer&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+plt&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;ylabel&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot;clustering_accuracy_score&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;replace&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot;_&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot; &quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;capitalize&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+plt&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;title&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot;Score by clustering acccuracy&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+plt&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;tight_layout&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+plt&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;savefig&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token string-interpolation&quot;&gt;&lt;span class=&quot;token string&quot;&gt;f&quot;&lt;/span&gt;&lt;span class=&quot;token interpolation&quot;&gt;&lt;span class=&quot;token punctuation&quot;&gt;{&lt;/span&gt;FIGS_PATH&lt;span class=&quot;token punctuation&quot;&gt;}&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;/clustering_accuracy.png&quot;&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; transparent&lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;token boolean&quot;&gt;True&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+plt&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;show&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;picture&gt;&lt;source type=&quot;image/avif&quot; srcset=&quot;https://yonatanlou.github.io/blog/Evaluating-Hierarchical-Clustering/hierarchical-clustering-eval/aOIMg_qJqd-640.avif 640w&quot;&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://yonatanlou.github.io/blog/Evaluating-Hierarchical-Clustering/hierarchical-clustering-eval/aOIMg_qJqd-640.webp 640w&quot;&gt;&lt;img loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://yonatanlou.github.io/blog/Evaluating-Hierarchical-Clustering/hierarchical-clustering-eval/aOIMg_qJqd-640.png&quot; alt=&quot;png&quot; width=&quot;640&quot; height=&quot;480&quot;&gt;&lt;/picture&gt;&lt;/p&gt;
+&lt;p&gt;Yes, it&#39;s pretty hard to make sense of everything at first glance.&lt;br&gt;
+First of all, we can see that the BERT model performs the best across all evaluation levels.&lt;/p&gt;
+&lt;p&gt;But what if we want to compare n-grams and TF-IDF?&lt;br&gt;
+For the accuracy metric, it seems that TF-IDF performs better at the 1st level, but performs worse at the other levels.&lt;/p&gt;
+&lt;p&gt;The Dasgupta score provides a single score for all levels by taking into account the overall cost we defined earlier. This allows us to evaluate the entire hierarchy in a more holistic way, rather than focusing on individual levels.&lt;/p&gt;
+&lt;p&gt;This approach makes it easier to compare different embedding models and understand how they perform across the full tree structure.&lt;/p&gt;
+&lt;pre class=&quot;language-python&quot; tabindex=&quot;0&quot;&gt;&lt;code class=&quot;language-python&quot;&gt;
+sns&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;boxplot&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;data&lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt;comparison_df&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; x&lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot;vectorizer&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; y&lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot;dasgupta&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; hue&lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot;eval_level&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+plt&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;savefig&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token string-interpolation&quot;&gt;&lt;span class=&quot;token string&quot;&gt;f&quot;&lt;/span&gt;&lt;span class=&quot;token interpolation&quot;&gt;&lt;span class=&quot;token punctuation&quot;&gt;{&lt;/span&gt;FIGS_PATH&lt;span class=&quot;token punctuation&quot;&gt;}&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;/dasgupta.png&quot;&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; transparent&lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;token boolean&quot;&gt;True&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+plt&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;title&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot;Score by dasgupta&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;picture&gt;&lt;source type=&quot;image/avif&quot; srcset=&quot;https://yonatanlou.github.io/blog/Evaluating-Hierarchical-Clustering/hierarchical-clustering-eval/eiS0S-DYas-640.avif 640w&quot;&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://yonatanlou.github.io/blog/Evaluating-Hierarchical-Clustering/hierarchical-clustering-eval/eiS0S-DYas-640.webp 640w&quot;&gt;&lt;img loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://yonatanlou.github.io/blog/Evaluating-Hierarchical-Clustering/hierarchical-clustering-eval/eiS0S-DYas-640.png&quot; alt=&quot;png&quot; width=&quot;640&quot; height=&quot;480&quot;&gt;&lt;/picture&gt;&lt;/p&gt;
+&lt;h4 id=&quot;dendrogram&quot;&gt;Dendrogram&lt;/h4&gt;
+&lt;p&gt;While it&#39;s really hard to read a dendrogram with more than ~100 points, it remains an important tool for evaluation and for ensuring that the clustering results align with our expectations.&lt;/p&gt;
+&lt;p&gt;Dendrograms allow us to visually inspect how items are grouped at different levels of the hierarchy, which can reveal unexpected patterns or potential issues.&lt;/p&gt;
+&lt;p&gt;Let&#39;s try to compare the dendrograms of BERT and TF-IDF side-by-side to see how they differ. By observing them &amp;quot;by eye,&amp;quot; we can get a sense of how the embedding models influence the structure of the hierarchy.&lt;/p&gt;
+&lt;pre class=&quot;language-python&quot; tabindex=&quot;0&quot;&gt;&lt;code class=&quot;language-python&quot;&gt;&lt;span class=&quot;token keyword&quot;&gt;import&lt;/span&gt; matplotlib&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;pyplot &lt;span class=&quot;token keyword&quot;&gt;as&lt;/span&gt; plt
+&lt;span class=&quot;token keyword&quot;&gt;from&lt;/span&gt; matplotlib &lt;span class=&quot;token keyword&quot;&gt;import&lt;/span&gt; cm
+&lt;span class=&quot;token keyword&quot;&gt;from&lt;/span&gt; scipy&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;cluster&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;hierarchy &lt;span class=&quot;token keyword&quot;&gt;import&lt;/span&gt; dendrogram
+
+
+&lt;span class=&quot;token keyword&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;token function&quot;&gt;colored_dendrogram&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;df&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; linkage_matrix&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; label_level&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; color_level&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
+
+    unique_categories &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; df&lt;span class=&quot;token punctuation&quot;&gt;[&lt;/span&gt;color_level&lt;span class=&quot;token punctuation&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;unique&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+    num_colors &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;token builtin&quot;&gt;len&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;unique_categories&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+    colormap &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; cm&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;get_cmap&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&#39;tab20c&#39;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; num_colors&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;  &lt;span class=&quot;token comment&quot;&gt;# Use HSV colormap for vibrant colors&lt;/span&gt;
+
+        &lt;span class=&quot;token comment&quot;&gt;# Map each category to a color&lt;/span&gt;
+    category_colors &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;{&lt;/span&gt;category&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; colormap&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;i&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;token keyword&quot;&gt;for&lt;/span&gt; i&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; category &lt;span class=&quot;token keyword&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;token builtin&quot;&gt;enumerate&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;unique_categories&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;}&lt;/span&gt;
+    labels &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; df&lt;span class=&quot;token punctuation&quot;&gt;[&lt;/span&gt;label_level&lt;span class=&quot;token punctuation&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;tolist&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+    fig &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; plt&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;figure&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;figsize&lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token number&quot;&gt;10&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;token number&quot;&gt;15&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+
+    &lt;span class=&quot;token comment&quot;&gt;# Plot the dendrogram&lt;/span&gt;
+    dendro &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; dendrogram&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;
+        linkage_matrix&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt;
+        labels&lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt;labels&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt;
+        leaf_rotation&lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;token number&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt;  &lt;span class=&quot;token comment&quot;&gt;# Rotate leaf labels&lt;/span&gt;
+        orientation&lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot;left&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt;  &lt;span class=&quot;token comment&quot;&gt;# Horizontal layout&lt;/span&gt;
+        leaf_font_size&lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;token number&quot;&gt;10.&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt;
+        color_threshold&lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;token number&quot;&gt;0.7&lt;/span&gt; &lt;span class=&quot;token operator&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;token builtin&quot;&gt;max&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;linkage_matrix&lt;span class=&quot;token punctuation&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;token number&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;  &lt;span class=&quot;token comment&quot;&gt;# Threshold for branch coloring&lt;/span&gt;
+    &lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+
+    &lt;span class=&quot;token comment&quot;&gt;# Get leaf labels and color them&lt;/span&gt;
+    ax &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; plt&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;gca&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+    y_labels &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; ax&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;get_yticklabels&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+
+    &lt;span class=&quot;token keyword&quot;&gt;for&lt;/span&gt; label &lt;span class=&quot;token keyword&quot;&gt;in&lt;/span&gt; y_labels&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
+        label_text &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; label&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;get_text&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+        &lt;span class=&quot;token comment&quot;&gt;# Find the category corresponding to this label&lt;/span&gt;
+        category &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; df&lt;span class=&quot;token punctuation&quot;&gt;[&lt;/span&gt;df&lt;span class=&quot;token punctuation&quot;&gt;[&lt;/span&gt;label_level&lt;span class=&quot;token punctuation&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;token operator&quot;&gt;==&lt;/span&gt; label_text&lt;span class=&quot;token punctuation&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;[&lt;/span&gt;color_level&lt;span class=&quot;token punctuation&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;values&lt;span class=&quot;token punctuation&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;token number&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;]&lt;/span&gt;
+        color &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; category_colors&lt;span class=&quot;token punctuation&quot;&gt;[&lt;/span&gt;category&lt;span class=&quot;token punctuation&quot;&gt;]&lt;/span&gt;
+        label&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;set_color&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;color&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+
+    &lt;span class=&quot;token comment&quot;&gt;# Add legend for main categories&lt;/span&gt;
+    handles &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;[&lt;/span&gt;plt&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;Line2D&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;token number&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;token number&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; color&lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt;color&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; lw&lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;token number&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; label&lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt;category&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+               &lt;span class=&quot;token keyword&quot;&gt;for&lt;/span&gt; category&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; color &lt;span class=&quot;token keyword&quot;&gt;in&lt;/span&gt; category_colors&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;items&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;]&lt;/span&gt;
+    plt&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;legend&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;handles&lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt;handles&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; title&lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt;color_level&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;replace&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot;_&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot; &quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;title&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; loc&lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot;upper left&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+
+    &lt;span class=&quot;token comment&quot;&gt;# Final plot adjustments&lt;/span&gt;
+    plt&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;title&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&#39;Dendrogram of Hierarchical Clustering with Colored Leaves&#39;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+    plt&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;xlabel&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&#39;Distance&#39;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+    plt&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;ylabel&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&#39;Product Names&#39;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;token keyword&quot;&gt;return&lt;/span&gt; fig
+
+df_sampled &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; df&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;sample&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token number&quot;&gt;50&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;token comment&quot;&gt;#We can state on which level we want to see colors, and on which level we want to see the text&lt;/span&gt;
+metrics&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; linkage_matrix &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; evaluate_clustering&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;df_sampled&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;bert&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;token boolean&quot;&gt;None&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;3rd_level_category&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+
+text_by_level &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;3rd_level_category&quot;&lt;/span&gt;
+color_by_level &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;2nd_level_category&quot;&lt;/span&gt;
+
+fig &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; colored_dendrogram&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;df_sampled&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; linkage_matrix&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; text_by_level&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; color_by_level&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+plt&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;savefig&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token string-interpolation&quot;&gt;&lt;span class=&quot;token string&quot;&gt;f&quot;&lt;/span&gt;&lt;span class=&quot;token interpolation&quot;&gt;&lt;span class=&quot;token punctuation&quot;&gt;{&lt;/span&gt;FIGS_PATH&lt;span class=&quot;token punctuation&quot;&gt;}&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;/dend_bert.png&quot;&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; transparent&lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;token boolean&quot;&gt;True&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+plt&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;show&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;picture&gt;&lt;source type=&quot;image/avif&quot; srcset=&quot;https://yonatanlou.github.io/blog/Evaluating-Hierarchical-Clustering/hierarchical-clustering-eval/YSLALxcm1a-1040.avif 1040w&quot;&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://yonatanlou.github.io/blog/Evaluating-Hierarchical-Clustering/hierarchical-clustering-eval/YSLALxcm1a-1040.webp 1040w&quot;&gt;&lt;img loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://yonatanlou.github.io/blog/Evaluating-Hierarchical-Clustering/hierarchical-clustering-eval/YSLALxcm1a-1040.png&quot; alt=&quot;png&quot; width=&quot;1040&quot; height=&quot;1249&quot;&gt;&lt;/picture&gt;&lt;/p&gt;
+&lt;pre class=&quot;language-python&quot; tabindex=&quot;0&quot;&gt;&lt;code class=&quot;language-python&quot;&gt;metrics&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; linkage_matrix &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; evaluate_clustering&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;df_sampled&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;tf-idf&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;token boolean&quot;&gt;None&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;3rd_level_category&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+
+text_by_level &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;3rd_level_category&quot;&lt;/span&gt;
+color_by_level &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;2nd_level_category&quot;&lt;/span&gt;
+
+
+fig &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; colored_dendrogram&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;df_sampled&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; linkage_matrix&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; text_by_level&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; color_by_level&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+plt&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;savefig&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token string-interpolation&quot;&gt;&lt;span class=&quot;token string&quot;&gt;f&quot;&lt;/span&gt;&lt;span class=&quot;token interpolation&quot;&gt;&lt;span class=&quot;token punctuation&quot;&gt;{&lt;/span&gt;FIGS_PATH&lt;span class=&quot;token punctuation&quot;&gt;}&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;/dend_tf_idf.png&quot;&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; transparent&lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;token boolean&quot;&gt;True&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+plt&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;show&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;picture&gt;&lt;source type=&quot;image/avif&quot; srcset=&quot;https://yonatanlou.github.io/blog/Evaluating-Hierarchical-Clustering/hierarchical-clustering-eval/ejt_WjjIxq-1040.avif 1040w&quot;&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://yonatanlou.github.io/blog/Evaluating-Hierarchical-Clustering/hierarchical-clustering-eval/ejt_WjjIxq-1040.webp 1040w&quot;&gt;&lt;img loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://yonatanlou.github.io/blog/Evaluating-Hierarchical-Clustering/hierarchical-clustering-eval/ejt_WjjIxq-1040.png&quot; alt=&quot;png&quot; width=&quot;1040&quot; height=&quot;1249&quot;&gt;&lt;/picture&gt;&lt;/p&gt;
+&lt;p&gt;We can clearly see that indeed the bert model have much better clustering results.&lt;/p&gt;
+</content>
+  </entry>
   <entry>
     <title>Jaccard index for unsupervised clustering</title>
     <link href="https://yonatanlou.github.io/blog/jaccard-index-unsupervised/Jaccard_index_for_unsupervised_clustering/" />
