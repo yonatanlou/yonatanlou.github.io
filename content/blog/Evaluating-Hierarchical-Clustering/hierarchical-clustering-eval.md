@@ -1259,3 +1259,13 @@ plt.show()
 
 
 We can clearly see that indeed the bert model have much better clustering results.
+
+```bibtex
+@misc{lou2025hierarchical,
+  author       = {Yonatan Lourie},
+  title        = {Evaluating Hierarchical Clustering Beyond the Leaves},
+  year         = {2025},
+  howpublished = {\url{https://yonatanlou.github.io/blog/Evaluating-Hierarchical-Clustering/hierarchical-clustering-eval/}},
+  note         = {Accessed: 2025-01-12}
+}
+```

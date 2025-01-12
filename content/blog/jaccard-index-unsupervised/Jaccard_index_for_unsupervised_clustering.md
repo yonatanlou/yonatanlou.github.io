@@ -362,3 +362,12 @@ Which is not what we want when we doing unsupervised clustering.
 When evaluating unsupervised clustering algorithms, it's crucial to use metrics that are robust to label permutations. The custom Jaccard Index implementation presented here provides a reliable way to assess the similarity between true and predicted cluster assignments. By understanding the limitations of scikit-learn's jaccard_score in this context, we can make more informed decisions about the performance of our clustering models.
 
 
+```bibtex
+@misc{lou2025jaccard,
+  author       = {Yonatan Lou},
+  title        = {Jaccard Index for Unsupervised Clustering:},
+  year         = {2024},
+  howpublished = {\url{https://yonatanlou.github.io/blog/jaccard-index-unsupervised/Jaccard_index_for_unsupervised_clustering/}},
+  note         = {Accessed: 2024-11-10}
+}
+```
