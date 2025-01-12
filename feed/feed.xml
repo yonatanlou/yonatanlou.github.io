@@ -1074,6 +1074,13 @@ plt&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;show&lt;span cl
 &lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;&lt;picture&gt;&lt;source type=&quot;image/avif&quot; srcset=&quot;https://yonatanlou.github.io/blog/Evaluating-Hierarchical-Clustering/hierarchical-clustering-eval/ejt_WjjIxq-1040.avif 1040w&quot;&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://yonatanlou.github.io/blog/Evaluating-Hierarchical-Clustering/hierarchical-clustering-eval/ejt_WjjIxq-1040.webp 1040w&quot;&gt;&lt;img loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://yonatanlou.github.io/blog/Evaluating-Hierarchical-Clustering/hierarchical-clustering-eval/ejt_WjjIxq-1040.png&quot; alt=&quot;png&quot; width=&quot;1040&quot; height=&quot;1249&quot;&gt;&lt;/picture&gt;&lt;/p&gt;
 &lt;p&gt;We can clearly see that indeed the bert model have much better clustering results.&lt;/p&gt;
+&lt;pre class=&quot;language-bibtex&quot; tabindex=&quot;0&quot;&gt;&lt;code class=&quot;language-bibtex&quot;&gt;@misc{lou2025hierarchical,
+  author       = {Yonatan Lourie},
+  title        = {Evaluating Hierarchical Clustering Beyond the Leaves},
+  year         = {2025},
+  howpublished = {&#92;url{https://yonatanlou.github.io/blog/Evaluating-Hierarchical-Clustering/hierarchical-clustering-eval/}},
+  note         = {Accessed: 2025-01-12}
+}&lt;/code&gt;&lt;/pre&gt;
 </content>
   </entry>
   <entry>
@@ -1383,6 +1390,13 @@ jaccard_score(a,b,average=&amp;quot;weighted&amp;quot;)
 &lt;p&gt;Which is not what we want when we doing unsupervised clustering.&lt;/p&gt;
 &lt;h3 id=&quot;conclusion&quot;&gt;Conclusion&lt;/h3&gt;
 &lt;p&gt;When evaluating unsupervised clustering algorithms, it&#39;s crucial to use metrics that are robust to label permutations. The custom Jaccard Index implementation presented here provides a reliable way to assess the similarity between true and predicted cluster assignments. By understanding the limitations of scikit-learn&#39;s jaccard_score in this context, we can make more informed decisions about the performance of our clustering models.&lt;/p&gt;
+&lt;pre class=&quot;language-bibtex&quot; tabindex=&quot;0&quot;&gt;&lt;code class=&quot;language-bibtex&quot;&gt;@misc{lou2025jaccard,
+  author       = {Yonatan Lou},
+  title        = {Jaccard Index for Unsupervised Clustering:},
+  year         = {2024},
+  howpublished = {&#92;url{https://yonatanlou.github.io/blog/jaccard-index-unsupervised/Jaccard_index_for_unsupervised_clustering/}},
+  note         = {Accessed: 2024-11-10}
+}&lt;/code&gt;&lt;/pre&gt;
 </content>
   </entry>
   <entry>
