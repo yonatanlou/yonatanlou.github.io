@@ -4,6 +4,9 @@ description: Why Jaccard Index (as implemented in sklearn.metrics) will not work
 date: 2024-11-10
 tags: posts
 ---
+<a target="_blank" href="https://colab.research.google.com/github/yonatanlou/notebooks/blob/main/Jaccard_index_for_unsupervised_clustering.ipynb">
+  <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
+</a>
 
 TL;DR - Don't use sklearn jaccard_score function when dealing with unsupervised clustering.
 

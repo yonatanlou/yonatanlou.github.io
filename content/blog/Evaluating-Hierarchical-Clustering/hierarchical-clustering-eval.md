@@ -4,6 +4,9 @@ description: Hierarchical clustering evaluation with the Dasgupta cost.
 date: 2025-01-12
 tags: posts
 ---
+<a target="_blank" href="https://colab.research.google.com/github/yonatanlou/notebooks/blob/main/Jaccard_index_for_unsupervised_clustering.ipynb">
+  <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
+</a>
 
 When working on hierarchical clustering tasks, evaluation is often limited to the **leaves of the tree** or relies on plots that look impressive but don't tell the whole story.What if we could assess the entire tree structure? Wouldn't that give us a more nuanced view of our clustering methods, linkage techniques, or embedding models?
 
