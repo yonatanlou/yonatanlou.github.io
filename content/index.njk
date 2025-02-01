@@ -5,15 +5,15 @@ eleventyNavigation:
 numberOfLatestPostsToShow: 3
 ---
 
-<h2>Hi,I'm
-  <a href="{{ '/about/' | url }}">Yonatan</a>
-  .</h2>
-{# <div class="home-heading">
-    <h2>All Posts</h2>
-    <a href="{{ '/posts/' | url }}">All posts</a>
-</div> #}
-<h3>Latest posts</h3>
-{% set postslist = collections.posts | head(-3) %}
-{% set postslistCounter = collections.posts | length %}
-{% include "postslist.njk" %} More posts on
-<a href="{{ '/blog/' | url }}">All posts</a>
+<h2>
+  <a href="{{ '/about/' | url }}">About me
+  </a>
+  |
+  <a href="{{ '/links/' | url }}">Links</a>
+  {# <div class="home-heading">
+                <h2>All Posts</h2>
+                <a href="{{ '/posts/' | url }}">All posts</a>
+            </div> #}
+  <h3>Latest posts</h3>
+  {% set postslist = collections.posts | head(-3) %}{% set postslistCounter = collections.posts | length %}{% include "postslist.njk" %} More posts on
+  <a href="{{ '/blog/' | url }}">All posts</a>
