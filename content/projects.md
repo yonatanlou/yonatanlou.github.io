@@ -9,7 +9,7 @@ const eleventyNavigation = {
 ## 2025
 
 - **Integrating Semantic and Statistical Features for Authorial Clustering of Qumran Scrolls**  
-  [Your Name], [Prof. Roded Sharan](https://www.cs.tau.ac.il/~roded/), [Prof. Jonathan Ben Dov](https://english.tau.ac.il/profile/028799815)  
+Yonatan Lourie, [Prof. Roded Sharan](https://www.cs.tau.ac.il/~roded/), [Prof. Jonathan Ben Dov](https://english.tau.ac.il/profile/028799815)  
   Accepted to the [ALP](https://www.ancientnlp.com/alp2025/) Workshop at [NAACL 2025](https://2025.naacl.org/)  
   [Coming soon on arXiv](#)
 
