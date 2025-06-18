@@ -11,7 +11,8 @@ const eleventyNavigation = {
 - **Integrating Semantic and Statistical Features for Authorial Clustering of Qumran Scrolls**  
 Yonatan Lourie, [Prof. Roded Sharan](https://www.cs.tau.ac.il/~roded/), [Prof. Jonathan Ben Dov](https://english.tau.ac.il/profile/028799815)  
   Accepted to the [ALP](https://www.ancientnlp.com/alp2025/) Workshop at [NAACL 2025](https://2025.naacl.org/)  
-  [Coming soon on arXiv](#)
+  [Paper](https://aclanthology.org/2025.alp-1.2/)
+  
 
 	<details>
 	<summary>Abstract</summary>
@@ -23,4 +24,5 @@ Yonatan Lourie, [Prof. Roded Sharan](https://www.cs.tau.ac.il/~roded/), [Prof. J
 	Interactive visualizations are available at the [project site](https://yonatanlou.github.io/QumranNLP/).
 
 	</details>
-
+<!-- ![image](img/dead_sea_scrolls.png) -->
+<img src="img/dead_sea_scrolls.png" alt="dead sea" width="50"/>
