@@ -1,0 +1,806 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+        <link rel="icon" href="/favicon.ico">
+        <title>Yonatan Lourie</title>
+        <meta name="description" content="Unsupervised text clustering using GNN (Graph Auto Encoder).">
+        <link rel="alternate" href="feed/feed.xml" type="application/atom+xml" title="Yonatan Lourie">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+        
+        <script async="" src="https://www.googletagmanager.com/gtag/js?id=G-C6PG57BBFC"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag() {
+                dataLayer.push(arguments);
+            }
+            gtag('js', new Date());
+            gtag('config', 'G-C6PG57BBFC');
+        </script>
+        
+        <style>
+        /**
+ * okaidia theme for JavaScript, CSS and HTML
+ * Loosely based on Monokai textmate theme by http://www.monokai.nl/
+ * @author ocodia
+ */
+
+code[class*="language-"],
+pre[class*="language-"] {
+	color: #f8f8f2;
+	background: none;
+	text-shadow: 0 1px rgba(0, 0, 0, 0.3);
+	font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+	font-size: 1em;
+	text-align: left;
+	white-space: pre;
+	word-spacing: normal;
+	word-break: normal;
+	word-wrap: normal;
+	line-height: 1.5;
+
+	-moz-tab-size: 4;
+	-o-tab-size: 4;
+	tab-size: 4;
+
+	-webkit-hyphens: none;
+	-moz-hyphens: none;
+	-ms-hyphens: none;
+	hyphens: none;
+}
+
+/* Code blocks */
+pre[class*="language-"] {
+	padding: 1em;
+	margin: .5em 0;
+	overflow: auto;
+	border-radius: 0.3em;
+}
+
+:not(pre) > code[class*="language-"],
+pre[class*="language-"] {
+	background: #272822;
+}
+
+/* Inline code */
+:not(pre) > code[class*="language-"] {
+	padding: .1em;
+	border-radius: .3em;
+	white-space: normal;
+}
+
+.token.comment,
+.token.prolog,
+.token.doctype,
+.token.cdata {
+	color: #8292a2;
+}
+
+.token.punctuation {
+	color: #f8f8f2;
+}
+
+.token.namespace {
+	opacity: .7;
+}
+
+.token.property,
+.token.tag,
+.token.constant,
+.token.symbol,
+.token.deleted {
+	color: #f92672;
+}
+
+.token.boolean,
+.token.number {
+	color: #ae81ff;
+}
+
+.token.selector,
+.token.attr-name,
+.token.string,
+.token.char,
+.token.builtin,
+.token.inserted {
+	color: #a6e22e;
+}
+
+.token.operator,
+.token.entity,
+.token.url,
+.language-css .token.string,
+.style .token.string,
+.token.variable {
+	color: #f8f8f2;
+}
+
+.token.atrule,
+.token.attr-value,
+.token.function,
+.token.class-name {
+	color: #e6db74;
+}
+
+.token.keyword {
+	color: #66d9ef;
+}
+
+.token.regex,
+.token.important {
+	color: #fd971f;
+}
+
+.token.important,
+.token.bold {
+	font-weight: bold;
+}
+.token.italic {
+	font-style: italic;
+}
+
+.token.entity {
+	cursor: help;
+}
+/*
+ * New diff- syntax
+ */
+
+pre[class*="language-diff-"] {
+	--eleventy-code-padding: 1.25em;
+	padding-left: var(--eleventy-code-padding);
+	padding-right: var(--eleventy-code-padding);
+}
+.token.deleted {
+	background-color: hsl(0, 51%, 37%);
+	color: inherit;
+}
+.token.inserted {
+	background-color: hsl(126, 31%, 39%);
+	color: inherit;
+}
+
+/* Make the + and - characters unselectable for copy/paste */
+.token.prefix.unchanged,
+.token.prefix.inserted,
+.token.prefix.deleted {
+	-webkit-user-select: none;
+	user-select: none;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding-top: 2px;
+	padding-bottom: 2px;
+}
+.token.prefix.inserted,
+.token.prefix.deleted {
+	width: var(--eleventy-code-padding);
+	background-color: rgba(0,0,0,.2);
+}
+
+/* Optional: full-width background color */
+.token.inserted:not(.prefix),
+.token.deleted:not(.prefix) {
+	display: block;
+	margin-left: calc(-1 * var(--eleventy-code-padding));
+	margin-right: calc(-1 * var(--eleventy-code-padding));
+	text-decoration: none; /* override del, ins, mark defaults */
+	color: inherit; /* override del, ins, mark defaults */
+}
+/* This is an arbitrary CSS string added to the bundle */
+/* Defaults */
+:root {
+	--font-family: -apple-system, system-ui, sans-serif;
+	--font-family-monospace: Consolas, Menlo, Monaco, Andale Mono WT, Andale Mono, Lucida Console, Lucida Sans Typewriter, DejaVu Sans Mono, Bitstream Vera Sans Mono, Liberation Mono, Nimbus Mono L, Courier New, Courier, monospace;
+}
+
+/* Theme colors */
+:root {
+	--color-gray-20: #e0e0e0;
+	--color-gray-50: #C0C0C0;
+	--color-gray-90: #333;
+	/* Change to a darker shade */
+
+	--background-color: #f5f5f5;
+	/* Lighter background */
+
+	--text-color: #333;
+	/* Change to a darker shade */
+	--text-color-link: #007bff;
+	--text-color-link-active: #0056b3;
+	--text-color-link-visited: #563d7c;
+}
+
+/* @media (prefers-color-scheme: light) {
+	:root {
+		--color-gray-20: #e0e0e0;
+		--color-gray-50: #C0C0C0;
+		--color-gray-90: #dad8d8;
+
+		--text-color-link: #1493fb;
+		--text-color-link-active: #6969f7;
+		--text-color-link-visited: #a6a6f8;
+
+		--background-color: #79bcff;
+	}
+} */
+
+
+/* Global stylesheet */
+* {
+	box-sizing: border-box;
+}
+
+@view-transition {
+	navigation: auto;
+}
+
+html,
+body {
+	padding: 0;
+	margin: 0 auto;
+	font-family: var(--font-family);
+	color: var(--text-color);
+	background-color: var(--background-color);
+}
+
+html {
+	overflow-y: scroll;
+}
+
+body {
+	max-width: 65em;
+}
+
+/* https://www.a11yproject.com/posts/how-to-hide-content/ */
+.visually-hidden {
+	clip: rect(0 0 0 0);
+	clip-path: inset(50%);
+	height: 1px;
+	overflow: hidden;
+	position: absolute;
+	white-space: nowrap;
+	width: 1px;
+}
+
+p:last-child {
+	margin-bottom: 0;
+}
+
+p {
+	line-height: 1.5;
+}
+
+li {
+	line-height: 1.5;
+}
+
+a[href] {
+	color: var(--text-color-link);
+}
+
+a[href]:visited {
+	color: var(--text-color-link-visited);
+}
+
+a[href]:hover,
+a[href]:active {
+	color: var(--text-color-link-active);
+}
+
+main,
+footer {
+	padding: 1rem;
+}
+
+main :first-child {
+	margin-top: 0;
+}
+
+header {
+	border-bottom: 1px dashed var(--color-gray-20);
+}
+
+header:after {
+	content: "";
+	display: table;
+	clear: both;
+}
+
+.links-nextprev {
+	display: flex;
+	justify-content: space-between;
+	gap: .5em 1em;
+	list-style: "";
+	border-top: 1px dashed var(--color-gray-20);
+	padding: 1em 0;
+}
+
+.links-nextprev>* {
+	flex-grow: 1;
+}
+
+.links-nextprev-next {
+	text-align: right;
+}
+
+table {
+	margin: 1em 0;
+}
+
+table td,
+table th {
+	padding-right: 1em;
+}
+
+pre,
+code {
+	font-family: var(--font-family-monospace);
+}
+
+pre:not([class*="language-"]) {
+	margin: .5em 0;
+	line-height: 1.375;
+	/* 22px /16 */
+	-moz-tab-size: var(--syntax-tab-size);
+	-o-tab-size: var(--syntax-tab-size);
+	tab-size: var(--syntax-tab-size);
+	-webkit-hyphens: none;
+	-ms-hyphens: none;
+	hyphens: none;
+	direction: ltr;
+	text-align: left;
+	white-space: pre;
+	word-spacing: normal;
+	word-break: normal;
+	overflow-x: auto;
+}
+
+code {
+	word-break: break-all;
+}
+
+/* Header */
+header {
+	display: flex;
+	gap: 1em .5em;
+	flex-wrap: wrap;
+	align-items: center;
+	padding: 1em;
+}
+
+.home-link {
+	font-size: 1.2em;
+	/* 16px /16 */
+	font-weight: 700;
+	margin-right: 2em;
+}
+
+.home-link:link:not(:hover) {
+	text-decoration: none;
+}
+
+/* Nav */
+.nav {
+	display: flex;
+	padding: 0;
+	margin: 0;
+	list-style: none;
+}
+
+.nav-item {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+.nav-item a[href]:not(:hover) {
+	text-decoration: none;
+}
+
+.nav a[href][aria-current="page"] {
+	text-decoration: underline;
+}
+
+/* Posts list */
+.postlist {
+	list-style: none;
+	padding: 0;
+	padding-left: 1.5rem;
+}
+
+.postlist-item {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: baseline;
+	counter-increment: start-from -1;
+	margin-bottom: 1em;
+}
+
+.postlist-item:before {
+	display: inline-block;
+	pointer-events: none;
+	content: "" counter(start-from, decimal-leading-zero) ". ";
+	line-height: 100%;
+	text-align: right;
+	margin-left: -1.5rem;
+}
+
+.postlist-date,
+.postlist-item:before {
+	font-size: 0.8125em;
+	/* 13px /16 */
+	color: var(--color-gray-90);
+}
+
+.postlist-date {
+	word-spacing: -0.5px;
+}
+
+.postlist-link {
+	font-size: 1.1875em;
+	/* 19px /16 */
+	font-weight: 700;
+	flex-basis: calc(100% - 1.5rem);
+	padding-left: .25em;
+	padding-right: .5em;
+	text-underline-position: from-font;
+	text-underline-offset: 0;
+	text-decoration-thickness: 1px;
+}
+
+.postlist-item-active .postlist-link {
+	font-weight: bold;
+}
+
+/* Tags */
+.post-tag {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	text-transform: capitalize;
+	font-style: italic;
+}
+
+.postlist-item>.post-tag {
+	align-self: center;
+}
+
+/* Tags list */
+.post-metadata {
+	display: inline-flex;
+	flex-wrap: wrap;
+	gap: .5em;
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+
+.post-metadata time {
+	margin-right: 1em;
+}
+
+footer {
+	text-align: center;
+	padding: 20px 0;
+}
+
+.social-links {
+	margin-top: 5px;
+}
+
+.social-links a {
+	margin: 0 3px;
+	text-decoration: none;
+	color: #333;
+}
+
+.social-links a:hover {
+	color: #cca4f4;
+	/* Customize this color as needed */
+}
+
+.social-links i {
+	font-size: 1.5em;
+	/* Adjust size as needed */
+}
+
+.site-logo {
+	max-width: 100px;
+	/* Adjust the size as needed */
+	height: auto;
+	/* Maintain aspect ratio */
+	display: block;
+	margin: 0 auto;
+	/* Center the logo */
+}</style>
+            </head><body><a href="#skip" class="visually-hidden">Skip to main content</a>
+            <header>
+                <a href="/" class="home-link">
+                    <picture><source type="image/avif" srcset="/img/t_xVYiIA5X-512.avif 512w"><source type="image/webp" srcset="/img/t_xVYiIA5X-512.webp 512w"><img loading="lazy" decoding="async" src="/img/t_xVYiIA5X-512.png" alt="Yonatan Lourie logo" class="site-logo" width="512" height="512"></picture>
+                </a>
+            
+            <a href="/" class="home-link">Yonatan Lourie</a>
+            <nav>
+                <h2 class="visually-hidden" id="top-level-navigation-menu">Top level navigation menu</h2>
+                <ul class="nav">
+                        <li class="nav-item">
+                            <a href="/">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/blog/">Blog</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/about/">About</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/Links/">Links</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/projects/">Projects</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/feed/feed.xml">Feed</a>
+                        </li>
+                </ul>
+            </nav>
+        </header></body>
+    
+</html><main id="skip">
+<heading-anchors>
+    
+<h1 id="unsupervised-text-clustering-using-gnn-graph-auto-encoder">Unsupervised text clustering using GNN (Graph Auto Encoder)</h1>
+
+<ul class="post-metadata">
+	<li><time datetime="2025-06-18">18 June 2025</time></li>
+</ul>
+
+<h2 id="unsupervised-text-clustering-using-gnn">Unsupervised text clustering using GNN</h2>
+<p>Graph neural networks (GNNs) have received a fair amount of attention over the past few years. That said, some of the initial excitement has faded-especially in certain research domains. Part of this decline is due to the rise of transformer models, which in many ways behave like fully connected GNNs. This has led some people to question whether GNNs are still relevant or necessary. (<a href="https://taewoon.kim/2024-10-15-transformer-vs-gnn/">Transformers vs GNNs – Taewoon Kim</a>, <a href="https://graphdeeplearning.github.io/post/transformers-are-gnns/">Transformers are GNNs – Graph Deep Learning</a>, <a href="https://www.reddit.com/r/MachineLearning/comments/1jgwjjk/d_are_gnns_obsolete_because_of_transformers/">Reddit discussion: Are GNNs obsolete?</a>).</p>
+<p>Personally, I still find GNNs extremely useful-particularly in two situations:</p>
+<ol>
+<li>When your data naturally forms a graph.</li>
+<li>When you want to combine multiple types of features in a &quot;learnable&quot; and flexible way.</li>
+</ol>
+<p>In this post, I’ll walk through how to implement <strong>unsupervised text clustering</strong> using a <strong><a href="https://arxiv.org/abs/1611.07308">Graph Autoencoder (GAE)</a></strong> framework that supports multiple feature types.</p>
+<p>This is more of a quick-and-dirty prototype than a polished package. I wrote it mainly because I couldn’t find a simple example of unsupervised text clustering using GNNs online.</p>
+<p>If you're looking for a more customizable and production-ready version, you can check out the <a href="https://github.com/yonatanlou/QumranNLP"><code>QumranNLP</code></a> repository. It's built around a fascinating dataset-texts from the Dead Sea Scrolls-and uses a more refined version of the same approach.</p>
+<p>First of all, we will import some important libraries, make some constants (which can be optimize in the future), and collect the data.</p>
+<pre class="language-python" tabindex="0"><code class="language-python"><span class="token keyword">import</span> torch<span class="token punctuation">,</span> random<span class="token punctuation">,</span> numpy <span class="token keyword">as</span> np
+<span class="token keyword">from</span> tqdm<span class="token punctuation">.</span>auto <span class="token keyword">import</span> tqdm
+<span class="token keyword">from</span> sklearn<span class="token punctuation">.</span>datasets <span class="token keyword">import</span> fetch_20newsgroups
+<span class="token keyword">from</span> sklearn<span class="token punctuation">.</span>feature_extraction<span class="token punctuation">.</span>text <span class="token keyword">import</span> TfidfVectorizer<span class="token punctuation">,</span> CountVectorizer
+<span class="token keyword">from</span> transformers <span class="token keyword">import</span> AutoTokenizer<span class="token punctuation">,</span> AutoModel
+<span class="token keyword">from</span> sklearn<span class="token punctuation">.</span>cluster <span class="token keyword">import</span> KMeans
+<span class="token keyword">from</span> sklearn<span class="token punctuation">.</span>metrics <span class="token keyword">import</span> v_measure_score<span class="token punctuation">,</span> adjusted_rand_score
+<span class="token keyword">from</span> torch_geometric<span class="token punctuation">.</span>nn <span class="token keyword">import</span> GAE<span class="token punctuation">,</span> GCNConv
+<span class="token keyword">from</span> torch_geometric<span class="token punctuation">.</span>data <span class="token keyword">import</span> Data
+<span class="token keyword">from</span> torch_geometric<span class="token punctuation">.</span>utils <span class="token keyword">import</span> to_undirected
+
+
+SAMPLES <span class="token operator">=</span> <span class="token number">1000</span>           <span class="token comment"># subset size</span>
+N_CLUST <span class="token operator">=</span> <span class="token number">20</span>            <span class="token comment"># k‑means clusters (20‑news groups)</span>
+HIDDEN  <span class="token operator">=</span> <span class="token number">256</span>           <span class="token comment"># GCN hidden dim</span>
+LATENT  <span class="token operator">=</span> <span class="token number">128</span>           <span class="token comment"># GCN latent dim</span>
+LR      <span class="token operator">=</span> <span class="token number">0.001</span>         <span class="token comment"># learning rate</span>
+EPOCHS  <span class="token operator">=</span> <span class="token number">350</span>           <span class="token comment"># training epochs</span>
+DEVICE  <span class="token operator">=</span> <span class="token string">"cuda"</span> <span class="token keyword">if</span> torch<span class="token punctuation">.</span>cuda<span class="token punctuation">.</span>is_available<span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token keyword">else</span> <span class="token string">"cpu"</span>
+Q_SIM     <span class="token operator">=</span> <span class="token number">0.999</span>
+SEED <span class="token operator">=</span> <span class="token number">42</span>
+
+
+<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">"Step 1 | Loading 20‑Newsgroups …"</span><span class="token punctuation">)</span>
+news <span class="token operator">=</span> fetch_20newsgroups<span class="token punctuation">(</span>remove<span class="token operator">=</span><span class="token punctuation">(</span><span class="token string">"headers"</span><span class="token punctuation">,</span> <span class="token string">"footers"</span><span class="token punctuation">,</span> <span class="token string">"quotes"</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+texts<span class="token punctuation">,</span> y <span class="token operator">=</span> news<span class="token punctuation">.</span>data<span class="token punctuation">[</span><span class="token punctuation">:</span>SAMPLES<span class="token punctuation">]</span><span class="token punctuation">,</span> news<span class="token punctuation">.</span>target<span class="token punctuation">[</span><span class="token punctuation">:</span>SAMPLES<span class="token punctuation">]</span>
+
+
+<span class="token keyword">def</span> <span class="token function">set_seed_globally</span><span class="token punctuation">(</span>seed<span class="token operator">=</span><span class="token number">42</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+    <span class="token comment"># Set seeds</span>
+    np<span class="token punctuation">.</span>random<span class="token punctuation">.</span>seed<span class="token punctuation">(</span>seed<span class="token punctuation">)</span>
+    random<span class="token punctuation">.</span>seed<span class="token punctuation">(</span>seed<span class="token punctuation">)</span>
+    torch<span class="token punctuation">.</span>manual_seed<span class="token punctuation">(</span>seed<span class="token punctuation">)</span>
+    <span class="token keyword">if</span> torch<span class="token punctuation">.</span>cuda<span class="token punctuation">.</span>is_available<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+        torch<span class="token punctuation">.</span>cuda<span class="token punctuation">.</span>manual_seed<span class="token punctuation">(</span>seed<span class="token punctuation">)</span>
+        torch<span class="token punctuation">.</span>cuda<span class="token punctuation">.</span>manual_seed_all<span class="token punctuation">(</span>seed<span class="token punctuation">)</span>
+
+set_seed_globally<span class="token punctuation">(</span>SEED<span class="token punctuation">)</span>
+
+</code></pre>
+<p>Now, we'll represent the text using three different methods. These are just examples-you can easily swap them out or tweak the configurations to fit your own data or preferences.</p>
+<p>The methods we'll use are:</p>
+<ul>
+<li><strong>BERT embeddings</strong> – contextual representations from a pretrained language model.</li>
+<li><strong>TF-IDF</strong> – a classic, sparse representation that captures term importance across the corpus.</li>
+<li><strong>Character n-grams</strong> – helpful for capturing subword patterns, especially in noisy texts.</li>
+</ul>
+<pre class="language-python" tabindex="0"><code class="language-python"><span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">"Step 2 | DistilBERT embeddings …"</span><span class="token punctuation">)</span>
+tokenizer <span class="token operator">=</span> AutoTokenizer<span class="token punctuation">.</span>from_pretrained<span class="token punctuation">(</span><span class="token string">"distilbert-base-uncased"</span><span class="token punctuation">)</span>
+model_bert <span class="token operator">=</span> AutoModel<span class="token punctuation">.</span>from_pretrained<span class="token punctuation">(</span><span class="token string">"distilbert-base-uncased"</span><span class="token punctuation">)</span><span class="token punctuation">.</span>to<span class="token punctuation">(</span>DEVICE<span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token builtin">eval</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+<span class="token decorator annotation punctuation">@torch<span class="token punctuation">.</span>no_grad</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token keyword">def</span> <span class="token function">bert_embed</span><span class="token punctuation">(</span>docs<span class="token punctuation">,</span> bs<span class="token operator">=</span><span class="token number">16</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+    out <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token punctuation">]</span>
+    <span class="token keyword">for</span> i <span class="token keyword">in</span> tqdm<span class="token punctuation">(</span><span class="token builtin">range</span><span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">,</span> <span class="token builtin">len</span><span class="token punctuation">(</span>docs<span class="token punctuation">)</span><span class="token punctuation">,</span> bs<span class="token punctuation">)</span><span class="token punctuation">,</span> desc<span class="token operator">=</span><span class="token string">"Embedding"</span><span class="token punctuation">,</span> leave<span class="token operator">=</span><span class="token boolean">False</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+        batch <span class="token operator">=</span> docs<span class="token punctuation">[</span>i<span class="token punctuation">:</span>i<span class="token operator">+</span>bs<span class="token punctuation">]</span>
+        inp <span class="token operator">=</span> tokenizer<span class="token punctuation">(</span>batch<span class="token punctuation">,</span> padding<span class="token operator">=</span><span class="token boolean">True</span><span class="token punctuation">,</span> truncation<span class="token operator">=</span><span class="token boolean">True</span><span class="token punctuation">,</span> max_length<span class="token operator">=</span><span class="token number">512</span><span class="token punctuation">,</span> return_tensors<span class="token operator">=</span><span class="token string">"pt"</span><span class="token punctuation">)</span><span class="token punctuation">.</span>to<span class="token punctuation">(</span>DEVICE<span class="token punctuation">)</span>
+        out<span class="token punctuation">.</span>append<span class="token punctuation">(</span>model_bert<span class="token punctuation">(</span><span class="token operator">**</span>inp<span class="token punctuation">)</span><span class="token punctuation">.</span>last_hidden_state<span class="token punctuation">.</span>mean<span class="token punctuation">(</span>dim<span class="token operator">=</span><span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">.</span>cpu<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+    <span class="token keyword">return</span> torch<span class="token punctuation">.</span>cat<span class="token punctuation">(</span>out<span class="token punctuation">)</span><span class="token punctuation">.</span>numpy<span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+Xb <span class="token operator">=</span> bert_embed<span class="token punctuation">(</span>texts<span class="token punctuation">)</span>
+
+
+<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">"Step 3 | TF‑IDF &amp; char‑3‑gram …"</span><span class="token punctuation">)</span>
+Xt <span class="token operator">=</span> TfidfVectorizer<span class="token punctuation">(</span>max_features<span class="token operator">=</span><span class="token number">1500</span><span class="token punctuation">)</span><span class="token punctuation">.</span>fit_transform<span class="token punctuation">(</span>texts<span class="token punctuation">)</span><span class="token punctuation">.</span>toarray<span class="token punctuation">(</span><span class="token punctuation">)</span>
+Xn <span class="token operator">=</span> CountVectorizer<span class="token punctuation">(</span>analyzer<span class="token operator">=</span><span class="token string">"char"</span><span class="token punctuation">,</span> ngram_range<span class="token operator">=</span><span class="token punctuation">(</span><span class="token number">3</span><span class="token punctuation">,</span> <span class="token number">3</span><span class="token punctuation">)</span><span class="token punctuation">,</span> max_features<span class="token operator">=</span><span class="token number">1500</span><span class="token punctuation">)</span><span class="token punctuation">.</span>fit_transform<span class="token punctuation">(</span>texts<span class="token punctuation">)</span><span class="token punctuation">.</span>toarray<span class="token punctuation">(</span><span class="token punctuation">)</span>
+</code></pre>
+<p>At this point, we're building the graph based on the TF-IDF and character n-gram features.</p>
+<p>There are quite a few parameters you can tweak here, and each choice can significantly affect your model. Some key considerations:</p>
+<ul>
+<li><strong>Similarity metric</strong>: How do we calculate the similarity between vectors? Common options are cosine similarity and Euclidean distance.</li>
+<li><strong>Graph structure</strong>: Do we want a <strong>heterogeneous graph</strong> (with multiple edge types, one for each feature type), or a <strong>homogeneous graph</strong> (a single adjacency matrix that combines all features)?</li>
+</ul>
+<p>These decisions give you a lot of flexibility-and room for creativity-to improve your model.</p>
+<blockquote>
+<p>🔧 <strong>Note:</strong> One of the most critical parameters is the similarity threshold for edge creation (<code>Q_SIM</code>).<br>
+If this threshold is set too low, you’ll end up with a massive graph-which means you'll need a lot of GPU's just to train the model.<br>
+Through trial and error, I’ve found that using a <strong>higher threshold</strong> often results in <strong>better performance</strong> and <strong>faster training</strong>.</p>
+</blockquote>
+<pre class="language-python" tabindex="0"><code class="language-python"><span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">"Step 4 | Building graph edges (k‑NN) …"</span><span class="token punctuation">)</span>
+
+<span class="token keyword">def</span> <span class="token function">adj_cosine</span><span class="token punctuation">(</span>mat<span class="token punctuation">,</span> q<span class="token operator">=</span><span class="token number">0.99</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+    norm <span class="token operator">=</span> mat <span class="token operator">/</span> <span class="token punctuation">(</span>np<span class="token punctuation">.</span>linalg<span class="token punctuation">.</span>norm<span class="token punctuation">(</span>mat<span class="token punctuation">,</span> axis<span class="token operator">=</span><span class="token number">1</span><span class="token punctuation">,</span> keepdims<span class="token operator">=</span><span class="token boolean">True</span><span class="token punctuation">)</span> <span class="token operator">+</span> <span class="token number">1e-8</span><span class="token punctuation">)</span>
+    sim  <span class="token operator">=</span> norm @ norm<span class="token punctuation">.</span>T
+    thresh <span class="token operator">=</span> np<span class="token punctuation">.</span>quantile<span class="token punctuation">(</span>sim<span class="token punctuation">,</span> q<span class="token punctuation">)</span>
+    adj <span class="token operator">=</span> <span class="token punctuation">(</span>sim <span class="token operator">>=</span> thresh<span class="token punctuation">)</span><span class="token punctuation">.</span>astype<span class="token punctuation">(</span><span class="token builtin">float</span><span class="token punctuation">)</span>
+    np<span class="token punctuation">.</span>fill_diagonal<span class="token punctuation">(</span>adj<span class="token punctuation">,</span> <span class="token number">1</span><span class="token punctuation">)</span>
+    <span class="token keyword">return</span> adj
+
+<span class="token keyword">def</span> <span class="token function">adj_to_edge</span><span class="token punctuation">(</span>adj<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    src<span class="token punctuation">,</span> dst <span class="token operator">=</span> np<span class="token punctuation">.</span>nonzero<span class="token punctuation">(</span>adj<span class="token punctuation">)</span>
+    <span class="token keyword">return</span> to_undirected<span class="token punctuation">(</span>torch<span class="token punctuation">.</span>tensor<span class="token punctuation">(</span><span class="token punctuation">[</span>src<span class="token punctuation">,</span> dst<span class="token punctuation">]</span><span class="token punctuation">,</span> dtype<span class="token operator">=</span>torch<span class="token punctuation">.</span><span class="token builtin">long</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+
+adj_tfidf <span class="token operator">=</span> adj_cosine<span class="token punctuation">(</span>Xt<span class="token punctuation">,</span> Q_SIM<span class="token punctuation">)</span>
+adj_ngram <span class="token operator">=</span> adj_cosine<span class="token punctuation">(</span>Xn<span class="token punctuation">,</span> Q_SIM<span class="token punctuation">)</span>
+adj_comb  <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token punctuation">(</span>adj_tfidf <span class="token operator">+</span> adj_ngram<span class="token punctuation">)</span> <span class="token operator">></span> Q_SIM<span class="token punctuation">)</span><span class="token punctuation">.</span>astype<span class="token punctuation">(</span><span class="token builtin">float</span><span class="token punctuation">)</span>  <span class="token comment"># union</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string-interpolation"><span class="token string">f"   TF-IDF edges:  </span><span class="token interpolation"><span class="token punctuation">{</span><span class="token builtin">int</span><span class="token punctuation">(</span>adj_tfidf<span class="token punctuation">.</span><span class="token builtin">sum</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">}</span></span><span class="token string">"</span></span><span class="token punctuation">)</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string-interpolation"><span class="token string">f"   N-gram edges: </span><span class="token interpolation"><span class="token punctuation">{</span><span class="token builtin">int</span><span class="token punctuation">(</span>adj_ngram<span class="token punctuation">.</span><span class="token builtin">sum</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">}</span></span><span class="token string">"</span></span><span class="token punctuation">)</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string-interpolation"><span class="token string">f"   Combined edges: </span><span class="token interpolation"><span class="token punctuation">{</span><span class="token builtin">int</span><span class="token punctuation">(</span>adj_comb<span class="token punctuation">.</span><span class="token builtin">sum</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">}</span></span><span class="token string">"</span></span><span class="token punctuation">)</span>
+E <span class="token operator">=</span> adj_to_edge<span class="token punctuation">(</span>adj_comb<span class="token punctuation">)</span>
+
+</code></pre>
+<pre class="language-bash" tabindex="0"><code class="language-bash">Step <span class="token number">4</span> <span class="token operator">|</span> Building graph edges <span class="token punctuation">(</span>k‑NN<span class="token punctuation">)</span>
+    TF-IDF edges:  <span class="token number">1032</span>
+    N-gram edges: <span class="token number">1028</span>
+    Combined edges: <span class="token number">1056</span></code></pre>
+<p>Now we move on to training the model.<br>
+In my original implementation, I included early stopping to avoid overfitting-but for the sake of this simplified version, I skipped it (I was lazy 😅).</p>
+<p>Just like before, this part is highly customizable. You can experiment with:</p>
+<ul>
+<li>The number of layers</li>
+<li>Hidden dimensions</li>
+<li>Dropout rates</li>
+<li>Batch normalization</li>
+<li>Activation functions</li>
+</ul>
+<p>Feel free to design the GAE/VGAE architecture in a way that fits your data and goals.</p>
+<hr>
+<p>Evaluating unsupervised clustering models is always a bit of a mystery. There's no single &quot;correct&quot; metric, and depending on your application, some may be more meaningful than others.<br>
+Still, I think <a href="https://scikit-learn.org/stable/modules/clustering.html#clustering-performance-evaluation">Scikit-learn’s guide on Clustering Performance Evaluation</a> is one of the best overviews available online.</p>
+<p>I also wrote about a more niche but useful method in my post on<br>
+<a href="https://yonatanlou.github.io/blog/Evaluating-Hierarchical-Clustering/hierarchical-clustering-eval/">Evaluating Hierarchical Clustering</a>, which dives into metrics like the Dasgupta cost (specific for hierarchial clustering).</p>
+<pre class="language-python" tabindex="0"><code class="language-python">
+<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">"Step 5 | Training Graph Auto‑Encoder …"</span><span class="token punctuation">)</span>
+
+graph <span class="token operator">=</span> Data<span class="token punctuation">(</span>x<span class="token operator">=</span>torch<span class="token punctuation">.</span>tensor<span class="token punctuation">(</span>Xb<span class="token punctuation">,</span> dtype<span class="token operator">=</span>torch<span class="token punctuation">.</span><span class="token builtin">float</span><span class="token punctuation">)</span><span class="token punctuation">,</span> edge_index<span class="token operator">=</span>E<span class="token punctuation">)</span>
+graph <span class="token operator">=</span> graph<span class="token punctuation">.</span>to<span class="token punctuation">(</span>DEVICE<span class="token punctuation">)</span>
+
+<span class="token keyword">class</span> <span class="token class-name">Encoder</span><span class="token punctuation">(</span>torch<span class="token punctuation">.</span>nn<span class="token punctuation">.</span>Module<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    <span class="token keyword">def</span> <span class="token function">__init__</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> dim_in<span class="token punctuation">,</span> dim_h<span class="token punctuation">,</span> dim_z<span class="token punctuation">)</span><span class="token punctuation">:</span>
+        <span class="token builtin">super</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span>__init__<span class="token punctuation">(</span><span class="token punctuation">)</span>
+        self<span class="token punctuation">.</span>g1 <span class="token operator">=</span> GCNConv<span class="token punctuation">(</span>dim_in<span class="token punctuation">,</span> dim_h<span class="token punctuation">)</span>
+        self<span class="token punctuation">.</span>g2 <span class="token operator">=</span> GCNConv<span class="token punctuation">(</span>dim_h<span class="token punctuation">,</span> dim_z<span class="token punctuation">)</span>
+    <span class="token keyword">def</span> <span class="token function">forward</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> x<span class="token punctuation">,</span> ei<span class="token punctuation">)</span><span class="token punctuation">:</span>
+        <span class="token keyword">return</span> self<span class="token punctuation">.</span>g2<span class="token punctuation">(</span>self<span class="token punctuation">.</span>g1<span class="token punctuation">(</span>x<span class="token punctuation">,</span> ei<span class="token punctuation">)</span><span class="token punctuation">.</span>relu<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span> ei<span class="token punctuation">)</span>
+
+gae <span class="token operator">=</span> GAE<span class="token punctuation">(</span>Encoder<span class="token punctuation">(</span>graph<span class="token punctuation">.</span>x<span class="token punctuation">.</span>size<span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">,</span> HIDDEN<span class="token punctuation">,</span> LATENT<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">.</span>to<span class="token punctuation">(</span>DEVICE<span class="token punctuation">)</span>
+opt <span class="token operator">=</span> torch<span class="token punctuation">.</span>optim<span class="token punctuation">.</span>Adam<span class="token punctuation">(</span>gae<span class="token punctuation">.</span>parameters<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span> lr<span class="token operator">=</span>LR<span class="token punctuation">)</span>
+
+<span class="token keyword">for</span> epoch <span class="token keyword">in</span> <span class="token builtin">range</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">,</span> EPOCHS <span class="token operator">+</span> <span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+    gae<span class="token punctuation">.</span>train<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span> opt<span class="token punctuation">.</span>zero_grad<span class="token punctuation">(</span><span class="token punctuation">)</span>
+    z <span class="token operator">=</span> gae<span class="token punctuation">.</span>encode<span class="token punctuation">(</span>graph<span class="token punctuation">.</span>x<span class="token punctuation">,</span> graph<span class="token punctuation">.</span>edge_index<span class="token punctuation">)</span>
+    loss <span class="token operator">=</span> gae<span class="token punctuation">.</span>recon_loss<span class="token punctuation">(</span>z<span class="token punctuation">,</span> graph<span class="token punctuation">.</span>edge_index<span class="token punctuation">)</span>
+    loss<span class="token punctuation">.</span>backward<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span> opt<span class="token punctuation">.</span>step<span class="token punctuation">(</span><span class="token punctuation">)</span>
+    <span class="token keyword">if</span> epoch <span class="token operator">%</span> <span class="token number">10</span> <span class="token operator">==</span> <span class="token number">0</span><span class="token punctuation">:</span>
+        <span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string-interpolation"><span class="token string">f"Epoch </span><span class="token interpolation"><span class="token punctuation">{</span>epoch<span class="token punctuation">:</span><span class="token format-spec">03d</span><span class="token punctuation">}</span></span><span class="token string"> | Loss </span><span class="token interpolation"><span class="token punctuation">{</span>loss<span class="token punctuation">.</span>item<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">:</span><span class="token format-spec">.4f</span><span class="token punctuation">}</span></span><span class="token string">"</span></span><span class="token punctuation">)</span>
+
+
+</code></pre>
+<pre class="language-bash" tabindex="0"><code class="language-bash">    Step <span class="token number">5</span> <span class="token operator">|</span> Training Graph Auto‑Encoder …
+    Epoch 010 <span class="token operator">|</span> Loss <span class="token number">1.1351</span>
+    Epoch 020 <span class="token operator">|</span> Loss <span class="token number">1.0478</span>
+    Epoch 030 <span class="token operator">|</span> Loss <span class="token number">0.9715</span>
+    Epoch 040 <span class="token operator">|</span> Loss <span class="token number">0.8702</span>
+    Epoch 050 <span class="token operator">|</span> Loss <span class="token number">0.8832</span>
+    Epoch 060 <span class="token operator">|</span> Loss <span class="token number">0.8712</span>
+    Epoch 070 <span class="token operator">|</span> Loss <span class="token number">0.8518</span>
+    Epoch 080 <span class="token operator">|</span> Loss <span class="token number">0.8291</span>
+    Epoch 090 <span class="token operator">|</span> Loss <span class="token number">0.8149</span>
+    Epoch <span class="token number">100</span> <span class="token operator">|</span> Loss <span class="token number">0.7946</span>
+    Epoch <span class="token number">110</span> <span class="token operator">|</span> Loss <span class="token number">0.8166</span>
+    Epoch <span class="token number">120</span> <span class="token operator">|</span> Loss <span class="token number">0.8010</span>
+    Epoch <span class="token number">130</span> <span class="token operator">|</span> Loss <span class="token number">0.7978</span>
+    Epoch <span class="token number">140</span> <span class="token operator">|</span> Loss <span class="token number">0.7979</span>
+    Epoch <span class="token number">150</span> <span class="token operator">|</span> Loss <span class="token number">0.8014</span>
+    Epoch <span class="token number">160</span> <span class="token operator">|</span> Loss <span class="token number">0.8089</span>
+    Epoch <span class="token number">170</span> <span class="token operator">|</span> Loss <span class="token number">0.7826</span>
+    Epoch <span class="token number">180</span> <span class="token operator">|</span> Loss <span class="token number">0.7878</span>
+    Epoch <span class="token number">190</span> <span class="token operator">|</span> Loss <span class="token number">0.8120</span>
+    Epoch <span class="token number">200</span> <span class="token operator">|</span> Loss <span class="token number">0.7809</span>
+    Epoch <span class="token number">210</span> <span class="token operator">|</span> Loss <span class="token number">0.7806</span>
+    Epoch <span class="token number">220</span> <span class="token operator">|</span> Loss <span class="token number">0.7765</span>
+    Epoch <span class="token number">230</span> <span class="token operator">|</span> Loss <span class="token number">0.7945</span>
+    Epoch <span class="token number">240</span> <span class="token operator">|</span> Loss <span class="token number">0.7801</span>
+    Epoch <span class="token number">250</span> <span class="token operator">|</span> Loss <span class="token number">0.7783</span>
+    Epoch <span class="token number">260</span> <span class="token operator">|</span> Loss <span class="token number">0.7951</span>
+    Epoch <span class="token number">270</span> <span class="token operator">|</span> Loss <span class="token number">0.7917</span>
+    Epoch <span class="token number">280</span> <span class="token operator">|</span> Loss <span class="token number">0.7733</span>
+    Epoch <span class="token number">290</span> <span class="token operator">|</span> Loss <span class="token number">0.7740</span>
+    Epoch <span class="token number">300</span> <span class="token operator">|</span> Loss <span class="token number">0.7602</span>
+    Epoch <span class="token number">310</span> <span class="token operator">|</span> Loss <span class="token number">0.7769</span>
+    Epoch <span class="token number">320</span> <span class="token operator">|</span> Loss <span class="token number">0.7720</span>
+    Epoch <span class="token number">330</span> <span class="token operator">|</span> Loss <span class="token number">0.7843</span>
+    Epoch <span class="token number">340</span> <span class="token operator">|</span> Loss <span class="token number">0.7836</span>
+    Epoch <span class="token number">350</span> <span class="token operator">|</span> Loss <span class="token number">0.7654</span>
+</code></pre>
+<pre class="language-python" tabindex="0"><code class="language-python"><span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">"Step 6 | Clustering latent space …"</span><span class="token punctuation">)</span>
+gae<span class="token punctuation">.</span><span class="token builtin">eval</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token keyword">with</span> torch<span class="token punctuation">.</span>no_grad<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+    embeddings <span class="token operator">=</span> gae<span class="token punctuation">.</span>encode<span class="token punctuation">(</span>graph<span class="token punctuation">.</span>x<span class="token punctuation">,</span> graph<span class="token punctuation">.</span>edge_index<span class="token punctuation">)</span><span class="token punctuation">.</span>cpu<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span>detach<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span>numpy<span class="token punctuation">(</span><span class="token punctuation">)</span>
+    km_emb  <span class="token operator">=</span> KMeans<span class="token punctuation">(</span>N_CLUST<span class="token punctuation">,</span> n_init<span class="token operator">=</span><span class="token number">10</span><span class="token punctuation">)</span><span class="token punctuation">.</span>fit<span class="token punctuation">(</span>embeddings<span class="token punctuation">)</span>
+    gae_v   <span class="token operator">=</span> v_measure_score<span class="token punctuation">(</span>y<span class="token punctuation">,</span> km_emb<span class="token punctuation">.</span>labels_<span class="token punctuation">)</span>
+    gae_ari <span class="token operator">=</span> adjusted_rand_score<span class="token punctuation">(</span>y<span class="token punctuation">,</span> km_emb<span class="token punctuation">.</span>labels_<span class="token punctuation">)</span>
+
+km_base <span class="token operator">=</span> KMeans<span class="token punctuation">(</span>N_CLUST<span class="token punctuation">,</span> n_init<span class="token operator">=</span><span class="token number">10</span><span class="token punctuation">)</span><span class="token punctuation">.</span>fit<span class="token punctuation">(</span>Xb<span class="token punctuation">)</span>
+base_v   <span class="token operator">=</span> v_measure_score<span class="token punctuation">(</span>y<span class="token punctuation">,</span> km_base<span class="token punctuation">.</span>labels_<span class="token punctuation">)</span>
+base_ari <span class="token operator">=</span> adjusted_rand_score<span class="token punctuation">(</span>y<span class="token punctuation">,</span> km_base<span class="token punctuation">.</span>labels_<span class="token punctuation">)</span>
+
+
+
+<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">"\nResults"</span><span class="token punctuation">)</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string-interpolation"><span class="token string">f"Baseline (BERT + k‑means) → V: </span><span class="token interpolation"><span class="token punctuation">{</span>base_v<span class="token punctuation">:</span><span class="token format-spec">.3f</span><span class="token punctuation">}</span></span><span class="token string"> | ARI: </span><span class="token interpolation"><span class="token punctuation">{</span>base_ari<span class="token punctuation">:</span><span class="token format-spec">.3f</span><span class="token punctuation">}</span></span><span class="token string">"</span></span><span class="token punctuation">)</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string-interpolation"><span class="token string">f"GAE (BERT + TF-IDF + N-grams)   → V: </span><span class="token interpolation"><span class="token punctuation">{</span>gae_v<span class="token punctuation">:</span><span class="token format-spec">.3f</span><span class="token punctuation">}</span></span><span class="token string"> | ARI: </span><span class="token interpolation"><span class="token punctuation">{</span>gae_ari<span class="token punctuation">:</span><span class="token format-spec">.3f</span><span class="token punctuation">}</span></span><span class="token string">"</span></span><span class="token punctuation">)</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string-interpolation"><span class="token string">f"Improvement: V </span><span class="token interpolation"><span class="token punctuation">{</span><span class="token punctuation">(</span>gae_v<span class="token operator">/</span>base_v<span class="token punctuation">)</span><span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">:</span><span class="token format-spec">.3%</span><span class="token punctuation">}</span></span><span class="token string"> | ARI </span><span class="token interpolation"><span class="token punctuation">{</span><span class="token punctuation">(</span>gae_ari<span class="token operator">/</span>base_ari<span class="token punctuation">)</span><span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">:</span><span class="token format-spec">.3%</span><span class="token punctuation">}</span></span><span class="token string">"</span></span><span class="token punctuation">)</span></code></pre>
+<pre class="language-bash" tabindex="0"><code class="language-bash">    Step <span class="token number">6</span> <span class="token operator">|</span> Clustering latent space …
+    
+    Results
+    Baseline <span class="token punctuation">(</span>BERT + k‑means<span class="token punctuation">)</span> → V: <span class="token number">0.317</span> <span class="token operator">|</span> ARI: <span class="token number">0.124</span>
+    GAE <span class="token punctuation">(</span>BERT + TF-IDF + N-grams<span class="token punctuation">)</span>   → V: <span class="token number">0.355</span> <span class="token operator">|</span> ARI: <span class="token number">0.153</span>
+    Improvement: V <span class="token number">12.082</span>% <span class="token operator">|</span> ARI <span class="token number">23.501</span>%</code></pre>
+
+<ul class="links-nextprev"><li class="links-nextprev-prev">← Previous<br> <a href="/blog/Evaluating-Hierarchical-Clustering/hierarchical-clustering-eval/">Evaluating Hierarchical Clustering Beyond the Leaves 🌳</a></li>
+</ul>
+
+</heading-anchors></main><footer>
+<div class="social-links">
+    <a href="https://www.goodreads.com/user/show/103722180-yonatan-lourie" target="_blank" title="Goodreads">
+        <i class="fab fa-goodreads"></i>
+    </a>
+    <a href="https://www.imdb.com/user/ur88119677/ratings/" target="_blank" title="IMDb">
+        <i class="fab fa-imdb"></i>
+    </a>
+    <a href="https://open.spotify.com/user/224udkuetwxsiqba7n4tums6q?si=_RD2kBO8QlSUYLfjBLjBEQ&nd=1" target="_blank" title="Spotify">
+        <i class="fab fa-spotify"></i>
+    </a>
+    <a href="https://x.com/yonatanlou" target="_blank" title="Twitter">
+        <i class="fab fa-twitter"></i>
+    </a>
+    <a href="https://www.linkedin.com/in/yonatanlourie/" target="_blank" title="LinkedIn">
+        <i class="fab fa-linkedin"></i>
+    </a>
+    <a href="https://github.com/yonatanlou" target="_blank" title="GitHub">
+        <i class="fab fa-github"></i>
+    </a>
+    <a href="mailto:yonatanlou@gmail.com" target="_blank" title="Email">
+        <i class="fa-solid fa-envelope"></i>
+    </a>
+</div></footer><!-- This page `/blog/unsupervised-text-clustering-gnn/6.2-unsupervised-gae-clustering/` was built on 2025-06-18T12:05:22.832Z --><script type="module" src="/dist/rJ3_G-2ArF.js"></script>
