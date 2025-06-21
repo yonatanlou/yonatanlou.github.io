@@ -45,9 +45,12 @@ export default async function (eleventyConfig) {
 	const { katex } = (await import("@mdit/plugin-katex"));
   eleventyConfig.setLibrary(
   	"md", 
-  	markdownIt().use(katex, {output: "mathml"})
-  );
-
+  	 markdownIt({
+            html: true, // <--- Add this line!
+            breaks: true, // Often useful for simple line breaks
+            linkify: true, // Auto-converts URLs to links
+        }).use(katex, {output: "mathml"})
+    );
 	// Official plugins
 	eleventyConfig.addPlugin(pluginSyntaxHighlight, {
 		preAttributes: { tabindex: 0 }

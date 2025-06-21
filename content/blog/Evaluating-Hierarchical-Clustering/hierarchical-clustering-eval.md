@@ -4,6 +4,7 @@ description: Hierarchical clustering evaluation with the Dasgupta cost.
 date: 2025-01-12
 tags: posts
 ---
+
 <a target="_blank" href="https://colab.research.google.com/github/yonatanlou/notebooks/blob/main/Jaccard_index_for_unsupervised_clustering.ipynb">
   <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
 </a>
@@ -30,11 +31,11 @@ In Dasgupta's formulation, the input to a clustering problem consists of similar
 
 #### **Cost Function Definition:**  
 A hierarchical clustering can be described as a **tree** (not necessarily a binary tree) whose **leaves** are the elements to be clustered. The clusters are then the subsets of elements descending from each tree node.  
-The **size** \( |C| \) of any cluster \( C \) is the number of elements in the cluster.
+The **size** $|C|$ of any cluster $C$ is the number of elements in the cluster.
 
-For each edge \( uv \) of the input graph:
-- Let \( w(uv) \) denote the **weight** of edge \( uv \).
-- Let \( C(uv) \) denote the **smallest cluster** of a given clustering that contains both \( u \) and \( v \).
+For each edge $uv$ of the input graph:
+- Let $w(uv)$ denote the **weight** of edge $uv$.
+- Let $C(uv)$ denote the **smallest cluster** of a given clustering that contains both $u$and $v$.
 
 Then Dasgupta defines the **cost of a clustering** as:
 
