@@ -250,9 +250,9 @@ base_ari &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; adjusted_ra
     <link href="https://yonatanlou.github.io/blog/Evaluating-Hierarchical-Clustering/hierarchical-clustering-eval/" />
     <updated>2025-01-12T00:00:00Z</updated>
     <id>https://yonatanlou.github.io/blog/Evaluating-Hierarchical-Clustering/hierarchical-clustering-eval/</id>
-    <content type="html">&lt;p&gt;&amp;lt;a target=&amp;quot;_blank&amp;quot; href=&amp;quot;https://colab.research.google.com/github/yonatanlou/notebooks/blob/main/Jaccard_index_for_unsupervised_clustering.ipynb&amp;quot;&amp;gt;
-&amp;lt;img src=&amp;quot;https://colab.research.google.com/assets/colab-badge.svg&amp;quot; alt=&amp;quot;Open In Colab&amp;quot;/&amp;gt;
-&amp;lt;/a&amp;gt;&lt;/p&gt;
+    <content type="html">&lt;a target=&quot;_blank&quot; href=&quot;https://colab.research.google.com/github/yonatanlou/notebooks/blob/main/Jaccard_index_for_unsupervised_clustering.ipynb&quot;&gt;
+  &lt;picture&gt;&lt;source type=&quot;image/avif&quot; srcset=&quot;https://yonatanlou.github.io/blog/Evaluating-Hierarchical-Clustering/hierarchical-clustering-eval/HffI470J9w-117.avif 117w&quot;&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://yonatanlou.github.io/blog/Evaluating-Hierarchical-Clustering/hierarchical-clustering-eval/HffI470J9w-117.webp 117w&quot;&gt;&lt;img loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://yonatanlou.github.io/blog/Evaluating-Hierarchical-Clustering/hierarchical-clustering-eval/HffI470J9w-117.svg&quot; alt=&quot;Open In Colab&quot; width=&quot;117&quot; height=&quot;20&quot;&gt;&lt;/picture&gt;
+&lt;/a&gt;
 &lt;p&gt;When working on hierarchical clustering tasks, evaluation is often limited to the &lt;strong&gt;leaves of the tree&lt;/strong&gt; or relies on plots that look impressive but don&#39;t tell the whole story.What if we could assess the entire tree structure? Wouldn&#39;t that give us a more nuanced view of our clustering methods, linkage techniques, or embedding models?&lt;/p&gt;
 &lt;p&gt;In this short article, I&#39;ll introduce you to a clever method invented by &lt;strong&gt;Sanjoy Dasgupta&lt;/strong&gt; for evaluating hierarchical clustering-not just at the leaves but across the whole tree structure.&lt;/p&gt;
 &lt;p&gt;Most people who implement hierarchical clustering tend to evaluate it using well-known unsupervised learning metrics (like the ones mentioned in &lt;a href=&quot;https://scikit-learn.org/1.5/modules/clustering.html#clustering-performance-evaluation&quot;&gt;scikit-learn&#39;s clustering evaluation&lt;/a&gt;).&lt;br&gt;
@@ -265,11 +265,11 @@ These metrics typically require you to &amp;quot;flatten&amp;quot; the clusters.
 &lt;p&gt;In Dasgupta&#39;s formulation, the input to a clustering problem consists of similarity scores between certain pairs of elements, represented as an &lt;strong&gt;undirected graph&lt;/strong&gt; &lt;span class=&quot;katex&quot;&gt;&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;&gt;&lt;semantics&gt;&lt;mrow&gt;&lt;mi&gt;G&lt;/mi&gt;&lt;mo&gt;=&lt;/mo&gt;&lt;mo stretchy=&quot;false&quot;&gt;(&lt;/mo&gt;&lt;mi&gt;V&lt;/mi&gt;&lt;mo separator=&quot;true&quot;&gt;,&lt;/mo&gt;&lt;mi&gt;E&lt;/mi&gt;&lt;mo stretchy=&quot;false&quot;&gt;)&lt;/mo&gt;&lt;/mrow&gt;&lt;annotation encoding=&quot;application/x-tex&quot;&gt;G = (V, E)&lt;/annotation&gt;&lt;/semantics&gt;&lt;/math&gt;&lt;/span&gt;, with the elements as its vertices and non-negative real weights on its edges.&lt;/p&gt;
 &lt;h4 id=&quot;cost-function-definition&quot;&gt;&lt;strong&gt;Cost Function Definition:&lt;/strong&gt;&lt;/h4&gt;
 &lt;p&gt;A hierarchical clustering can be described as a &lt;strong&gt;tree&lt;/strong&gt; (not necessarily a binary tree) whose &lt;strong&gt;leaves&lt;/strong&gt; are the elements to be clustered. The clusters are then the subsets of elements descending from each tree node.&lt;br&gt;
-The &lt;strong&gt;size&lt;/strong&gt; ( |C| ) of any cluster ( C ) is the number of elements in the cluster.&lt;/p&gt;
-&lt;p&gt;For each edge ( uv ) of the input graph:&lt;/p&gt;
+The &lt;strong&gt;size&lt;/strong&gt; &lt;span class=&quot;katex&quot;&gt;&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;&gt;&lt;semantics&gt;&lt;mrow&gt;&lt;mi mathvariant=&quot;normal&quot;&gt;∣&lt;/mi&gt;&lt;mi&gt;C&lt;/mi&gt;&lt;mi mathvariant=&quot;normal&quot;&gt;∣&lt;/mi&gt;&lt;/mrow&gt;&lt;annotation encoding=&quot;application/x-tex&quot;&gt;|C|&lt;/annotation&gt;&lt;/semantics&gt;&lt;/math&gt;&lt;/span&gt; of any cluster &lt;span class=&quot;katex&quot;&gt;&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;&gt;&lt;semantics&gt;&lt;mrow&gt;&lt;mi&gt;C&lt;/mi&gt;&lt;/mrow&gt;&lt;annotation encoding=&quot;application/x-tex&quot;&gt;C&lt;/annotation&gt;&lt;/semantics&gt;&lt;/math&gt;&lt;/span&gt; is the number of elements in the cluster.&lt;/p&gt;
+&lt;p&gt;For each edge &lt;span class=&quot;katex&quot;&gt;&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;&gt;&lt;semantics&gt;&lt;mrow&gt;&lt;mi&gt;u&lt;/mi&gt;&lt;mi&gt;v&lt;/mi&gt;&lt;/mrow&gt;&lt;annotation encoding=&quot;application/x-tex&quot;&gt;uv&lt;/annotation&gt;&lt;/semantics&gt;&lt;/math&gt;&lt;/span&gt; of the input graph:&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;Let ( w(uv) ) denote the &lt;strong&gt;weight&lt;/strong&gt; of edge ( uv ).&lt;/li&gt;
-&lt;li&gt;Let ( C(uv) ) denote the &lt;strong&gt;smallest cluster&lt;/strong&gt; of a given clustering that contains both ( u ) and ( v ).&lt;/li&gt;
+&lt;li&gt;Let &lt;span class=&quot;katex&quot;&gt;&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;&gt;&lt;semantics&gt;&lt;mrow&gt;&lt;mi&gt;w&lt;/mi&gt;&lt;mo stretchy=&quot;false&quot;&gt;(&lt;/mo&gt;&lt;mi&gt;u&lt;/mi&gt;&lt;mi&gt;v&lt;/mi&gt;&lt;mo stretchy=&quot;false&quot;&gt;)&lt;/mo&gt;&lt;/mrow&gt;&lt;annotation encoding=&quot;application/x-tex&quot;&gt;w(uv)&lt;/annotation&gt;&lt;/semantics&gt;&lt;/math&gt;&lt;/span&gt; denote the &lt;strong&gt;weight&lt;/strong&gt; of edge &lt;span class=&quot;katex&quot;&gt;&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;&gt;&lt;semantics&gt;&lt;mrow&gt;&lt;mi&gt;u&lt;/mi&gt;&lt;mi&gt;v&lt;/mi&gt;&lt;/mrow&gt;&lt;annotation encoding=&quot;application/x-tex&quot;&gt;uv&lt;/annotation&gt;&lt;/semantics&gt;&lt;/math&gt;&lt;/span&gt;.&lt;/li&gt;
+&lt;li&gt;Let &lt;span class=&quot;katex&quot;&gt;&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;&gt;&lt;semantics&gt;&lt;mrow&gt;&lt;mi&gt;C&lt;/mi&gt;&lt;mo stretchy=&quot;false&quot;&gt;(&lt;/mo&gt;&lt;mi&gt;u&lt;/mi&gt;&lt;mi&gt;v&lt;/mi&gt;&lt;mo stretchy=&quot;false&quot;&gt;)&lt;/mo&gt;&lt;/mrow&gt;&lt;annotation encoding=&quot;application/x-tex&quot;&gt;C(uv)&lt;/annotation&gt;&lt;/semantics&gt;&lt;/math&gt;&lt;/span&gt; denote the &lt;strong&gt;smallest cluster&lt;/strong&gt; of a given clustering that contains both &lt;span class=&quot;katex&quot;&gt;&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;&gt;&lt;semantics&gt;&lt;mrow&gt;&lt;mi&gt;u&lt;/mi&gt;&lt;/mrow&gt;&lt;annotation encoding=&quot;application/x-tex&quot;&gt;u&lt;/annotation&gt;&lt;/semantics&gt;&lt;/math&gt;&lt;/span&gt;and &lt;span class=&quot;katex&quot;&gt;&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;&gt;&lt;semantics&gt;&lt;mrow&gt;&lt;mi&gt;v&lt;/mi&gt;&lt;/mrow&gt;&lt;annotation encoding=&quot;application/x-tex&quot;&gt;v&lt;/annotation&gt;&lt;/semantics&gt;&lt;/math&gt;&lt;/span&gt;.&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;Then Dasgupta defines the &lt;strong&gt;cost of a clustering&lt;/strong&gt; as:&lt;/p&gt;
 &lt;p class=&quot;katex-block&quot;&gt;&lt;span class=&quot;katex&quot;&gt;&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot; display=&quot;block&quot;&gt;&lt;semantics&gt;&lt;mrow&gt;&lt;munder&gt;&lt;mo&gt;∑&lt;/mo&gt;&lt;mrow&gt;&lt;mi&gt;u&lt;/mi&gt;&lt;mi&gt;v&lt;/mi&gt;&lt;mo&gt;∈&lt;/mo&gt;&lt;mi&gt;E&lt;/mi&gt;&lt;/mrow&gt;&lt;/munder&gt;&lt;mi&gt;w&lt;/mi&gt;&lt;mo stretchy=&quot;false&quot;&gt;(&lt;/mo&gt;&lt;mi&gt;u&lt;/mi&gt;&lt;mi&gt;v&lt;/mi&gt;&lt;mo stretchy=&quot;false&quot;&gt;)&lt;/mo&gt;&lt;mo&gt;⋅&lt;/mo&gt;&lt;mi mathvariant=&quot;normal&quot;&gt;∣&lt;/mi&gt;&lt;mi&gt;C&lt;/mi&gt;&lt;mo stretchy=&quot;false&quot;&gt;(&lt;/mo&gt;&lt;mi&gt;u&lt;/mi&gt;&lt;mi&gt;v&lt;/mi&gt;&lt;mo stretchy=&quot;false&quot;&gt;)&lt;/mo&gt;&lt;mi mathvariant=&quot;normal&quot;&gt;∣&lt;/mi&gt;&lt;/mrow&gt;&lt;annotation encoding=&quot;application/x-tex&quot;&gt;&#92;sum_{uv &#92;in E} w(uv) &#92;cdot |C(uv)|
@@ -363,377 +363,384 @@ combined_df &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; combined
 &lt;span class=&quot;token punctuation&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
 
 combined_df&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;groupby&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot;1st_level_category&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;2nd_level_category&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot;3rd_level_category&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;nunique&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&amp;lt;div&amp;gt;
-&amp;lt;style scoped&amp;gt;
-.dataframe tbody tr th:only-of-type {
-vertical-align: middle;
+&lt;div&gt;
+&lt;style scoped=&quot;&quot;&gt;
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+&lt;p&gt;.dataframe tbody tr th {&lt;br&gt;
+vertical-align: top;&lt;br&gt;
 }&lt;/p&gt;
-&lt;p&gt;.dataframe tbody tr th {
-vertical-align: top;
-}&lt;/p&gt;
-&lt;p&gt;.dataframe thead th {
-text-align: right;
-}
-&amp;lt;/style&amp;gt;
-&amp;lt;table border=&amp;quot;1&amp;quot; class=&amp;quot;dataframe&amp;quot;&amp;gt;
-&amp;lt;thead&amp;gt;
-&amp;lt;tr style=&amp;quot;text-align: right;&amp;quot;&amp;gt;
-&amp;lt;th&amp;gt;&amp;lt;/th&amp;gt;
-&amp;lt;th&amp;gt;&amp;lt;/th&amp;gt;
-&amp;lt;th&amp;gt;3rd_level_category&amp;lt;/th&amp;gt;
-&amp;lt;/tr&amp;gt;
-&amp;lt;tr&amp;gt;
-&amp;lt;th&amp;gt;1st_level_category&amp;lt;/th&amp;gt;
-&amp;lt;th&amp;gt;2nd_level_category&amp;lt;/th&amp;gt;
-&amp;lt;th&amp;gt;&amp;lt;/th&amp;gt;
-&amp;lt;/tr&amp;gt;
-&amp;lt;/thead&amp;gt;
-&amp;lt;tbody&amp;gt;
-&amp;lt;tr&amp;gt;
-&amp;lt;th rowspan=&amp;quot;5&amp;quot; valign=&amp;quot;top&amp;quot;&amp;gt;Family and General Supplies&amp;lt;/th&amp;gt;
-&amp;lt;th&amp;gt;car &amp;amp; motorbike&amp;lt;/th&amp;gt;
-&amp;lt;td&amp;gt;6&amp;lt;/td&amp;gt;
-&amp;lt;/tr&amp;gt;
-&amp;lt;tr&amp;gt;
-&amp;lt;th&amp;gt;grocery &amp;amp; gourmet foods&amp;lt;/th&amp;gt;
-&amp;lt;td&amp;gt;3&amp;lt;/td&amp;gt;
-&amp;lt;/tr&amp;gt;
-&amp;lt;tr&amp;gt;
-&amp;lt;th&amp;gt;industrial supplies&amp;lt;/th&amp;gt;
-&amp;lt;td&amp;gt;4&amp;lt;/td&amp;gt;
-&amp;lt;/tr&amp;gt;
-&amp;lt;tr&amp;gt;
-&amp;lt;th&amp;gt;stores&amp;lt;/th&amp;gt;
-&amp;lt;td&amp;gt;6&amp;lt;/td&amp;gt;
-&amp;lt;/tr&amp;gt;
-&amp;lt;tr&amp;gt;
-&amp;lt;th&amp;gt;toys &amp;amp; baby products&amp;lt;/th&amp;gt;
-&amp;lt;td&amp;gt;9&amp;lt;/td&amp;gt;
-&amp;lt;/tr&amp;gt;
-&amp;lt;tr&amp;gt;
-&amp;lt;th rowspan=&amp;quot;7&amp;quot; valign=&amp;quot;top&amp;quot;&amp;gt;Fashion and Accessories&amp;lt;/th&amp;gt;
-&amp;lt;th&amp;gt;accessories&amp;lt;/th&amp;gt;
-&amp;lt;td&amp;gt;7&amp;lt;/td&amp;gt;
-&amp;lt;/tr&amp;gt;
-&amp;lt;tr&amp;gt;
-&amp;lt;th&amp;gt;bags &amp;amp; luggage&amp;lt;/th&amp;gt;
-&amp;lt;td&amp;gt;6&amp;lt;/td&amp;gt;
-&amp;lt;/tr&amp;gt;
-&amp;lt;tr&amp;gt;
-&amp;lt;th&amp;gt;kids&#39; fashion&amp;lt;/th&amp;gt;
-&amp;lt;td&amp;gt;6&amp;lt;/td&amp;gt;
-&amp;lt;/tr&amp;gt;
-&amp;lt;tr&amp;gt;
-&amp;lt;th&amp;gt;men&#39;s clothing&amp;lt;/th&amp;gt;
-&amp;lt;td&amp;gt;4&amp;lt;/td&amp;gt;
-&amp;lt;/tr&amp;gt;
-&amp;lt;tr&amp;gt;
-&amp;lt;th&amp;gt;men&#39;s shoes&amp;lt;/th&amp;gt;
-&amp;lt;td&amp;gt;3&amp;lt;/td&amp;gt;
-&amp;lt;/tr&amp;gt;
-&amp;lt;tr&amp;gt;
-&amp;lt;th&amp;gt;women&#39;s clothing&amp;lt;/th&amp;gt;
-&amp;lt;td&amp;gt;4&amp;lt;/td&amp;gt;
-&amp;lt;/tr&amp;gt;
-&amp;lt;tr&amp;gt;
-&amp;lt;th&amp;gt;women&#39;s shoes&amp;lt;/th&amp;gt;
-&amp;lt;td&amp;gt;3&amp;lt;/td&amp;gt;
-&amp;lt;/tr&amp;gt;
-&amp;lt;tr&amp;gt;
-&amp;lt;th rowspan=&amp;quot;4&amp;quot; valign=&amp;quot;top&amp;quot;&amp;gt;Health and Entertainment&amp;lt;/th&amp;gt;
-&amp;lt;th&amp;gt;beauty &amp;amp; health&amp;lt;/th&amp;gt;
-&amp;lt;td&amp;gt;8&amp;lt;/td&amp;gt;
-&amp;lt;/tr&amp;gt;
-&amp;lt;tr&amp;gt;
-&amp;lt;th&amp;gt;music&amp;lt;/th&amp;gt;
-&amp;lt;td&amp;gt;1&amp;lt;/td&amp;gt;
-&amp;lt;/tr&amp;gt;
-&amp;lt;tr&amp;gt;
-&amp;lt;th&amp;gt;sports &amp;amp; fitness&amp;lt;/th&amp;gt;
-&amp;lt;td&amp;gt;12&amp;lt;/td&amp;gt;
-&amp;lt;/tr&amp;gt;
-&amp;lt;tr&amp;gt;
-&amp;lt;th&amp;gt;tv, audio &amp;amp; cameras&amp;lt;/th&amp;gt;
-&amp;lt;td&amp;gt;9&amp;lt;/td&amp;gt;
-&amp;lt;/tr&amp;gt;
-&amp;lt;tr&amp;gt;
-&amp;lt;th rowspan=&amp;quot;4&amp;quot; valign=&amp;quot;top&amp;quot;&amp;gt;Home and Lifestyle&amp;lt;/th&amp;gt;
-&amp;lt;th&amp;gt;appliances&amp;lt;/th&amp;gt;
-&amp;lt;td&amp;gt;6&amp;lt;/td&amp;gt;
-&amp;lt;/tr&amp;gt;
-&amp;lt;tr&amp;gt;
-&amp;lt;th&amp;gt;home &amp;amp; kitchen&amp;lt;/th&amp;gt;
-&amp;lt;td&amp;gt;12&amp;lt;/td&amp;gt;
-&amp;lt;/tr&amp;gt;
-&amp;lt;tr&amp;gt;
-&amp;lt;th&amp;gt;home, kitchen, pets&amp;lt;/th&amp;gt;
-&amp;lt;td&amp;gt;1&amp;lt;/td&amp;gt;
-&amp;lt;/tr&amp;gt;
-&amp;lt;tr&amp;gt;
-&amp;lt;th&amp;gt;pet supplies&amp;lt;/th&amp;gt;
-&amp;lt;td&amp;gt;2&amp;lt;/td&amp;gt;
-&amp;lt;/tr&amp;gt;
-&amp;lt;/tbody&amp;gt;
-&amp;lt;/table&amp;gt;
-&amp;lt;/div&amp;gt;&amp;lt;br&amp;gt;&amp;lt;label&amp;gt;&amp;lt;b&amp;gt;dtype:&amp;lt;/b&amp;gt; int64&amp;lt;/label&amp;gt;&lt;/p&gt;
+&lt;p&gt;.dataframe thead th {&lt;br&gt;
+text-align: right;&lt;br&gt;
+}&lt;br&gt;
+&lt;/style&gt;&lt;p&gt;&lt;/p&gt;
+&lt;table border=&quot;1&quot; class=&quot;dataframe&quot;&gt;
+  &lt;thead&gt;
+    &lt;tr style=&quot;text-align: right;&quot;&gt;
+      &lt;th&gt;&lt;/th&gt;
+      &lt;th&gt;&lt;/th&gt;
+      &lt;th&gt;3rd_level_category&lt;/th&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;th&gt;1st_level_category&lt;/th&gt;
+      &lt;th&gt;2nd_level_category&lt;/th&gt;
+      &lt;th&gt;&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;th rowspan=&quot;5&quot; valign=&quot;top&quot;&gt;Family and General Supplies&lt;/th&gt;
+      &lt;th&gt;car &amp;amp; motorbike&lt;/th&gt;
+      &lt;td&gt;6&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;th&gt;grocery &amp;amp; gourmet foods&lt;/th&gt;
+      &lt;td&gt;3&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;th&gt;industrial supplies&lt;/th&gt;
+      &lt;td&gt;4&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;th&gt;stores&lt;/th&gt;
+      &lt;td&gt;6&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;th&gt;toys &amp;amp; baby products&lt;/th&gt;
+      &lt;td&gt;9&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;th rowspan=&quot;7&quot; valign=&quot;top&quot;&gt;Fashion and Accessories&lt;/th&gt;
+      &lt;th&gt;accessories&lt;/th&gt;
+      &lt;td&gt;7&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;th&gt;bags &amp;amp; luggage&lt;/th&gt;
+      &lt;td&gt;6&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;th&gt;kids&#39; fashion&lt;/th&gt;
+      &lt;td&gt;6&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;th&gt;men&#39;s clothing&lt;/th&gt;
+      &lt;td&gt;4&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;th&gt;men&#39;s shoes&lt;/th&gt;
+      &lt;td&gt;3&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;th&gt;women&#39;s clothing&lt;/th&gt;
+      &lt;td&gt;4&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;th&gt;women&#39;s shoes&lt;/th&gt;
+      &lt;td&gt;3&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;th rowspan=&quot;4&quot; valign=&quot;top&quot;&gt;Health and Entertainment&lt;/th&gt;
+      &lt;th&gt;beauty &amp;amp; health&lt;/th&gt;
+      &lt;td&gt;8&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;th&gt;music&lt;/th&gt;
+      &lt;td&gt;1&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;th&gt;sports &amp;amp; fitness&lt;/th&gt;
+      &lt;td&gt;12&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;th&gt;tv, audio &amp;amp; cameras&lt;/th&gt;
+      &lt;td&gt;9&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;th rowspan=&quot;4&quot; valign=&quot;top&quot;&gt;Home and Lifestyle&lt;/th&gt;
+      &lt;th&gt;appliances&lt;/th&gt;
+      &lt;td&gt;6&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;th&gt;home &amp;amp; kitchen&lt;/th&gt;
+      &lt;td&gt;12&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;th&gt;home, kitchen, pets&lt;/th&gt;
+      &lt;td&gt;1&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;th&gt;pet supplies&lt;/th&gt;
+      &lt;td&gt;2&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;/div&gt;&lt;br&gt;&lt;label&gt;&lt;b&gt;dtype:&lt;/b&gt; int64&lt;/label&gt;
 &lt;pre class=&quot;language-python&quot; tabindex=&quot;0&quot;&gt;&lt;code class=&quot;language-python&quot;&gt;N_SAMPLES &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;token number&quot;&gt;100&lt;/span&gt;
 df &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; combined_df&lt;span class=&quot;token punctuation&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot;name&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;1st_level_category&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;2nd_level_category&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;3rd_level_category&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;]&lt;/span&gt;
 df &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; df&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;sample&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;N_SAMPLES&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
 df&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;head&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&amp;lt;div id=&amp;quot;df-e3aa984c-6ff7-418d-9e3e-d33c59c6ca2d&amp;quot; class=&amp;quot;colab-df-container&amp;quot;&amp;gt;
-&amp;lt;div&amp;gt;
-&amp;lt;style scoped&amp;gt;
-.dataframe tbody tr th:only-of-type {
-vertical-align: middle;
+  &lt;div id=&quot;df-e3aa984c-6ff7-418d-9e3e-d33c59c6ca2d&quot; class=&quot;colab-df-container&quot;&gt;
+    &lt;div&gt;
+&lt;style scoped=&quot;&quot;&gt;
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+&lt;p&gt;.dataframe tbody tr th {&lt;br&gt;
+vertical-align: top;&lt;br&gt;
 }&lt;/p&gt;
-&lt;p&gt;.dataframe tbody tr th {
-vertical-align: top;
-}&lt;/p&gt;
-&lt;p&gt;.dataframe thead th {
-text-align: right;
-}
-&amp;lt;/style&amp;gt;
-&amp;lt;table border=&amp;quot;1&amp;quot; class=&amp;quot;dataframe&amp;quot;&amp;gt;
-&amp;lt;thead&amp;gt;
-&amp;lt;tr style=&amp;quot;text-align: right;&amp;quot;&amp;gt;
-&amp;lt;th&amp;gt;&amp;lt;/th&amp;gt;
-&amp;lt;th&amp;gt;name&amp;lt;/th&amp;gt;
-&amp;lt;th&amp;gt;1st_level_category&amp;lt;/th&amp;gt;
-&amp;lt;th&amp;gt;2nd_level_category&amp;lt;/th&amp;gt;
-&amp;lt;th&amp;gt;3rd_level_category&amp;lt;/th&amp;gt;
-&amp;lt;/tr&amp;gt;
-&amp;lt;/thead&amp;gt;
-&amp;lt;tbody&amp;gt;
-&amp;lt;tr&amp;gt;
-&amp;lt;th&amp;gt;728311&amp;lt;/th&amp;gt;
-&amp;lt;td&amp;gt;Metro Womens Synthetic Antic Gold Slip Ons (Si...&amp;lt;/td&amp;gt;
-&amp;lt;td&amp;gt;Fashion and Accessories&amp;lt;/td&amp;gt;
-&amp;lt;td&amp;gt;women&#39;s shoes&amp;lt;/td&amp;gt;
-&amp;lt;td&amp;gt;Fashion Sandals&amp;lt;/td&amp;gt;
-&amp;lt;/tr&amp;gt;
-&amp;lt;tr&amp;gt;
-&amp;lt;th&amp;gt;123190&amp;lt;/th&amp;gt;
-&amp;lt;td&amp;gt;Beingelegant - Pack of 100 Women&#39;s Organza Net...&amp;lt;/td&amp;gt;
-&amp;lt;td&amp;gt;Fashion and Accessories&amp;lt;/td&amp;gt;
-&amp;lt;td&amp;gt;accessories&amp;lt;/td&amp;gt;
-&amp;lt;td&amp;gt;Bags &amp;amp; Luggage&amp;lt;/td&amp;gt;
-&amp;lt;/tr&amp;gt;
-&amp;lt;tr&amp;gt;
-&amp;lt;th&amp;gt;772828&amp;lt;/th&amp;gt;
-&amp;lt;td&amp;gt;Wolven Handcrafted Men&#39;s Termoli Black Burnish...&amp;lt;/td&amp;gt;
-&amp;lt;td&amp;gt;Fashion and Accessories&amp;lt;/td&amp;gt;
-&amp;lt;td&amp;gt;men&#39;s shoes&amp;lt;/td&amp;gt;
-&amp;lt;td&amp;gt;Formal Shoes&amp;lt;/td&amp;gt;
-&amp;lt;/tr&amp;gt;
-&amp;lt;tr&amp;gt;
-&amp;lt;th&amp;gt;979017&amp;lt;/th&amp;gt;
-&amp;lt;td&amp;gt;GROOT Party Wedding Analog Black Color Dial Me...&amp;lt;/td&amp;gt;
-&amp;lt;td&amp;gt;Fashion and Accessories&amp;lt;/td&amp;gt;
-&amp;lt;td&amp;gt;accessories&amp;lt;/td&amp;gt;
-&amp;lt;td&amp;gt;Watches&amp;lt;/td&amp;gt;
-&amp;lt;/tr&amp;gt;
-&amp;lt;tr&amp;gt;
-&amp;lt;th&amp;gt;295506&amp;lt;/th&amp;gt;
-&amp;lt;td&amp;gt;Happy Cultures Girls and Women Handmade Croche...&amp;lt;/td&amp;gt;
-&amp;lt;td&amp;gt;Fashion and Accessories&amp;lt;/td&amp;gt;
-&amp;lt;td&amp;gt;accessories&amp;lt;/td&amp;gt;
-&amp;lt;td&amp;gt;Handbags &amp;amp; Clutches&amp;lt;/td&amp;gt;
-&amp;lt;/tr&amp;gt;
-&amp;lt;/tbody&amp;gt;
-&amp;lt;/table&amp;gt;
-&amp;lt;/div&amp;gt;
-&amp;lt;div class=&amp;quot;colab-df-buttons&amp;quot;&amp;gt;&lt;/p&gt;
-&lt;p&gt;&amp;lt;div class=&amp;quot;colab-df-container&amp;quot;&amp;gt;
-&amp;lt;button class=&amp;quot;colab-df-convert&amp;quot; onclick=&amp;quot;convertToInteractive(&#39;df-e3aa984c-6ff7-418d-9e3e-d33c59c6ca2d&#39;)&amp;quot;
-title=&amp;quot;Convert this dataframe to an interactive table.&amp;quot;
-style=&amp;quot;display:none;&amp;quot;&amp;gt;&lt;/p&gt;
-&lt;p&gt;&amp;lt;svg xmlns=&amp;quot;http://www.w3.org/2000/svg&amp;quot; height=&amp;quot;24px&amp;quot; viewBox=&amp;quot;0 -960 960 960&amp;quot;&amp;gt;
-&amp;lt;path d=&amp;quot;M120-120v-720h720v720H120Zm60-500h600v-160H180v160Zm220 220h160v-160H400v160Zm0 220h160v-160H400v160ZM180-400h160v-160H180v160Zm440 0h160v-160H620v160ZM180-180h160v-160H180v160Zm440 0h160v-160H620v160Z&amp;quot;/&amp;gt;
-&amp;lt;/svg&amp;gt;
-&amp;lt;/button&amp;gt;&lt;/p&gt;
-&lt;p&gt;&amp;lt;style&amp;gt;
-.colab-df-container {
-display:flex;
-gap: 12px;
-}&lt;/p&gt;
-&lt;p&gt;.colab-df-convert {
-background-color: #E8F0FE;
-border: none;
-border-radius: 50%;
-cursor: pointer;
-display: none;
-fill: #1967D2;
-height: 32px;
-padding: 0 0 0 0;
-width: 32px;
-}&lt;/p&gt;
-&lt;p&gt;.colab-df-convert:hover {
-background-color: #E2EBFA;
-box-shadow: 0px 1px 2px rgba(60, 64, 67, 0.3), 0px 1px 3px 1px rgba(60, 64, 67, 0.15);
-fill: #174EA6;
-}&lt;/p&gt;
-&lt;p&gt;.colab-df-buttons div {
-margin-bottom: 4px;
-}&lt;/p&gt;
-&lt;p&gt;[theme=dark] .colab-df-convert {
-background-color: #3B4455;
-fill: #D2E3FC;
-}&lt;/p&gt;
-&lt;p&gt;[theme=dark] .colab-df-convert:hover {
-background-color: #434B5C;
-box-shadow: 0px 1px 3px 1px rgba(0, 0, 0, 0.15);
-filter: drop-shadow(0px 1px 2px rgba(0, 0, 0, 0.3));
-fill: #FFFFFF;
-}
-&amp;lt;/style&amp;gt;&lt;/p&gt;
-&lt;p&gt;&amp;lt;script&amp;gt;
-const buttonEl =
-document.querySelector(&#39;#df-e3aa984c-6ff7-418d-9e3e-d33c59c6ca2d button.colab-df-convert&#39;);
-buttonEl.style.display =
+&lt;p&gt;.dataframe thead th {&lt;br&gt;
+text-align: right;&lt;br&gt;
+}&lt;br&gt;
+&lt;/style&gt;&lt;p&gt;&lt;/p&gt;
+&lt;table border=&quot;1&quot; class=&quot;dataframe&quot;&gt;
+  &lt;thead&gt;
+    &lt;tr style=&quot;text-align: right;&quot;&gt;
+      &lt;th&gt;&lt;/th&gt;
+      &lt;th&gt;name&lt;/th&gt;
+      &lt;th&gt;1st_level_category&lt;/th&gt;
+      &lt;th&gt;2nd_level_category&lt;/th&gt;
+      &lt;th&gt;3rd_level_category&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;th&gt;728311&lt;/th&gt;
+      &lt;td&gt;Metro Womens Synthetic Antic Gold Slip Ons (Si...&lt;/td&gt;
+      &lt;td&gt;Fashion and Accessories&lt;/td&gt;
+      &lt;td&gt;women&#39;s shoes&lt;/td&gt;
+      &lt;td&gt;Fashion Sandals&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;th&gt;123190&lt;/th&gt;
+      &lt;td&gt;Beingelegant - Pack of 100 Women&#39;s Organza Net...&lt;/td&gt;
+      &lt;td&gt;Fashion and Accessories&lt;/td&gt;
+      &lt;td&gt;accessories&lt;/td&gt;
+      &lt;td&gt;Bags &amp;amp; Luggage&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;th&gt;772828&lt;/th&gt;
+      &lt;td&gt;Wolven Handcrafted Men&#39;s Termoli Black Burnish...&lt;/td&gt;
+      &lt;td&gt;Fashion and Accessories&lt;/td&gt;
+      &lt;td&gt;men&#39;s shoes&lt;/td&gt;
+      &lt;td&gt;Formal Shoes&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;th&gt;979017&lt;/th&gt;
+      &lt;td&gt;GROOT Party Wedding Analog Black Color Dial Me...&lt;/td&gt;
+      &lt;td&gt;Fashion and Accessories&lt;/td&gt;
+      &lt;td&gt;accessories&lt;/td&gt;
+      &lt;td&gt;Watches&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;th&gt;295506&lt;/th&gt;
+      &lt;td&gt;Happy Cultures Girls and Women Handmade Croche...&lt;/td&gt;
+      &lt;td&gt;Fashion and Accessories&lt;/td&gt;
+      &lt;td&gt;accessories&lt;/td&gt;
+      &lt;td&gt;Handbags &amp;amp; Clutches&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;/div&gt;
+    &lt;div class=&quot;colab-df-buttons&quot;&gt;
+  &lt;div class=&quot;colab-df-container&quot;&gt;
+    &lt;button class=&quot;colab-df-convert&quot; onclick=&quot;convertToInteractive(&#39;df-e3aa984c-6ff7-418d-9e3e-d33c59c6ca2d&#39;)&quot; title=&quot;Convert this dataframe to an interactive table.&quot; style=&quot;display:none;&quot;&gt;
+  &lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot; height=&quot;24px&quot; viewBox=&quot;0 -960 960 960&quot;&gt;
+    &lt;path d=&quot;M120-120v-720h720v720H120Zm60-500h600v-160H180v160Zm220 220h160v-160H400v160Zm0 220h160v-160H400v160ZM180-400h160v-160H180v160Zm440 0h160v-160H620v160ZM180-180h160v-160H180v160Zm440 0h160v-160H620v160Z&quot;&gt;&lt;/path&gt;
+  &lt;/svg&gt;
+    &lt;/button&gt;
+  &lt;style&gt;
+    .colab-df-container {
+      display:flex;
+      gap: 12px;
+    }
+
+    .colab-df-convert {
+      background-color: #E8F0FE;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      display: none;
+      fill: #1967D2;
+      height: 32px;
+      padding: 0 0 0 0;
+      width: 32px;
+    }
+
+    .colab-df-convert:hover {
+      background-color: #E2EBFA;
+      box-shadow: 0px 1px 2px rgba(60, 64, 67, 0.3), 0px 1px 3px 1px rgba(60, 64, 67, 0.15);
+      fill: #174EA6;
+    }
+
+    .colab-df-buttons div {
+      margin-bottom: 4px;
+    }
+
+    [theme=dark] .colab-df-convert {
+      background-color: #3B4455;
+      fill: #D2E3FC;
+    }
+
+    [theme=dark] .colab-df-convert:hover {
+      background-color: #434B5C;
+      box-shadow: 0px 1px 3px 1px rgba(0, 0, 0, 0.15);
+      filter: drop-shadow(0px 1px 2px rgba(0, 0, 0, 0.3));
+      fill: #FFFFFF;
+    }
+  &lt;/style&gt;
+&lt;p&gt;&lt;script&gt;&lt;br&gt;
+const buttonEl =&lt;br&gt;
+document.querySelector(&#39;#df-e3aa984c-6ff7-418d-9e3e-d33c59c6ca2d button.colab-df-convert&#39;);&lt;br&gt;
+buttonEl.style.display =&lt;br&gt;
 google.colab.kernel.accessAllowed ? &#39;block&#39; : &#39;none&#39;;&lt;/p&gt;
-&lt;p&gt;async function convertToInteractive(key) {
-const element = document.querySelector(&#39;#df-e3aa984c-6ff7-418d-9e3e-d33c59c6ca2d&#39;);
-const dataTable =
-await google.colab.kernel.invokeFunction(&#39;convertToInteractive&#39;,
-[key], {});
+&lt;p&gt;async function convertToInteractive(key) {&lt;br&gt;
+const element = document.querySelector(&#39;#df-e3aa984c-6ff7-418d-9e3e-d33c59c6ca2d&#39;);&lt;br&gt;
+const dataTable =&lt;br&gt;
+await google.colab.kernel.invokeFunction(&#39;convertToInteractive&#39;,&lt;br&gt;
+[key], {});&lt;br&gt;
 if (!dataTable) return;&lt;/p&gt;
-&lt;p&gt;const docLinkHtml = &#39;Like what you see? Visit the &#39; +
-&#39;&amp;lt;a target=&amp;quot;_blank&amp;quot; href=https://colab.research.google.com/notebooks/data_table.ipynb&amp;gt;data table notebook&amp;lt;/a&amp;gt;&#39;
-+ &#39; to learn more about interactive tables.&#39;;
-element.innerHTML = &#39;&#39;;
-dataTable[&#39;output_type&#39;] = &#39;display_data&#39;;
-await google.colab.output.renderOutput(dataTable, element);
-const docLink = document.createElement(&#39;div&#39;);
-docLink.innerHTML = docLinkHtml;
-element.appendChild(docLink);
-}
-&amp;lt;/script&amp;gt;
-&amp;lt;/div&amp;gt;&lt;/p&gt;
-&lt;p&gt;&amp;lt;div id=&amp;quot;df-f3c06226-a7bf-4d60-8a6c-c2d7f8da4da1&amp;quot;&amp;gt;
-&amp;lt;button class=&amp;quot;colab-df-quickchart&amp;quot; onclick=&amp;quot;quickchart(&#39;df-f3c06226-a7bf-4d60-8a6c-c2d7f8da4da1&#39;)&amp;quot;
-title=&amp;quot;Suggest charts&amp;quot;
-style=&amp;quot;display:none;&amp;quot;&amp;gt;&lt;/p&gt;
-&lt;p&gt;&amp;lt;svg xmlns=&amp;quot;http://www.w3.org/2000/svg&amp;quot; height=&amp;quot;24px&amp;quot;viewBox=&amp;quot;0 0 24 24&amp;quot;
-width=&amp;quot;24px&amp;quot;&amp;gt;
-&amp;lt;g&amp;gt;
-&amp;lt;path d=&amp;quot;M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z&amp;quot;/&amp;gt;
-&amp;lt;/g&amp;gt;
-&amp;lt;/svg&amp;gt;
-&amp;lt;/button&amp;gt;&lt;/p&gt;
-&lt;p&gt;&amp;lt;style&amp;gt;
-.colab-df-quickchart {
---bg-color: #E8F0FE;
---fill-color: #1967D2;
---hover-bg-color: #E2EBFA;
---hover-fill-color: #174EA6;
---disabled-fill-color: #AAA;
---disabled-bg-color: #DDD;
-}&lt;/p&gt;
-&lt;p&gt;[theme=dark] .colab-df-quickchart {
---bg-color: #3B4455;
---fill-color: #D2E3FC;
---hover-bg-color: #434B5C;
---hover-fill-color: #FFFFFF;
---disabled-bg-color: #3B4455;
---disabled-fill-color: #666;
-}&lt;/p&gt;
-&lt;p&gt;.colab-df-quickchart {
-background-color: var(--bg-color);
-border: none;
-border-radius: 50%;
-cursor: pointer;
-display: none;
-fill: var(--fill-color);
-height: 32px;
-padding: 0;
-width: 32px;
-}&lt;/p&gt;
-&lt;p&gt;.colab-df-quickchart:hover {
-background-color: var(--hover-bg-color);
-box-shadow: 0 1px 2px rgba(60, 64, 67, 0.3), 0 1px 3px 1px rgba(60, 64, 67, 0.15);
-fill: var(--button-hover-fill-color);
-}&lt;/p&gt;
-&lt;p&gt;.colab-df-quickchart-complete:disabled,
-.colab-df-quickchart-complete:disabled:hover {
-background-color: var(--disabled-bg-color);
-fill: var(--disabled-fill-color);
-box-shadow: none;
-}&lt;/p&gt;
-&lt;p&gt;.colab-df-spinner {
-border: 2px solid var(--fill-color);
-border-color: transparent;
-border-bottom-color: var(--fill-color);
-animation:
-spin 1s steps(1) infinite;
-}&lt;/p&gt;
-&lt;p&gt;@keyframes spin {
-0% {
-border-color: transparent;
-border-bottom-color: var(--fill-color);
-border-left-color: var(--fill-color);
-}
-20% {
-border-color: transparent;
-border-left-color: var(--fill-color);
-border-top-color: var(--fill-color);
-}
-30% {
-border-color: transparent;
-border-left-color: var(--fill-color);
-border-top-color: var(--fill-color);
-border-right-color: var(--fill-color);
-}
-40% {
-border-color: transparent;
-border-right-color: var(--fill-color);
-border-top-color: var(--fill-color);
-}
-60% {
-border-color: transparent;
-border-right-color: var(--fill-color);
-}
-80% {
-border-color: transparent;
-border-right-color: var(--fill-color);
-border-bottom-color: var(--fill-color);
-}
-90% {
-border-color: transparent;
-border-bottom-color: var(--fill-color);
-}
-}
-&amp;lt;/style&amp;gt;&lt;/p&gt;
-&lt;p&gt;&amp;lt;script&amp;gt;
-async function quickchart(key) {
-const quickchartButtonEl =
-document.querySelector(&#39;#&#39; + key + &#39; button&#39;);
-quickchartButtonEl.disabled = true;  // To prevent multiple clicks.
-quickchartButtonEl.classList.add(&#39;colab-df-spinner&#39;);
-try {
-const charts = await google.colab.kernel.invokeFunction(
-&#39;suggestCharts&#39;, [key], {});
-} catch (error) {
-console.error(&#39;Error during call to suggestCharts:&#39;, error);
-}
-quickchartButtonEl.classList.remove(&#39;colab-df-spinner&#39;);
-quickchartButtonEl.classList.add(&#39;colab-df-quickchart-complete&#39;);
-}
-(() =&amp;gt; {
-let quickchartButtonEl =
-document.querySelector(&#39;#df-f3c06226-a7bf-4d60-8a6c-c2d7f8da4da1 button&#39;);
-quickchartButtonEl.style.display =
-google.colab.kernel.accessAllowed ? &#39;block&#39; : &#39;none&#39;;
-})();
-&amp;lt;/script&amp;gt;
-&amp;lt;/div&amp;gt;&lt;/p&gt;
-&lt;p&gt;&amp;lt;/div&amp;gt;
-&amp;lt;/div&amp;gt;&lt;/p&gt;
+&lt;p&gt;const docLinkHtml = &#39;Like what you see? Visit the &#39; +&lt;br&gt;
+&#39;&lt;a target=&quot;_blank&quot; href=https://colab.research.google.com/notebooks/data_table.ipynb&gt;data table notebook&lt;/a&gt;&#39;&lt;br&gt;
++ &#39; to learn more about interactive tables.&#39;;&lt;br&gt;
+element.innerHTML = &#39;&#39;;&lt;br&gt;
+dataTable[&#39;output_type&#39;] = &#39;display_data&#39;;&lt;br&gt;
+await google.colab.output.renderOutput(dataTable, element);&lt;br&gt;
+const docLink = document.createElement(&#39;div&#39;);&lt;br&gt;
+docLink.innerHTML = docLinkHtml;&lt;br&gt;
+element.appendChild(docLink);&lt;br&gt;
+}&lt;br&gt;
+&lt;/script&gt;&lt;/p&gt;
+  &lt;/div&gt;
+&lt;div id=&quot;df-f3c06226-a7bf-4d60-8a6c-c2d7f8da4da1&quot;&gt;
+  &lt;button class=&quot;colab-df-quickchart&quot; onclick=&quot;quickchart(&#39;df-f3c06226-a7bf-4d60-8a6c-c2d7f8da4da1&#39;)&quot; title=&quot;Suggest charts&quot; style=&quot;display:none;&quot;&gt;
+&lt;p&gt;&amp;lt;svg xmlns=&amp;quot;&lt;a href=&quot;http://www.w3.org/2000/svg&quot;&gt;http://www.w3.org/2000/svg&lt;/a&gt;&amp;quot; height=&amp;quot;24px&amp;quot;viewBox=&amp;quot;0 0 24 24&amp;quot;&lt;br&gt;
+width=&amp;quot;24px&amp;quot;&amp;gt;&lt;br&gt;
+&lt;g&gt;&lt;br&gt;
+&lt;path d=&quot;M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z&quot;&gt;&lt;br&gt;
+&lt;/path&gt;&lt;/g&gt;&lt;br&gt;
+&lt;br&gt;
+&lt;/p&gt;&lt;/button&gt;&lt;p&gt;&lt;/p&gt;
+&lt;style&gt;
+  .colab-df-quickchart {
+      --bg-color: #E8F0FE;
+      --fill-color: #1967D2;
+      --hover-bg-color: #E2EBFA;
+      --hover-fill-color: #174EA6;
+      --disabled-fill-color: #AAA;
+      --disabled-bg-color: #DDD;
+  }
+
+  [theme=dark] .colab-df-quickchart {
+      --bg-color: #3B4455;
+      --fill-color: #D2E3FC;
+      --hover-bg-color: #434B5C;
+      --hover-fill-color: #FFFFFF;
+      --disabled-bg-color: #3B4455;
+      --disabled-fill-color: #666;
+  }
+
+  .colab-df-quickchart {
+    background-color: var(--bg-color);
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    display: none;
+    fill: var(--fill-color);
+    height: 32px;
+    padding: 0;
+    width: 32px;
+  }
+
+  .colab-df-quickchart:hover {
+    background-color: var(--hover-bg-color);
+    box-shadow: 0 1px 2px rgba(60, 64, 67, 0.3), 0 1px 3px 1px rgba(60, 64, 67, 0.15);
+    fill: var(--button-hover-fill-color);
+  }
+
+  .colab-df-quickchart-complete:disabled,
+  .colab-df-quickchart-complete:disabled:hover {
+    background-color: var(--disabled-bg-color);
+    fill: var(--disabled-fill-color);
+    box-shadow: none;
+  }
+
+  .colab-df-spinner {
+    border: 2px solid var(--fill-color);
+    border-color: transparent;
+    border-bottom-color: var(--fill-color);
+    animation:
+      spin 1s steps(1) infinite;
+  }
+
+  @keyframes spin {
+    0% {
+      border-color: transparent;
+      border-bottom-color: var(--fill-color);
+      border-left-color: var(--fill-color);
+    }
+    20% {
+      border-color: transparent;
+      border-left-color: var(--fill-color);
+      border-top-color: var(--fill-color);
+    }
+    30% {
+      border-color: transparent;
+      border-left-color: var(--fill-color);
+      border-top-color: var(--fill-color);
+      border-right-color: var(--fill-color);
+    }
+    40% {
+      border-color: transparent;
+      border-right-color: var(--fill-color);
+      border-top-color: var(--fill-color);
+    }
+    60% {
+      border-color: transparent;
+      border-right-color: var(--fill-color);
+    }
+    80% {
+      border-color: transparent;
+      border-right-color: var(--fill-color);
+      border-bottom-color: var(--fill-color);
+    }
+    90% {
+      border-color: transparent;
+      border-bottom-color: var(--fill-color);
+    }
+  }
+&lt;/style&gt;
+  &lt;script&gt;
+    async function quickchart(key) {
+      const quickchartButtonEl =
+        document.querySelector(&#39;#&#39; + key + &#39; button&#39;);
+      quickchartButtonEl.disabled = true;  // To prevent multiple clicks.
+      quickchartButtonEl.classList.add(&#39;colab-df-spinner&#39;);
+      try {
+        const charts = await google.colab.kernel.invokeFunction(
+            &#39;suggestCharts&#39;, [key], {});
+      } catch (error) {
+        console.error(&#39;Error during call to suggestCharts:&#39;, error);
+      }
+      quickchartButtonEl.classList.remove(&#39;colab-df-spinner&#39;);
+      quickchartButtonEl.classList.add(&#39;colab-df-quickchart-complete&#39;);
+    }
+    (() =&gt; {
+      let quickchartButtonEl =
+        document.querySelector(&#39;#df-f3c06226-a7bf-4d60-8a6c-c2d7f8da4da1 button&#39;);
+      quickchartButtonEl.style.display =
+        google.colab.kernel.accessAllowed ? &#39;block&#39; : &#39;none&#39;;
+    })();
+  &lt;/script&gt;
+&lt;/div&gt;
+&lt;p&gt;&lt;/p&gt;&lt;/div&gt;&lt;p&gt;&lt;/p&gt;
+  &lt;/div&gt;
 &lt;p&gt;So now, we have a nice dataset with three levels of hierarchy.&lt;/p&gt;
 &lt;p&gt;For this experiment, I won&#39;t focus on text processing, but I believe that it could be beneficial for future improvements.&lt;/p&gt;
 &lt;p&gt;There are two main choices we need to make for this task:&lt;/p&gt;
 &lt;ol&gt;
 &lt;li&gt;
-&lt;p&gt;&lt;strong&gt;How do we vectorize (embed) the item names?&lt;/strong&gt;
+&lt;p&gt;&lt;strong&gt;How do we vectorize (embed) the item names?&lt;/strong&gt;&lt;br&gt;
 Should we use simple vectorizers like TF-IDF or more advanced embeddings like BERT (maybe compare multiple BERT models)? The choice of embedding can have a significant impact on the clustering quality.&lt;/p&gt;
 &lt;/li&gt;
 &lt;li&gt;
@@ -861,289 +868,296 @@ plt&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;savefig&lt;span
 &lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;&lt;picture&gt;&lt;source type=&quot;image/avif&quot; srcset=&quot;https://yonatanlou.github.io/blog/Evaluating-Hierarchical-Clustering/hierarchical-clustering-eval/nuhY2ExpUH-640.avif 640w&quot;&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://yonatanlou.github.io/blog/Evaluating-Hierarchical-Clustering/hierarchical-clustering-eval/nuhY2ExpUH-640.webp 640w&quot;&gt;&lt;img loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://yonatanlou.github.io/blog/Evaluating-Hierarchical-Clustering/hierarchical-clustering-eval/nuhY2ExpUH-640.png&quot; alt=&quot;png&quot; width=&quot;640&quot; height=&quot;480&quot;&gt;&lt;/picture&gt;&lt;/p&gt;
 &lt;pre class=&quot;language-python&quot; tabindex=&quot;0&quot;&gt;&lt;code class=&quot;language-python&quot;&gt;df&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;reset_index&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;drop&lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;token boolean&quot;&gt;True&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;head&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token number&quot;&gt;10&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&amp;lt;div id=&amp;quot;df-9ddc9fa2-05ea-45f8-ae6d-5235f9435ee4&amp;quot; class=&amp;quot;colab-df-container&amp;quot;&amp;gt;
-&amp;lt;div&amp;gt;
-&amp;lt;style scoped&amp;gt;
-.dataframe tbody tr th:only-of-type {
-vertical-align: middle;
+  &lt;div id=&quot;df-9ddc9fa2-05ea-45f8-ae6d-5235f9435ee4&quot; class=&quot;colab-df-container&quot;&gt;
+    &lt;div&gt;
+&lt;style scoped=&quot;&quot;&gt;
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+&lt;p&gt;.dataframe tbody tr th {&lt;br&gt;
+vertical-align: top;&lt;br&gt;
 }&lt;/p&gt;
-&lt;p&gt;.dataframe tbody tr th {
-vertical-align: top;
-}&lt;/p&gt;
-&lt;p&gt;.dataframe thead th {
-text-align: right;
-}
-&amp;lt;/style&amp;gt;
-&amp;lt;table border=&amp;quot;1&amp;quot; class=&amp;quot;dataframe&amp;quot;&amp;gt;
-&amp;lt;thead&amp;gt;
-&amp;lt;tr style=&amp;quot;text-align: right;&amp;quot;&amp;gt;
-&amp;lt;th&amp;gt;&amp;lt;/th&amp;gt;
-&amp;lt;th&amp;gt;name&amp;lt;/th&amp;gt;
-&amp;lt;th&amp;gt;1st_level_category&amp;lt;/th&amp;gt;
-&amp;lt;th&amp;gt;2nd_level_category&amp;lt;/th&amp;gt;
-&amp;lt;th&amp;gt;3rd_level_category&amp;lt;/th&amp;gt;
-&amp;lt;/tr&amp;gt;
-&amp;lt;/thead&amp;gt;
-&amp;lt;tbody&amp;gt;
-&amp;lt;tr&amp;gt;
-&amp;lt;th&amp;gt;0&amp;lt;/th&amp;gt;
-&amp;lt;td&amp;gt;Metro Womens Synthetic Antic Gold Slip Ons (Si...&amp;lt;/td&amp;gt;
-&amp;lt;td&amp;gt;Fashion and Accessories&amp;lt;/td&amp;gt;
-&amp;lt;td&amp;gt;women&#39;s shoes&amp;lt;/td&amp;gt;
-&amp;lt;td&amp;gt;Fashion Sandals&amp;lt;/td&amp;gt;
-&amp;lt;/tr&amp;gt;
-&amp;lt;tr&amp;gt;
-&amp;lt;th&amp;gt;1&amp;lt;/th&amp;gt;
-&amp;lt;td&amp;gt;Beingelegant - Pack of 100 Women&#39;s Organza Net...&amp;lt;/td&amp;gt;
-&amp;lt;td&amp;gt;Fashion and Accessories&amp;lt;/td&amp;gt;
-&amp;lt;td&amp;gt;accessories&amp;lt;/td&amp;gt;
-&amp;lt;td&amp;gt;Bags &amp;amp; Luggage&amp;lt;/td&amp;gt;
-&amp;lt;/tr&amp;gt;
-&amp;lt;tr&amp;gt;
-&amp;lt;th&amp;gt;2&amp;lt;/th&amp;gt;
-&amp;lt;td&amp;gt;Wolven Handcrafted Men&#39;s Termoli Black Burnish...&amp;lt;/td&amp;gt;
-&amp;lt;td&amp;gt;Fashion and Accessories&amp;lt;/td&amp;gt;
-&amp;lt;td&amp;gt;men&#39;s shoes&amp;lt;/td&amp;gt;
-&amp;lt;td&amp;gt;Formal Shoes&amp;lt;/td&amp;gt;
-&amp;lt;/tr&amp;gt;
-&amp;lt;tr&amp;gt;
-&amp;lt;th&amp;gt;3&amp;lt;/th&amp;gt;
-&amp;lt;td&amp;gt;GROOT Party Wedding Analog Black Color Dial Me...&amp;lt;/td&amp;gt;
-&amp;lt;td&amp;gt;Fashion and Accessories&amp;lt;/td&amp;gt;
-&amp;lt;td&amp;gt;accessories&amp;lt;/td&amp;gt;
-&amp;lt;td&amp;gt;Watches&amp;lt;/td&amp;gt;
-&amp;lt;/tr&amp;gt;
-&amp;lt;tr&amp;gt;
-&amp;lt;th&amp;gt;4&amp;lt;/th&amp;gt;
-&amp;lt;td&amp;gt;Happy Cultures Girls and Women Handmade Croche...&amp;lt;/td&amp;gt;
-&amp;lt;td&amp;gt;Fashion and Accessories&amp;lt;/td&amp;gt;
-&amp;lt;td&amp;gt;accessories&amp;lt;/td&amp;gt;
-&amp;lt;td&amp;gt;Handbags &amp;amp; Clutches&amp;lt;/td&amp;gt;
-&amp;lt;/tr&amp;gt;
-&amp;lt;tr&amp;gt;
-&amp;lt;th&amp;gt;5&amp;lt;/th&amp;gt;
-&amp;lt;td&amp;gt;ZOUK Women&#39;s Handcrafted Ikat Shoulder Tote Ba...&amp;lt;/td&amp;gt;
-&amp;lt;td&amp;gt;Fashion and Accessories&amp;lt;/td&amp;gt;
-&amp;lt;td&amp;gt;accessories&amp;lt;/td&amp;gt;
-&amp;lt;td&amp;gt;Handbags &amp;amp; Clutches&amp;lt;/td&amp;gt;
-&amp;lt;/tr&amp;gt;
-&amp;lt;tr&amp;gt;
-&amp;lt;th&amp;gt;6&amp;lt;/th&amp;gt;
-&amp;lt;td&amp;gt;NEUTRON Present Analog Orange and Blue Color D...&amp;lt;/td&amp;gt;
-&amp;lt;td&amp;gt;Fashion and Accessories&amp;lt;/td&amp;gt;
-&amp;lt;td&amp;gt;accessories&amp;lt;/td&amp;gt;
-&amp;lt;td&amp;gt;Watches&amp;lt;/td&amp;gt;
-&amp;lt;/tr&amp;gt;
-&amp;lt;tr&amp;gt;
-&amp;lt;th&amp;gt;7&amp;lt;/th&amp;gt;
-&amp;lt;td&amp;gt;PC Jeweller The Giancarlo 18KT White Gold and ...&amp;lt;/td&amp;gt;
-&amp;lt;td&amp;gt;Fashion and Accessories&amp;lt;/td&amp;gt;
-&amp;lt;td&amp;gt;accessories&amp;lt;/td&amp;gt;
-&amp;lt;td&amp;gt;Gold &amp;amp; Diamond Jewellery&amp;lt;/td&amp;gt;
-&amp;lt;/tr&amp;gt;
-&amp;lt;tr&amp;gt;
-&amp;lt;th&amp;gt;8&amp;lt;/th&amp;gt;
-&amp;lt;td&amp;gt;Blue/Black Light wash 5-Pocket Slim Fit high-R...&amp;lt;/td&amp;gt;
-&amp;lt;td&amp;gt;Fashion and Accessories&amp;lt;/td&amp;gt;
-&amp;lt;td&amp;gt;men&#39;s clothing&amp;lt;/td&amp;gt;
-&amp;lt;td&amp;gt;Jeans&amp;lt;/td&amp;gt;
-&amp;lt;/tr&amp;gt;
-&amp;lt;tr&amp;gt;
-&amp;lt;th&amp;gt;9&amp;lt;/th&amp;gt;
-&amp;lt;td&amp;gt;KBNBJ Women&#39;s Pure Cotton Regular Nighty&amp;lt;/td&amp;gt;
-&amp;lt;td&amp;gt;Fashion and Accessories&amp;lt;/td&amp;gt;
-&amp;lt;td&amp;gt;women&#39;s clothing&amp;lt;/td&amp;gt;
-&amp;lt;td&amp;gt;Lingerie &amp;amp; Nightwear&amp;lt;/td&amp;gt;
-&amp;lt;/tr&amp;gt;
-&amp;lt;/tbody&amp;gt;
-&amp;lt;/table&amp;gt;
-&amp;lt;/div&amp;gt;
-&amp;lt;div class=&amp;quot;colab-df-buttons&amp;quot;&amp;gt;&lt;/p&gt;
-&lt;p&gt;&amp;lt;div class=&amp;quot;colab-df-container&amp;quot;&amp;gt;
-&amp;lt;button class=&amp;quot;colab-df-convert&amp;quot; onclick=&amp;quot;convertToInteractive(&#39;df-9ddc9fa2-05ea-45f8-ae6d-5235f9435ee4&#39;)&amp;quot;
-title=&amp;quot;Convert this dataframe to an interactive table.&amp;quot;
-style=&amp;quot;display:none;&amp;quot;&amp;gt;&lt;/p&gt;
-&lt;p&gt;&amp;lt;svg xmlns=&amp;quot;http://www.w3.org/2000/svg&amp;quot; height=&amp;quot;24px&amp;quot; viewBox=&amp;quot;0 -960 960 960&amp;quot;&amp;gt;
-&amp;lt;path d=&amp;quot;M120-120v-720h720v720H120Zm60-500h600v-160H180v160Zm220 220h160v-160H400v160Zm0 220h160v-160H400v160ZM180-400h160v-160H180v160Zm440 0h160v-160H620v160ZM180-180h160v-160H180v160Zm440 0h160v-160H620v160Z&amp;quot;/&amp;gt;
-&amp;lt;/svg&amp;gt;
-&amp;lt;/button&amp;gt;&lt;/p&gt;
-&lt;p&gt;&amp;lt;style&amp;gt;
-.colab-df-container {
-display:flex;
-gap: 12px;
-}&lt;/p&gt;
-&lt;p&gt;.colab-df-convert {
-background-color: #E8F0FE;
-border: none;
-border-radius: 50%;
-cursor: pointer;
-display: none;
-fill: #1967D2;
-height: 32px;
-padding: 0 0 0 0;
-width: 32px;
-}&lt;/p&gt;
-&lt;p&gt;.colab-df-convert:hover {
-background-color: #E2EBFA;
-box-shadow: 0px 1px 2px rgba(60, 64, 67, 0.3), 0px 1px 3px 1px rgba(60, 64, 67, 0.15);
-fill: #174EA6;
-}&lt;/p&gt;
-&lt;p&gt;.colab-df-buttons div {
-margin-bottom: 4px;
-}&lt;/p&gt;
-&lt;p&gt;[theme=dark] .colab-df-convert {
-background-color: #3B4455;
-fill: #D2E3FC;
-}&lt;/p&gt;
-&lt;p&gt;[theme=dark] .colab-df-convert:hover {
-background-color: #434B5C;
-box-shadow: 0px 1px 3px 1px rgba(0, 0, 0, 0.15);
-filter: drop-shadow(0px 1px 2px rgba(0, 0, 0, 0.3));
-fill: #FFFFFF;
-}
-&amp;lt;/style&amp;gt;&lt;/p&gt;
-&lt;p&gt;&amp;lt;script&amp;gt;
-const buttonEl =
-document.querySelector(&#39;#df-9ddc9fa2-05ea-45f8-ae6d-5235f9435ee4 button.colab-df-convert&#39;);
-buttonEl.style.display =
+&lt;p&gt;.dataframe thead th {&lt;br&gt;
+text-align: right;&lt;br&gt;
+}&lt;br&gt;
+&lt;/style&gt;&lt;p&gt;&lt;/p&gt;
+&lt;table border=&quot;1&quot; class=&quot;dataframe&quot;&gt;
+  &lt;thead&gt;
+    &lt;tr style=&quot;text-align: right;&quot;&gt;
+      &lt;th&gt;&lt;/th&gt;
+      &lt;th&gt;name&lt;/th&gt;
+      &lt;th&gt;1st_level_category&lt;/th&gt;
+      &lt;th&gt;2nd_level_category&lt;/th&gt;
+      &lt;th&gt;3rd_level_category&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;th&gt;0&lt;/th&gt;
+      &lt;td&gt;Metro Womens Synthetic Antic Gold Slip Ons (Si...&lt;/td&gt;
+      &lt;td&gt;Fashion and Accessories&lt;/td&gt;
+      &lt;td&gt;women&#39;s shoes&lt;/td&gt;
+      &lt;td&gt;Fashion Sandals&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;th&gt;1&lt;/th&gt;
+      &lt;td&gt;Beingelegant - Pack of 100 Women&#39;s Organza Net...&lt;/td&gt;
+      &lt;td&gt;Fashion and Accessories&lt;/td&gt;
+      &lt;td&gt;accessories&lt;/td&gt;
+      &lt;td&gt;Bags &amp;amp; Luggage&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;th&gt;2&lt;/th&gt;
+      &lt;td&gt;Wolven Handcrafted Men&#39;s Termoli Black Burnish...&lt;/td&gt;
+      &lt;td&gt;Fashion and Accessories&lt;/td&gt;
+      &lt;td&gt;men&#39;s shoes&lt;/td&gt;
+      &lt;td&gt;Formal Shoes&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;th&gt;3&lt;/th&gt;
+      &lt;td&gt;GROOT Party Wedding Analog Black Color Dial Me...&lt;/td&gt;
+      &lt;td&gt;Fashion and Accessories&lt;/td&gt;
+      &lt;td&gt;accessories&lt;/td&gt;
+      &lt;td&gt;Watches&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;th&gt;4&lt;/th&gt;
+      &lt;td&gt;Happy Cultures Girls and Women Handmade Croche...&lt;/td&gt;
+      &lt;td&gt;Fashion and Accessories&lt;/td&gt;
+      &lt;td&gt;accessories&lt;/td&gt;
+      &lt;td&gt;Handbags &amp;amp; Clutches&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;th&gt;5&lt;/th&gt;
+      &lt;td&gt;ZOUK Women&#39;s Handcrafted Ikat Shoulder Tote Ba...&lt;/td&gt;
+      &lt;td&gt;Fashion and Accessories&lt;/td&gt;
+      &lt;td&gt;accessories&lt;/td&gt;
+      &lt;td&gt;Handbags &amp;amp; Clutches&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;th&gt;6&lt;/th&gt;
+      &lt;td&gt;NEUTRON Present Analog Orange and Blue Color D...&lt;/td&gt;
+      &lt;td&gt;Fashion and Accessories&lt;/td&gt;
+      &lt;td&gt;accessories&lt;/td&gt;
+      &lt;td&gt;Watches&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;th&gt;7&lt;/th&gt;
+      &lt;td&gt;PC Jeweller The Giancarlo 18KT White Gold and ...&lt;/td&gt;
+      &lt;td&gt;Fashion and Accessories&lt;/td&gt;
+      &lt;td&gt;accessories&lt;/td&gt;
+      &lt;td&gt;Gold &amp;amp; Diamond Jewellery&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;th&gt;8&lt;/th&gt;
+      &lt;td&gt;Blue/Black Light wash 5-Pocket Slim Fit high-R...&lt;/td&gt;
+      &lt;td&gt;Fashion and Accessories&lt;/td&gt;
+      &lt;td&gt;men&#39;s clothing&lt;/td&gt;
+      &lt;td&gt;Jeans&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;th&gt;9&lt;/th&gt;
+      &lt;td&gt;KBNBJ Women&#39;s Pure Cotton Regular Nighty&lt;/td&gt;
+      &lt;td&gt;Fashion and Accessories&lt;/td&gt;
+      &lt;td&gt;women&#39;s clothing&lt;/td&gt;
+      &lt;td&gt;Lingerie &amp;amp; Nightwear&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;/div&gt;
+    &lt;div class=&quot;colab-df-buttons&quot;&gt;
+  &lt;div class=&quot;colab-df-container&quot;&gt;
+    &lt;button class=&quot;colab-df-convert&quot; onclick=&quot;convertToInteractive(&#39;df-9ddc9fa2-05ea-45f8-ae6d-5235f9435ee4&#39;)&quot; title=&quot;Convert this dataframe to an interactive table.&quot; style=&quot;display:none;&quot;&gt;
+  &lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot; height=&quot;24px&quot; viewBox=&quot;0 -960 960 960&quot;&gt;
+    &lt;path d=&quot;M120-120v-720h720v720H120Zm60-500h600v-160H180v160Zm220 220h160v-160H400v160Zm0 220h160v-160H400v160ZM180-400h160v-160H180v160Zm440 0h160v-160H620v160ZM180-180h160v-160H180v160Zm440 0h160v-160H620v160Z&quot;&gt;&lt;/path&gt;
+  &lt;/svg&gt;
+    &lt;/button&gt;
+  &lt;style&gt;
+    .colab-df-container {
+      display:flex;
+      gap: 12px;
+    }
+
+    .colab-df-convert {
+      background-color: #E8F0FE;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      display: none;
+      fill: #1967D2;
+      height: 32px;
+      padding: 0 0 0 0;
+      width: 32px;
+    }
+
+    .colab-df-convert:hover {
+      background-color: #E2EBFA;
+      box-shadow: 0px 1px 2px rgba(60, 64, 67, 0.3), 0px 1px 3px 1px rgba(60, 64, 67, 0.15);
+      fill: #174EA6;
+    }
+
+    .colab-df-buttons div {
+      margin-bottom: 4px;
+    }
+
+    [theme=dark] .colab-df-convert {
+      background-color: #3B4455;
+      fill: #D2E3FC;
+    }
+
+    [theme=dark] .colab-df-convert:hover {
+      background-color: #434B5C;
+      box-shadow: 0px 1px 3px 1px rgba(0, 0, 0, 0.15);
+      filter: drop-shadow(0px 1px 2px rgba(0, 0, 0, 0.3));
+      fill: #FFFFFF;
+    }
+  &lt;/style&gt;
+&lt;p&gt;&lt;script&gt;&lt;br&gt;
+const buttonEl =&lt;br&gt;
+document.querySelector(&#39;#df-9ddc9fa2-05ea-45f8-ae6d-5235f9435ee4 button.colab-df-convert&#39;);&lt;br&gt;
+buttonEl.style.display =&lt;br&gt;
 google.colab.kernel.accessAllowed ? &#39;block&#39; : &#39;none&#39;;&lt;/p&gt;
-&lt;p&gt;async function convertToInteractive(key) {
-const element = document.querySelector(&#39;#df-9ddc9fa2-05ea-45f8-ae6d-5235f9435ee4&#39;);
-const dataTable =
-await google.colab.kernel.invokeFunction(&#39;convertToInteractive&#39;,
-[key], {});
+&lt;p&gt;async function convertToInteractive(key) {&lt;br&gt;
+const element = document.querySelector(&#39;#df-9ddc9fa2-05ea-45f8-ae6d-5235f9435ee4&#39;);&lt;br&gt;
+const dataTable =&lt;br&gt;
+await google.colab.kernel.invokeFunction(&#39;convertToInteractive&#39;,&lt;br&gt;
+[key], {});&lt;br&gt;
 if (!dataTable) return;&lt;/p&gt;
-&lt;p&gt;const docLinkHtml = &#39;Like what you see? Visit the &#39; +
-&#39;&amp;lt;a target=&amp;quot;_blank&amp;quot; href=https://colab.research.google.com/notebooks/data_table.ipynb&amp;gt;data table notebook&amp;lt;/a&amp;gt;&#39;
-+ &#39; to learn more about interactive tables.&#39;;
-element.innerHTML = &#39;&#39;;
-dataTable[&#39;output_type&#39;] = &#39;display_data&#39;;
-await google.colab.output.renderOutput(dataTable, element);
-const docLink = document.createElement(&#39;div&#39;);
-docLink.innerHTML = docLinkHtml;
-element.appendChild(docLink);
-}
-&amp;lt;/script&amp;gt;
-&amp;lt;/div&amp;gt;&lt;/p&gt;
-&lt;p&gt;&amp;lt;div id=&amp;quot;df-536a2b15-29d9-4f9e-8b8f-0ded85f1a798&amp;quot;&amp;gt;
-&amp;lt;button class=&amp;quot;colab-df-quickchart&amp;quot; onclick=&amp;quot;quickchart(&#39;df-536a2b15-29d9-4f9e-8b8f-0ded85f1a798&#39;)&amp;quot;
-title=&amp;quot;Suggest charts&amp;quot;
-style=&amp;quot;display:none;&amp;quot;&amp;gt;&lt;/p&gt;
-&lt;p&gt;&amp;lt;svg xmlns=&amp;quot;http://www.w3.org/2000/svg&amp;quot; height=&amp;quot;24px&amp;quot;viewBox=&amp;quot;0 0 24 24&amp;quot;
-width=&amp;quot;24px&amp;quot;&amp;gt;
-&amp;lt;g&amp;gt;
-&amp;lt;path d=&amp;quot;M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z&amp;quot;/&amp;gt;
-&amp;lt;/g&amp;gt;
-&amp;lt;/svg&amp;gt;
-&amp;lt;/button&amp;gt;&lt;/p&gt;
-&lt;p&gt;&amp;lt;style&amp;gt;
-.colab-df-quickchart {
---bg-color: #E8F0FE;
---fill-color: #1967D2;
---hover-bg-color: #E2EBFA;
---hover-fill-color: #174EA6;
---disabled-fill-color: #AAA;
---disabled-bg-color: #DDD;
-}&lt;/p&gt;
-&lt;p&gt;[theme=dark] .colab-df-quickchart {
---bg-color: #3B4455;
---fill-color: #D2E3FC;
---hover-bg-color: #434B5C;
---hover-fill-color: #FFFFFF;
---disabled-bg-color: #3B4455;
---disabled-fill-color: #666;
-}&lt;/p&gt;
-&lt;p&gt;.colab-df-quickchart {
-background-color: var(--bg-color);
-border: none;
-border-radius: 50%;
-cursor: pointer;
-display: none;
-fill: var(--fill-color);
-height: 32px;
-padding: 0;
-width: 32px;
-}&lt;/p&gt;
-&lt;p&gt;.colab-df-quickchart:hover {
-background-color: var(--hover-bg-color);
-box-shadow: 0 1px 2px rgba(60, 64, 67, 0.3), 0 1px 3px 1px rgba(60, 64, 67, 0.15);
-fill: var(--button-hover-fill-color);
-}&lt;/p&gt;
-&lt;p&gt;.colab-df-quickchart-complete:disabled,
-.colab-df-quickchart-complete:disabled:hover {
-background-color: var(--disabled-bg-color);
-fill: var(--disabled-fill-color);
-box-shadow: none;
-}&lt;/p&gt;
-&lt;p&gt;.colab-df-spinner {
-border: 2px solid var(--fill-color);
-border-color: transparent;
-border-bottom-color: var(--fill-color);
-animation:
-spin 1s steps(1) infinite;
-}&lt;/p&gt;
-&lt;p&gt;@keyframes spin {
-0% {
-border-color: transparent;
-border-bottom-color: var(--fill-color);
-border-left-color: var(--fill-color);
-}
-20% {
-border-color: transparent;
-border-left-color: var(--fill-color);
-border-top-color: var(--fill-color);
-}
-30% {
-border-color: transparent;
-border-left-color: var(--fill-color);
-border-top-color: var(--fill-color);
-border-right-color: var(--fill-color);
-}
-40% {
-border-color: transparent;
-border-right-color: var(--fill-color);
-border-top-color: var(--fill-color);
-}
-60% {
-border-color: transparent;
-border-right-color: var(--fill-color);
-}
-80% {
-border-color: transparent;
-border-right-color: var(--fill-color);
-border-bottom-color: var(--fill-color);
-}
-90% {
-border-color: transparent;
-border-bottom-color: var(--fill-color);
-}
-}
-&amp;lt;/style&amp;gt;&lt;/p&gt;
-&lt;p&gt;&amp;lt;script&amp;gt;
-async function quickchart(key) {
-const quickchartButtonEl =
-document.querySelector(&#39;#&#39; + key + &#39; button&#39;);
-quickchartButtonEl.disabled = true;  // To prevent multiple clicks.
-quickchartButtonEl.classList.add(&#39;colab-df-spinner&#39;);
-try {
-const charts = await google.colab.kernel.invokeFunction(
-&#39;suggestCharts&#39;, [key], {});
-} catch (error) {
-console.error(&#39;Error during call to suggestCharts:&#39;, error);
-}
-quickchartButtonEl.classList.remove(&#39;colab-df-spinner&#39;);
-quickchartButtonEl.classList.add(&#39;colab-df-quickchart-complete&#39;);
-}
-(() =&amp;gt; {
-let quickchartButtonEl =
-document.querySelector(&#39;#df-536a2b15-29d9-4f9e-8b8f-0ded85f1a798 button&#39;);
-quickchartButtonEl.style.display =
-google.colab.kernel.accessAllowed ? &#39;block&#39; : &#39;none&#39;;
-})();
-&amp;lt;/script&amp;gt;
-&amp;lt;/div&amp;gt;&lt;/p&gt;
-&lt;p&gt;&amp;lt;/div&amp;gt;
-&amp;lt;/div&amp;gt;&lt;/p&gt;
+&lt;p&gt;const docLinkHtml = &#39;Like what you see? Visit the &#39; +&lt;br&gt;
+&#39;&lt;a target=&quot;_blank&quot; href=https://colab.research.google.com/notebooks/data_table.ipynb&gt;data table notebook&lt;/a&gt;&#39;&lt;br&gt;
++ &#39; to learn more about interactive tables.&#39;;&lt;br&gt;
+element.innerHTML = &#39;&#39;;&lt;br&gt;
+dataTable[&#39;output_type&#39;] = &#39;display_data&#39;;&lt;br&gt;
+await google.colab.output.renderOutput(dataTable, element);&lt;br&gt;
+const docLink = document.createElement(&#39;div&#39;);&lt;br&gt;
+docLink.innerHTML = docLinkHtml;&lt;br&gt;
+element.appendChild(docLink);&lt;br&gt;
+}&lt;br&gt;
+&lt;/script&gt;&lt;/p&gt;
+  &lt;/div&gt;
+&lt;div id=&quot;df-536a2b15-29d9-4f9e-8b8f-0ded85f1a798&quot;&gt;
+  &lt;button class=&quot;colab-df-quickchart&quot; onclick=&quot;quickchart(&#39;df-536a2b15-29d9-4f9e-8b8f-0ded85f1a798&#39;)&quot; title=&quot;Suggest charts&quot; style=&quot;display:none;&quot;&gt;
+&lt;p&gt;&amp;lt;svg xmlns=&amp;quot;&lt;a href=&quot;http://www.w3.org/2000/svg&quot;&gt;http://www.w3.org/2000/svg&lt;/a&gt;&amp;quot; height=&amp;quot;24px&amp;quot;viewBox=&amp;quot;0 0 24 24&amp;quot;&lt;br&gt;
+width=&amp;quot;24px&amp;quot;&amp;gt;&lt;br&gt;
+&lt;g&gt;&lt;br&gt;
+&lt;path d=&quot;M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z&quot;&gt;&lt;br&gt;
+&lt;/path&gt;&lt;/g&gt;&lt;br&gt;
+&lt;br&gt;
+&lt;/p&gt;&lt;/button&gt;&lt;p&gt;&lt;/p&gt;
+&lt;style&gt;
+  .colab-df-quickchart {
+      --bg-color: #E8F0FE;
+      --fill-color: #1967D2;
+      --hover-bg-color: #E2EBFA;
+      --hover-fill-color: #174EA6;
+      --disabled-fill-color: #AAA;
+      --disabled-bg-color: #DDD;
+  }
+
+  [theme=dark] .colab-df-quickchart {
+      --bg-color: #3B4455;
+      --fill-color: #D2E3FC;
+      --hover-bg-color: #434B5C;
+      --hover-fill-color: #FFFFFF;
+      --disabled-bg-color: #3B4455;
+      --disabled-fill-color: #666;
+  }
+
+  .colab-df-quickchart {
+    background-color: var(--bg-color);
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    display: none;
+    fill: var(--fill-color);
+    height: 32px;
+    padding: 0;
+    width: 32px;
+  }
+
+  .colab-df-quickchart:hover {
+    background-color: var(--hover-bg-color);
+    box-shadow: 0 1px 2px rgba(60, 64, 67, 0.3), 0 1px 3px 1px rgba(60, 64, 67, 0.15);
+    fill: var(--button-hover-fill-color);
+  }
+
+  .colab-df-quickchart-complete:disabled,
+  .colab-df-quickchart-complete:disabled:hover {
+    background-color: var(--disabled-bg-color);
+    fill: var(--disabled-fill-color);
+    box-shadow: none;
+  }
+
+  .colab-df-spinner {
+    border: 2px solid var(--fill-color);
+    border-color: transparent;
+    border-bottom-color: var(--fill-color);
+    animation:
+      spin 1s steps(1) infinite;
+  }
+
+  @keyframes spin {
+    0% {
+      border-color: transparent;
+      border-bottom-color: var(--fill-color);
+      border-left-color: var(--fill-color);
+    }
+    20% {
+      border-color: transparent;
+      border-left-color: var(--fill-color);
+      border-top-color: var(--fill-color);
+    }
+    30% {
+      border-color: transparent;
+      border-left-color: var(--fill-color);
+      border-top-color: var(--fill-color);
+      border-right-color: var(--fill-color);
+    }
+    40% {
+      border-color: transparent;
+      border-right-color: var(--fill-color);
+      border-top-color: var(--fill-color);
+    }
+    60% {
+      border-color: transparent;
+      border-right-color: var(--fill-color);
+    }
+    80% {
+      border-color: transparent;
+      border-right-color: var(--fill-color);
+      border-bottom-color: var(--fill-color);
+    }
+    90% {
+      border-color: transparent;
+      border-bottom-color: var(--fill-color);
+    }
+  }
+&lt;/style&gt;
+  &lt;script&gt;
+    async function quickchart(key) {
+      const quickchartButtonEl =
+        document.querySelector(&#39;#&#39; + key + &#39; button&#39;);
+      quickchartButtonEl.disabled = true;  // To prevent multiple clicks.
+      quickchartButtonEl.classList.add(&#39;colab-df-spinner&#39;);
+      try {
+        const charts = await google.colab.kernel.invokeFunction(
+            &#39;suggestCharts&#39;, [key], {});
+      } catch (error) {
+        console.error(&#39;Error during call to suggestCharts:&#39;, error);
+      }
+      quickchartButtonEl.classList.remove(&#39;colab-df-spinner&#39;);
+      quickchartButtonEl.classList.add(&#39;colab-df-quickchart-complete&#39;);
+    }
+    (() =&gt; {
+      let quickchartButtonEl =
+        document.querySelector(&#39;#df-536a2b15-29d9-4f9e-8b8f-0ded85f1a798 button&#39;);
+      quickchartButtonEl.style.display =
+        google.colab.kernel.accessAllowed ? &#39;block&#39; : &#39;none&#39;;
+    })();
+  &lt;/script&gt;
+&lt;/div&gt;
+&lt;p&gt;&lt;/p&gt;&lt;/div&gt;&lt;p&gt;&lt;/p&gt;
+  &lt;/div&gt;
 &lt;p&gt;We can see that some of the items share exactly the same clusters across all levels of the hierarchy. These items receive the maximum score of 1.&lt;/p&gt;
 &lt;p&gt;Some items differ in only one or two levels, resulting in intermediate scores like 0.5 or 0.25.&lt;/p&gt;
 &lt;p&gt;Finally, there are pairs of items that have nothing in common across all levels, so their similarity score is 0.&lt;/p&gt;
@@ -1311,9 +1325,9 @@ plt&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;show&lt;span cl
     <link href="https://yonatanlou.github.io/blog/jaccard-index-unsupervised/Jaccard_index_for_unsupervised_clustering/" />
     <updated>2024-11-10T00:00:00Z</updated>
     <id>https://yonatanlou.github.io/blog/jaccard-index-unsupervised/Jaccard_index_for_unsupervised_clustering/</id>
-    <content type="html">&lt;p&gt;&amp;lt;a target=&amp;quot;_blank&amp;quot; href=&amp;quot;https://colab.research.google.com/github/yonatanlou/notebooks/blob/main/Jaccard_index_for_unsupervised_clustering.ipynb&amp;quot;&amp;gt;
-&amp;lt;img src=&amp;quot;https://colab.research.google.com/assets/colab-badge.svg&amp;quot; alt=&amp;quot;Open In Colab&amp;quot;/&amp;gt;
-&amp;lt;/a&amp;gt;&lt;/p&gt;
+    <content type="html">&lt;a target=&quot;_blank&quot; href=&quot;https://colab.research.google.com/github/yonatanlou/notebooks/blob/main/Jaccard_index_for_unsupervised_clustering.ipynb&quot;&gt;
+  &lt;picture&gt;&lt;source type=&quot;image/avif&quot; srcset=&quot;https://yonatanlou.github.io/blog/jaccard-index-unsupervised/Jaccard_index_for_unsupervised_clustering/HffI470J9w-117.avif 117w&quot;&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://yonatanlou.github.io/blog/jaccard-index-unsupervised/Jaccard_index_for_unsupervised_clustering/HffI470J9w-117.webp 117w&quot;&gt;&lt;img loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://yonatanlou.github.io/blog/jaccard-index-unsupervised/Jaccard_index_for_unsupervised_clustering/HffI470J9w-117.svg&quot; alt=&quot;Open In Colab&quot; width=&quot;117&quot; height=&quot;20&quot;&gt;&lt;/picture&gt;
+&lt;/a&gt;
 &lt;p&gt;TL;DR - Don&#39;t use sklearn jaccard_score function when dealing with unsupervised clustering.&lt;/p&gt;
 &lt;p&gt;The Jaccard Index is a similarity measure used to compare the similarity and diversity of sample sets. It&#39;s calculated as the intersection divided by the union of sample sets. While it&#39;s a useful metric, its direct application in scikit-learn&#39;s &lt;code&gt;jaccard_score&lt;/code&gt; is not suitable for unsupervised clustering scenarios.&lt;/p&gt;
 &lt;h3 id=&quot;the-problem-with-sklearns-jaccard-score&quot;&gt;The Problem with Sklearn&#39;s Jaccard Score&lt;/h3&gt;
@@ -1461,7 +1475,7 @@ data2&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; labels2 &lt;
 
 plot_umap_projections&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;data1&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; labels1&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; data2&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; labels2&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; num_classes&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; similarity1&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; similarity2&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;&lt;picture&gt;&lt;source type=&quot;image/avif&quot; srcset=&quot;https://yonatanlou.github.io/blog/jaccard-index-unsupervised/Jaccard_index_for_unsupervised_clustering/WxCZBTDUAQ-1002.avif 1002w&quot;&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://yonatanlou.github.io/blog/jaccard-index-unsupervised/Jaccard_index_for_unsupervised_clustering/WxCZBTDUAQ-1002.webp 1002w&quot;&gt;&lt;img loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://yonatanlou.github.io/blog/jaccard-index-unsupervised/Jaccard_index_for_unsupervised_clustering/WxCZBTDUAQ-1002.png&quot; alt=&quot;png&quot; width=&quot;1002&quot; height=&quot;340&quot;&gt;&lt;/picture&gt;&lt;/p&gt;
-&lt;p&gt;Nice! So we can now control on the similiarity between clusters and the number of clusters.
+&lt;p&gt;Nice! So we can now control on the similiarity between clusters and the number of clusters.&lt;br&gt;
 Let&#39;s run a bigger simulation and measure the Jaccard measure:&lt;/p&gt;
 &lt;pre class=&quot;language-python&quot; tabindex=&quot;0&quot;&gt;&lt;code class=&quot;language-python&quot;&gt;&lt;span class=&quot;token keyword&quot;&gt;import&lt;/span&gt; numpy &lt;span class=&quot;token keyword&quot;&gt;as&lt;/span&gt; np
 &lt;span class=&quot;token keyword&quot;&gt;import&lt;/span&gt; matplotlib&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;pyplot &lt;span class=&quot;token keyword&quot;&gt;as&lt;/span&gt; plt
@@ -1600,10 +1614,10 @@ ax2&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;grid&lt;span cl
 plt&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;tight_layout&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
 plt&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;show&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;&lt;picture&gt;&lt;source type=&quot;image/avif&quot; srcset=&quot;https://yonatanlou.github.io/blog/jaccard-index-unsupervised/Jaccard_index_for_unsupervised_clustering/c6jHoN4adD-1039.avif 1039w&quot;&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://yonatanlou.github.io/blog/jaccard-index-unsupervised/Jaccard_index_for_unsupervised_clustering/c6jHoN4adD-1039.webp 1039w&quot;&gt;&lt;img loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://yonatanlou.github.io/blog/jaccard-index-unsupervised/Jaccard_index_for_unsupervised_clustering/c6jHoN4adD-1039.png&quot; alt=&quot;png&quot; width=&quot;1039&quot; height=&quot;340&quot;&gt;&lt;/picture&gt;&lt;/p&gt;
-&lt;p&gt;What we will expect to see in this simulation?
-We will expect the data with high similiarity (clusters more dense), will get higher jaccard score.
+&lt;p&gt;What we will expect to see in this simulation?&lt;br&gt;
+We will expect the data with high similiarity (clusters more dense), will get higher jaccard score.&lt;br&gt;
 Because ive used the same number of samples, with different number of classes, the jaccard will decrease - but we still expect to see the data with the high similiarity with much better jaccard score then the low similiarity.&lt;/p&gt;
-&lt;p&gt;The left plot it very very noisy, and we can&#39;t say if the which data setting is better.
+&lt;p&gt;The left plot it very very noisy, and we can&#39;t say if the which data setting is better.&lt;br&gt;
 This is make sense, because the sklearn implementation expecting to get prediction labels that correspond the actual labels.&lt;/p&gt;
 &lt;p&gt;That means that following setting will get 0 jaccard index:&lt;/p&gt;
 &lt;pre&gt;&lt;code&gt;from sklearn.metric import jaccard_score
@@ -1631,19 +1645,19 @@ jaccard_score(a,b,average=&amp;quot;weighted&amp;quot;)
     <updated>2024-10-30T00:00:00Z</updated>
     <id>https://yonatanlou.github.io/blog/data-pipeline-for-qumran-scrolls/data-pipeline-for-the-qumran-scrolls-using-text-fabric/</id>
     <content type="html">&lt;p&gt;When I first started my thesis, I inherited the Dead Sea Scrolls project from another student in my lab. He provided a large file that looked something like this:&lt;br&gt;
-&amp;lt;img src=&amp;quot;abeg_origin.png&amp;quot; alt=&amp;quot;abeg_origin&amp;quot; width=&amp;quot;10&amp;quot;/&amp;gt;&lt;/p&gt;
+&lt;picture&gt;&lt;source type=&quot;image/avif&quot; srcset=&quot;https://yonatanlou.github.io/blog/data-pipeline-for-qumran-scrolls/data-pipeline-for-the-qumran-scrolls-using-text-fabric/l__zRaStbu-510.avif 510w&quot;&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://yonatanlou.github.io/blog/data-pipeline-for-qumran-scrolls/data-pipeline-for-the-qumran-scrolls-using-text-fabric/l__zRaStbu-510.webp 510w&quot;&gt;&lt;img loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://yonatanlou.github.io/blog/data-pipeline-for-qumran-scrolls/data-pipeline-for-the-qumran-scrolls-using-text-fabric/l__zRaStbu-510.png&quot; alt=&quot;abeg_origin&quot; width=&quot;510&quot; height=&quot;340&quot;&gt;&lt;/picture&gt;&lt;/p&gt;
 &lt;p&gt;I also inherited a complex spaghetti code that parsed this data into readable Hebrew text. These files (from the image above),  were created by &lt;a href=&quot;https://en.wikipedia.org/wiki/Martin_Abegg&quot;&gt;Martin Abegg&lt;/a&gt; and contain the raw text of the Dead Sea Scrolls, with morphological data on each word.&lt;/p&gt;
 &lt;p&gt;A few weeks later, I discovered the &lt;a href=&quot;https://github.com/annotation/text-fabric&quot;&gt;text-fabric&lt;/a&gt; package, a toolkit for analyzing large, structured text datasets, including ancient manuscripts, biblical texts, and other linguistically complex corpora. Popular among researchers in linguistics, biblical studies, and digital humanities.&lt;/p&gt;
 &lt;p&gt;This package actually parsing those files that looks like gibberish from Abegg, but with easy to use API.&lt;/p&gt;
 &lt;p&gt;For my purposes, I needed the entire corpus as plain text, along with some morphological features of each word. Here’s a quick guide on how to set it up:&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;Disclaimer&lt;/strong&gt;
+&lt;p&gt;&lt;strong&gt;Disclaimer&lt;/strong&gt;&lt;br&gt;
 The original documentation for this package is pretty good, but i felt that the learning curve was too steep for what I needed. This post is very simple, and it will be good if you need to do something similar to mine.&lt;/p&gt;
 &lt;h2 id=&quot;installation&quot;&gt;Installation&lt;/h2&gt;
-&lt;p&gt;Follow the instructions in &lt;a href=&quot;https://annotation.github.io/text-fabric/tf/about/install.html&quot;&gt;here&lt;/a&gt;.
+&lt;p&gt;Follow the instructions in &lt;a href=&quot;https://annotation.github.io/text-fabric/tf/about/install.html&quot;&gt;here&lt;/a&gt;.&lt;br&gt;
 If you having problems, you can try to install it with: &lt;code&gt;pip instal &#39;text-fabric[github]&#39;&lt;/code&gt;.&lt;/p&gt;
 &lt;h3 id=&quot;installation-and-setup&quot;&gt;Installation and Setup&lt;/h3&gt;
-&lt;p&gt;(For more comprehensive guide check the &lt;a href=&quot;https://annotation.github.io/text-fabric/tf/index.html&quot;&gt;documentation&lt;/a&gt;)
-To get started, you’ll need to install &lt;code&gt;text-fabric&lt;/code&gt; and load a dataset.
+&lt;p&gt;(For more comprehensive guide check the &lt;a href=&quot;https://annotation.github.io/text-fabric/tf/index.html&quot;&gt;documentation&lt;/a&gt;)&lt;br&gt;
+To get started, you’ll need to install &lt;code&gt;text-fabric&lt;/code&gt; and load a dataset.&lt;br&gt;
 Here’s an example using the ETCBC Hebrew Bible dataset:&lt;/p&gt;
 &lt;pre class=&quot;language-python&quot; tabindex=&quot;0&quot;&gt;&lt;code class=&quot;language-python&quot;&gt;&lt;span class=&quot;token comment&quot;&gt;# Import Text-Fabric and load a dataset&lt;/span&gt;
 &lt;span class=&quot;token keyword&quot;&gt;from&lt;/span&gt; tf&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;app &lt;span class=&quot;token keyword&quot;&gt;import&lt;/span&gt; use
@@ -1785,7 +1799,7 @@ all_scrolls &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; defaultd
         single_scroll_data&lt;span class=&quot;token punctuation&quot;&gt;[&lt;/span&gt;scroll&lt;span class=&quot;token punctuation&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;append&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;word_entry&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
     &lt;span class=&quot;token keyword&quot;&gt;return&lt;/span&gt; single_scroll_data
 &lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;That&#39;s it, from here you can do whatever you want with the data.
+&lt;p&gt;That&#39;s it, from here you can do whatever you want with the data.&lt;br&gt;
 For more context and much ordered pipeline you can take a peek in here: &lt;a href=&quot;https://github.com/yonatanlou/QumranNLP/blob/main/src/ETL/main_ETL.py&quot;&gt;main_ETL.py&lt;/a&gt;.&lt;/p&gt;
 </content>
   </entry>

@@ -555,9 +555,9 @@ footer {
 	<li><time datetime="2024-11-10">10 November 2024</time></li>
 </ul>
 
-<p>&lt;a target=&quot;_blank&quot; href=&quot;https://colab.research.google.com/github/yonatanlou/notebooks/blob/main/Jaccard_index_for_unsupervised_clustering.ipynb&quot;&gt;
-&lt;img src=&quot;https://colab.research.google.com/assets/colab-badge.svg&quot; alt=&quot;Open In Colab&quot;/&gt;
-&lt;/a&gt;</p>
+<a target="_blank" href="https://colab.research.google.com/github/yonatanlou/notebooks/blob/main/Jaccard_index_for_unsupervised_clustering.ipynb">
+  <picture><source type="image/avif" srcset="/blog/jaccard-index-unsupervised/Jaccard_index_for_unsupervised_clustering/HffI470J9w-117.avif 117w"><source type="image/webp" srcset="/blog/jaccard-index-unsupervised/Jaccard_index_for_unsupervised_clustering/HffI470J9w-117.webp 117w"><img loading="lazy" decoding="async" src="/blog/jaccard-index-unsupervised/Jaccard_index_for_unsupervised_clustering/HffI470J9w-117.svg" alt="Open In Colab" width="117" height="20"></picture>
+</a>
 <p>TL;DR - Don't use sklearn jaccard_score function when dealing with unsupervised clustering.</p>
 <p>The Jaccard Index is a similarity measure used to compare the similarity and diversity of sample sets. It's calculated as the intersection divided by the union of sample sets. While it's a useful metric, its direct application in scikit-learn's <code>jaccard_score</code> is not suitable for unsupervised clustering scenarios.</p>
 <h3 id="the-problem-with-sklearns-jaccard-score">The Problem with Sklearn's Jaccard Score</h3>
@@ -705,7 +705,7 @@ data2<span class="token punctuation">,</span> labels2 <span class="token operato
 
 plot_umap_projections<span class="token punctuation">(</span>data1<span class="token punctuation">,</span> labels1<span class="token punctuation">,</span> data2<span class="token punctuation">,</span> labels2<span class="token punctuation">,</span> num_classes<span class="token punctuation">,</span> similarity1<span class="token punctuation">,</span> similarity2<span class="token punctuation">)</span></code></pre>
 <p><picture><source type="image/avif" srcset="/blog/jaccard-index-unsupervised/Jaccard_index_for_unsupervised_clustering/WxCZBTDUAQ-1002.avif 1002w"><source type="image/webp" srcset="/blog/jaccard-index-unsupervised/Jaccard_index_for_unsupervised_clustering/WxCZBTDUAQ-1002.webp 1002w"><img loading="lazy" decoding="async" src="/blog/jaccard-index-unsupervised/Jaccard_index_for_unsupervised_clustering/WxCZBTDUAQ-1002.png" alt="png" width="1002" height="340"></picture></p>
-<p>Nice! So we can now control on the similiarity between clusters and the number of clusters.
+<p>Nice! So we can now control on the similiarity between clusters and the number of clusters.<br>
 Let's run a bigger simulation and measure the Jaccard measure:</p>
 <pre class="language-python" tabindex="0"><code class="language-python"><span class="token keyword">import</span> numpy <span class="token keyword">as</span> np
 <span class="token keyword">import</span> matplotlib<span class="token punctuation">.</span>pyplot <span class="token keyword">as</span> plt
@@ -844,10 +844,10 @@ ax2<span class="token punctuation">.</span>grid<span class="token punctuation">(
 plt<span class="token punctuation">.</span>tight_layout<span class="token punctuation">(</span><span class="token punctuation">)</span>
 plt<span class="token punctuation">.</span>show<span class="token punctuation">(</span><span class="token punctuation">)</span></code></pre>
 <p><picture><source type="image/avif" srcset="/blog/jaccard-index-unsupervised/Jaccard_index_for_unsupervised_clustering/c6jHoN4adD-1039.avif 1039w"><source type="image/webp" srcset="/blog/jaccard-index-unsupervised/Jaccard_index_for_unsupervised_clustering/c6jHoN4adD-1039.webp 1039w"><img loading="lazy" decoding="async" src="/blog/jaccard-index-unsupervised/Jaccard_index_for_unsupervised_clustering/c6jHoN4adD-1039.png" alt="png" width="1039" height="340"></picture></p>
-<p>What we will expect to see in this simulation?
-We will expect the data with high similiarity (clusters more dense), will get higher jaccard score.
+<p>What we will expect to see in this simulation?<br>
+We will expect the data with high similiarity (clusters more dense), will get higher jaccard score.<br>
 Because ive used the same number of samples, with different number of classes, the jaccard will decrease - but we still expect to see the data with the high similiarity with much better jaccard score then the low similiarity.</p>
-<p>The left plot it very very noisy, and we can't say if the which data setting is better.
+<p>The left plot it very very noisy, and we can't say if the which data setting is better.<br>
 This is make sense, because the sklearn implementation expecting to get prediction labels that correspond the actual labels.</p>
 <p>That means that following setting will get 0 jaccard index:</p>
 <pre><code>from sklearn.metric import jaccard_score
@@ -894,4 +894,4 @@ jaccard_score(a,b,average=&quot;weighted&quot;)
     <a href="mailto:yonatanlou@gmail.com" target="_blank" title="Email">
         <i class="fa-solid fa-envelope"></i>
     </a>
-</div></footer><!-- This page `/blog/jaccard-index-unsupervised/Jaccard_index_for_unsupervised_clustering/` was built on 2025-06-21T07:33:33.308Z --><script type="module" src="/dist/rJ3_G-2ArF.js"></script>
+</div></footer><!-- This page `/blog/jaccard-index-unsupervised/Jaccard_index_for_unsupervised_clustering/` was built on 2025-06-21T07:43:23.624Z --><script type="module" src="/dist/rJ3_G-2ArF.js"></script>

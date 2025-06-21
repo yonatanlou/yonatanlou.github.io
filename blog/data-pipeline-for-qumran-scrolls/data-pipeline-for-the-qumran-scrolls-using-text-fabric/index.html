@@ -556,19 +556,19 @@ footer {
 </ul>
 
 <p>When I first started my thesis, I inherited the Dead Sea Scrolls project from another student in my lab. He provided a large file that looked something like this:<br>
-&lt;img src=&quot;abeg_origin.png&quot; alt=&quot;abeg_origin&quot; width=&quot;10&quot;/&gt;</p>
+<picture><source type="image/avif" srcset="/blog/data-pipeline-for-qumran-scrolls/data-pipeline-for-the-qumran-scrolls-using-text-fabric/l__zRaStbu-510.avif 510w"><source type="image/webp" srcset="/blog/data-pipeline-for-qumran-scrolls/data-pipeline-for-the-qumran-scrolls-using-text-fabric/l__zRaStbu-510.webp 510w"><img loading="lazy" decoding="async" src="/blog/data-pipeline-for-qumran-scrolls/data-pipeline-for-the-qumran-scrolls-using-text-fabric/l__zRaStbu-510.png" alt="abeg_origin" width="510" height="340"></picture></p>
 <p>I also inherited a complex spaghetti code that parsed this data into readable Hebrew text. These files (from the image above),  were created by <a href="https://en.wikipedia.org/wiki/Martin_Abegg">Martin Abegg</a> and contain the raw text of the Dead Sea Scrolls, with morphological data on each word.</p>
 <p>A few weeks later, I discovered the <a href="https://github.com/annotation/text-fabric">text-fabric</a> package, a toolkit for analyzing large, structured text datasets, including ancient manuscripts, biblical texts, and other linguistically complex corpora. Popular among researchers in linguistics, biblical studies, and digital humanities.</p>
 <p>This package actually parsing those files that looks like gibberish from Abegg, but with easy to use API.</p>
 <p>For my purposes, I needed the entire corpus as plain text, along with some morphological features of each word. Here’s a quick guide on how to set it up:</p>
-<p><strong>Disclaimer</strong>
+<p><strong>Disclaimer</strong><br>
 The original documentation for this package is pretty good, but i felt that the learning curve was too steep for what I needed. This post is very simple, and it will be good if you need to do something similar to mine.</p>
 <h2 id="installation">Installation</h2>
-<p>Follow the instructions in <a href="https://annotation.github.io/text-fabric/tf/about/install.html">here</a>.
+<p>Follow the instructions in <a href="https://annotation.github.io/text-fabric/tf/about/install.html">here</a>.<br>
 If you having problems, you can try to install it with: <code>pip instal 'text-fabric[github]'</code>.</p>
 <h3 id="installation-and-setup">Installation and Setup</h3>
-<p>(For more comprehensive guide check the <a href="https://annotation.github.io/text-fabric/tf/index.html">documentation</a>)
-To get started, you’ll need to install <code>text-fabric</code> and load a dataset.
+<p>(For more comprehensive guide check the <a href="https://annotation.github.io/text-fabric/tf/index.html">documentation</a>)<br>
+To get started, you’ll need to install <code>text-fabric</code> and load a dataset.<br>
 Here’s an example using the ETCBC Hebrew Bible dataset:</p>
 <pre class="language-python" tabindex="0"><code class="language-python"><span class="token comment"># Import Text-Fabric and load a dataset</span>
 <span class="token keyword">from</span> tf<span class="token punctuation">.</span>app <span class="token keyword">import</span> use
@@ -710,7 +710,7 @@ all_scrolls <span class="token operator">=</span> defaultdict<span class="token 
         single_scroll_data<span class="token punctuation">[</span>scroll<span class="token punctuation">]</span><span class="token punctuation">.</span>append<span class="token punctuation">(</span>word_entry<span class="token punctuation">)</span>
     <span class="token keyword">return</span> single_scroll_data
 </code></pre>
-<p>That's it, from here you can do whatever you want with the data.
+<p>That's it, from here you can do whatever you want with the data.<br>
 For more context and much ordered pipeline you can take a peek in here: <a href="https://github.com/yonatanlou/QumranNLP/blob/main/src/ETL/main_ETL.py">main_ETL.py</a>.</p>
 
 <ul class="links-nextprev"><li class="links-nextprev-prev">← Previous<br> <a href="/blog/firstpost/">Moving from Jekyll to Eleventy.</a></li><li class="links-nextprev-next">Next →<br><a href="/blog/jaccard-index-unsupervised/Jaccard_index_for_unsupervised_clustering/">Jaccard index for unsupervised clustering</a></li>
@@ -739,4 +739,4 @@ For more context and much ordered pipeline you can take a peek in here: <a href=
     <a href="mailto:yonatanlou@gmail.com" target="_blank" title="Email">
         <i class="fa-solid fa-envelope"></i>
     </a>
-</div></footer><!-- This page `/blog/data-pipeline-for-qumran-scrolls/data-pipeline-for-the-qumran-scrolls-using-text-fabric/` was built on 2025-06-21T07:33:33.307Z --><script type="module" src="/dist/rJ3_G-2ArF.js"></script>
+</div></footer><!-- This page `/blog/data-pipeline-for-qumran-scrolls/data-pipeline-for-the-qumran-scrolls-using-text-fabric/` was built on 2025-06-21T07:43:23.623Z --><script type="module" src="/dist/rJ3_G-2ArF.js"></script>

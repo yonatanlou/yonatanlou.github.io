@@ -555,9 +555,9 @@ footer {
 	<li><time datetime="2025-01-12">12 January 2025</time></li>
 </ul>
 
-<p>&lt;a target=&quot;_blank&quot; href=&quot;https://colab.research.google.com/github/yonatanlou/notebooks/blob/main/Jaccard_index_for_unsupervised_clustering.ipynb&quot;&gt;
-&lt;img src=&quot;https://colab.research.google.com/assets/colab-badge.svg&quot; alt=&quot;Open In Colab&quot;/&gt;
-&lt;/a&gt;</p>
+<a target="_blank" href="https://colab.research.google.com/github/yonatanlou/notebooks/blob/main/Jaccard_index_for_unsupervised_clustering.ipynb">
+  <picture><source type="image/avif" srcset="/blog/Evaluating-Hierarchical-Clustering/hierarchical-clustering-eval/HffI470J9w-117.avif 117w"><source type="image/webp" srcset="/blog/Evaluating-Hierarchical-Clustering/hierarchical-clustering-eval/HffI470J9w-117.webp 117w"><img loading="lazy" decoding="async" src="/blog/Evaluating-Hierarchical-Clustering/hierarchical-clustering-eval/HffI470J9w-117.svg" alt="Open In Colab" width="117" height="20"></picture>
+</a>
 <p>When working on hierarchical clustering tasks, evaluation is often limited to the <strong>leaves of the tree</strong> or relies on plots that look impressive but don't tell the whole story.What if we could assess the entire tree structure? Wouldn't that give us a more nuanced view of our clustering methods, linkage techniques, or embedding models?</p>
 <p>In this short article, I'll introduce you to a clever method invented by <strong>Sanjoy Dasgupta</strong> for evaluating hierarchical clustering-not just at the leaves but across the whole tree structure.</p>
 <p>Most people who implement hierarchical clustering tend to evaluate it using well-known unsupervised learning metrics (like the ones mentioned in <a href="https://scikit-learn.org/1.5/modules/clustering.html#clustering-performance-evaluation">scikit-learn's clustering evaluation</a>).<br>
@@ -570,11 +570,11 @@ These metrics typically require you to &quot;flatten&quot; the clusters. In othe
 <p>In Dasgupta's formulation, the input to a clustering problem consists of similarity scores between certain pairs of elements, represented as an <strong>undirected graph</strong> <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>G</mi><mo>=</mo><mo stretchy="false">(</mo><mi>V</mi><mo separator="true">,</mo><mi>E</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">G = (V, E)</annotation></semantics></math></span>, with the elements as its vertices and non-negative real weights on its edges.</p>
 <h4 id="cost-function-definition"><strong>Cost Function Definition:</strong></h4>
 <p>A hierarchical clustering can be described as a <strong>tree</strong> (not necessarily a binary tree) whose <strong>leaves</strong> are the elements to be clustered. The clusters are then the subsets of elements descending from each tree node.<br>
-The <strong>size</strong> ( |C| ) of any cluster ( C ) is the number of elements in the cluster.</p>
-<p>For each edge ( uv ) of the input graph:</p>
+The <strong>size</strong> <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">∣</mi><mi>C</mi><mi mathvariant="normal">∣</mi></mrow><annotation encoding="application/x-tex">|C|</annotation></semantics></math></span> of any cluster <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>C</mi></mrow><annotation encoding="application/x-tex">C</annotation></semantics></math></span> is the number of elements in the cluster.</p>
+<p>For each edge <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>u</mi><mi>v</mi></mrow><annotation encoding="application/x-tex">uv</annotation></semantics></math></span> of the input graph:</p>
 <ul>
-<li>Let ( w(uv) ) denote the <strong>weight</strong> of edge ( uv ).</li>
-<li>Let ( C(uv) ) denote the <strong>smallest cluster</strong> of a given clustering that contains both ( u ) and ( v ).</li>
+<li>Let <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>w</mi><mo stretchy="false">(</mo><mi>u</mi><mi>v</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">w(uv)</annotation></semantics></math></span> denote the <strong>weight</strong> of edge <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>u</mi><mi>v</mi></mrow><annotation encoding="application/x-tex">uv</annotation></semantics></math></span>.</li>
+<li>Let <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>C</mi><mo stretchy="false">(</mo><mi>u</mi><mi>v</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">C(uv)</annotation></semantics></math></span> denote the <strong>smallest cluster</strong> of a given clustering that contains both <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>u</mi></mrow><annotation encoding="application/x-tex">u</annotation></semantics></math></span>and <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>v</mi></mrow><annotation encoding="application/x-tex">v</annotation></semantics></math></span>.</li>
 </ul>
 <p>Then Dasgupta defines the <strong>cost of a clustering</strong> as:</p>
 <p class="katex-block"><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><munder><mo>∑</mo><mrow><mi>u</mi><mi>v</mi><mo>∈</mo><mi>E</mi></mrow></munder><mi>w</mi><mo stretchy="false">(</mo><mi>u</mi><mi>v</mi><mo stretchy="false">)</mo><mo>⋅</mo><mi mathvariant="normal">∣</mi><mi>C</mi><mo stretchy="false">(</mo><mi>u</mi><mi>v</mi><mo stretchy="false">)</mo><mi mathvariant="normal">∣</mi></mrow><annotation encoding="application/x-tex">\sum_{uv \in E} w(uv) \cdot |C(uv)|
@@ -668,377 +668,384 @@ combined_df <span class="token operator">=</span> combined_df<span class="token 
 <span class="token punctuation">}</span><span class="token punctuation">)</span>
 
 combined_df<span class="token punctuation">.</span>groupby<span class="token punctuation">(</span><span class="token punctuation">[</span><span class="token string">"1st_level_category"</span><span class="token punctuation">,</span> <span class="token string">"2nd_level_category"</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">[</span><span class="token string">"3rd_level_category"</span><span class="token punctuation">]</span><span class="token punctuation">.</span>nunique<span class="token punctuation">(</span><span class="token punctuation">)</span></code></pre>
-<p>&lt;div&gt;
-&lt;style scoped&gt;
-.dataframe tbody tr th:only-of-type {
-vertical-align: middle;
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+<p>.dataframe tbody tr th {<br>
+vertical-align: top;<br>
 }</p>
-<p>.dataframe tbody tr th {
-vertical-align: top;
-}</p>
-<p>.dataframe thead th {
-text-align: right;
-}
-&lt;/style&gt;
-&lt;table border=&quot;1&quot; class=&quot;dataframe&quot;&gt;
-&lt;thead&gt;
-&lt;tr style=&quot;text-align: right;&quot;&gt;
-&lt;th&gt;&lt;/th&gt;
-&lt;th&gt;&lt;/th&gt;
-&lt;th&gt;3rd_level_category&lt;/th&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;th&gt;1st_level_category&lt;/th&gt;
-&lt;th&gt;2nd_level_category&lt;/th&gt;
-&lt;th&gt;&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;th rowspan=&quot;5&quot; valign=&quot;top&quot;&gt;Family and General Supplies&lt;/th&gt;
-&lt;th&gt;car &amp; motorbike&lt;/th&gt;
-&lt;td&gt;6&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;th&gt;grocery &amp; gourmet foods&lt;/th&gt;
-&lt;td&gt;3&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;th&gt;industrial supplies&lt;/th&gt;
-&lt;td&gt;4&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;th&gt;stores&lt;/th&gt;
-&lt;td&gt;6&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;th&gt;toys &amp; baby products&lt;/th&gt;
-&lt;td&gt;9&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;th rowspan=&quot;7&quot; valign=&quot;top&quot;&gt;Fashion and Accessories&lt;/th&gt;
-&lt;th&gt;accessories&lt;/th&gt;
-&lt;td&gt;7&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;th&gt;bags &amp; luggage&lt;/th&gt;
-&lt;td&gt;6&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;th&gt;kids' fashion&lt;/th&gt;
-&lt;td&gt;6&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;th&gt;men's clothing&lt;/th&gt;
-&lt;td&gt;4&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;th&gt;men's shoes&lt;/th&gt;
-&lt;td&gt;3&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;th&gt;women's clothing&lt;/th&gt;
-&lt;td&gt;4&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;th&gt;women's shoes&lt;/th&gt;
-&lt;td&gt;3&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;th rowspan=&quot;4&quot; valign=&quot;top&quot;&gt;Health and Entertainment&lt;/th&gt;
-&lt;th&gt;beauty &amp; health&lt;/th&gt;
-&lt;td&gt;8&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;th&gt;music&lt;/th&gt;
-&lt;td&gt;1&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;th&gt;sports &amp; fitness&lt;/th&gt;
-&lt;td&gt;12&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;th&gt;tv, audio &amp; cameras&lt;/th&gt;
-&lt;td&gt;9&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;th rowspan=&quot;4&quot; valign=&quot;top&quot;&gt;Home and Lifestyle&lt;/th&gt;
-&lt;th&gt;appliances&lt;/th&gt;
-&lt;td&gt;6&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;th&gt;home &amp; kitchen&lt;/th&gt;
-&lt;td&gt;12&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;th&gt;home, kitchen, pets&lt;/th&gt;
-&lt;td&gt;1&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;th&gt;pet supplies&lt;/th&gt;
-&lt;td&gt;2&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-&lt;/div&gt;&lt;br&gt;&lt;label&gt;&lt;b&gt;dtype:&lt;/b&gt; int64&lt;/label&gt;</p>
+<p>.dataframe thead th {<br>
+text-align: right;<br>
+}<br>
+</style><p></p>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th></th>
+      <th>3rd_level_category</th>
+    </tr>
+    <tr>
+      <th>1st_level_category</th>
+      <th>2nd_level_category</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th rowspan="5" valign="top">Family and General Supplies</th>
+      <th>car &amp; motorbike</th>
+      <td>6</td>
+    </tr>
+    <tr>
+      <th>grocery &amp; gourmet foods</th>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>industrial supplies</th>
+      <td>4</td>
+    </tr>
+    <tr>
+      <th>stores</th>
+      <td>6</td>
+    </tr>
+    <tr>
+      <th>toys &amp; baby products</th>
+      <td>9</td>
+    </tr>
+    <tr>
+      <th rowspan="7" valign="top">Fashion and Accessories</th>
+      <th>accessories</th>
+      <td>7</td>
+    </tr>
+    <tr>
+      <th>bags &amp; luggage</th>
+      <td>6</td>
+    </tr>
+    <tr>
+      <th>kids' fashion</th>
+      <td>6</td>
+    </tr>
+    <tr>
+      <th>men's clothing</th>
+      <td>4</td>
+    </tr>
+    <tr>
+      <th>men's shoes</th>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>women's clothing</th>
+      <td>4</td>
+    </tr>
+    <tr>
+      <th>women's shoes</th>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th rowspan="4" valign="top">Health and Entertainment</th>
+      <th>beauty &amp; health</th>
+      <td>8</td>
+    </tr>
+    <tr>
+      <th>music</th>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>sports &amp; fitness</th>
+      <td>12</td>
+    </tr>
+    <tr>
+      <th>tv, audio &amp; cameras</th>
+      <td>9</td>
+    </tr>
+    <tr>
+      <th rowspan="4" valign="top">Home and Lifestyle</th>
+      <th>appliances</th>
+      <td>6</td>
+    </tr>
+    <tr>
+      <th>home &amp; kitchen</th>
+      <td>12</td>
+    </tr>
+    <tr>
+      <th>home, kitchen, pets</th>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>pet supplies</th>
+      <td>2</td>
+    </tr>
+  </tbody>
+</table>
+</div><br><label><b>dtype:</b> int64</label>
 <pre class="language-python" tabindex="0"><code class="language-python">N_SAMPLES <span class="token operator">=</span> <span class="token number">100</span>
 df <span class="token operator">=</span> combined_df<span class="token punctuation">[</span><span class="token punctuation">[</span><span class="token string">"name"</span><span class="token punctuation">,</span> <span class="token string">"1st_level_category"</span><span class="token punctuation">,</span> <span class="token string">"2nd_level_category"</span><span class="token punctuation">,</span> <span class="token string">"3rd_level_category"</span><span class="token punctuation">]</span><span class="token punctuation">]</span>
 df <span class="token operator">=</span> df<span class="token punctuation">.</span>sample<span class="token punctuation">(</span>N_SAMPLES<span class="token punctuation">)</span>
 df<span class="token punctuation">.</span>head<span class="token punctuation">(</span><span class="token punctuation">)</span></code></pre>
-<p>&lt;div id=&quot;df-e3aa984c-6ff7-418d-9e3e-d33c59c6ca2d&quot; class=&quot;colab-df-container&quot;&gt;
-&lt;div&gt;
-&lt;style scoped&gt;
-.dataframe tbody tr th:only-of-type {
-vertical-align: middle;
+  <div id="df-e3aa984c-6ff7-418d-9e3e-d33c59c6ca2d" class="colab-df-container">
+    <div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+<p>.dataframe tbody tr th {<br>
+vertical-align: top;<br>
 }</p>
-<p>.dataframe tbody tr th {
-vertical-align: top;
-}</p>
-<p>.dataframe thead th {
-text-align: right;
-}
-&lt;/style&gt;
-&lt;table border=&quot;1&quot; class=&quot;dataframe&quot;&gt;
-&lt;thead&gt;
-&lt;tr style=&quot;text-align: right;&quot;&gt;
-&lt;th&gt;&lt;/th&gt;
-&lt;th&gt;name&lt;/th&gt;
-&lt;th&gt;1st_level_category&lt;/th&gt;
-&lt;th&gt;2nd_level_category&lt;/th&gt;
-&lt;th&gt;3rd_level_category&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;th&gt;728311&lt;/th&gt;
-&lt;td&gt;Metro Womens Synthetic Antic Gold Slip Ons (Si...&lt;/td&gt;
-&lt;td&gt;Fashion and Accessories&lt;/td&gt;
-&lt;td&gt;women's shoes&lt;/td&gt;
-&lt;td&gt;Fashion Sandals&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;th&gt;123190&lt;/th&gt;
-&lt;td&gt;Beingelegant - Pack of 100 Women's Organza Net...&lt;/td&gt;
-&lt;td&gt;Fashion and Accessories&lt;/td&gt;
-&lt;td&gt;accessories&lt;/td&gt;
-&lt;td&gt;Bags &amp; Luggage&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;th&gt;772828&lt;/th&gt;
-&lt;td&gt;Wolven Handcrafted Men's Termoli Black Burnish...&lt;/td&gt;
-&lt;td&gt;Fashion and Accessories&lt;/td&gt;
-&lt;td&gt;men's shoes&lt;/td&gt;
-&lt;td&gt;Formal Shoes&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;th&gt;979017&lt;/th&gt;
-&lt;td&gt;GROOT Party Wedding Analog Black Color Dial Me...&lt;/td&gt;
-&lt;td&gt;Fashion and Accessories&lt;/td&gt;
-&lt;td&gt;accessories&lt;/td&gt;
-&lt;td&gt;Watches&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;th&gt;295506&lt;/th&gt;
-&lt;td&gt;Happy Cultures Girls and Women Handmade Croche...&lt;/td&gt;
-&lt;td&gt;Fashion and Accessories&lt;/td&gt;
-&lt;td&gt;accessories&lt;/td&gt;
-&lt;td&gt;Handbags &amp; Clutches&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-&lt;/div&gt;
-&lt;div class=&quot;colab-df-buttons&quot;&gt;</p>
-<p>&lt;div class=&quot;colab-df-container&quot;&gt;
-&lt;button class=&quot;colab-df-convert&quot; onclick=&quot;convertToInteractive('df-e3aa984c-6ff7-418d-9e3e-d33c59c6ca2d')&quot;
-title=&quot;Convert this dataframe to an interactive table.&quot;
-style=&quot;display:none;&quot;&gt;</p>
-<p>&lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot; height=&quot;24px&quot; viewBox=&quot;0 -960 960 960&quot;&gt;
-&lt;path d=&quot;M120-120v-720h720v720H120Zm60-500h600v-160H180v160Zm220 220h160v-160H400v160Zm0 220h160v-160H400v160ZM180-400h160v-160H180v160Zm440 0h160v-160H620v160ZM180-180h160v-160H180v160Zm440 0h160v-160H620v160Z&quot;/&gt;
-&lt;/svg&gt;
-&lt;/button&gt;</p>
-<p>&lt;style&gt;
-.colab-df-container {
-display:flex;
-gap: 12px;
-}</p>
-<p>.colab-df-convert {
-background-color: #E8F0FE;
-border: none;
-border-radius: 50%;
-cursor: pointer;
-display: none;
-fill: #1967D2;
-height: 32px;
-padding: 0 0 0 0;
-width: 32px;
-}</p>
-<p>.colab-df-convert:hover {
-background-color: #E2EBFA;
-box-shadow: 0px 1px 2px rgba(60, 64, 67, 0.3), 0px 1px 3px 1px rgba(60, 64, 67, 0.15);
-fill: #174EA6;
-}</p>
-<p>.colab-df-buttons div {
-margin-bottom: 4px;
-}</p>
-<p>[theme=dark] .colab-df-convert {
-background-color: #3B4455;
-fill: #D2E3FC;
-}</p>
-<p>[theme=dark] .colab-df-convert:hover {
-background-color: #434B5C;
-box-shadow: 0px 1px 3px 1px rgba(0, 0, 0, 0.15);
-filter: drop-shadow(0px 1px 2px rgba(0, 0, 0, 0.3));
-fill: #FFFFFF;
-}
-&lt;/style&gt;</p>
-<p>&lt;script&gt;
-const buttonEl =
-document.querySelector('#df-e3aa984c-6ff7-418d-9e3e-d33c59c6ca2d button.colab-df-convert');
-buttonEl.style.display =
+<p>.dataframe thead th {<br>
+text-align: right;<br>
+}<br>
+</style><p></p>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>name</th>
+      <th>1st_level_category</th>
+      <th>2nd_level_category</th>
+      <th>3rd_level_category</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>728311</th>
+      <td>Metro Womens Synthetic Antic Gold Slip Ons (Si...</td>
+      <td>Fashion and Accessories</td>
+      <td>women's shoes</td>
+      <td>Fashion Sandals</td>
+    </tr>
+    <tr>
+      <th>123190</th>
+      <td>Beingelegant - Pack of 100 Women's Organza Net...</td>
+      <td>Fashion and Accessories</td>
+      <td>accessories</td>
+      <td>Bags &amp; Luggage</td>
+    </tr>
+    <tr>
+      <th>772828</th>
+      <td>Wolven Handcrafted Men's Termoli Black Burnish...</td>
+      <td>Fashion and Accessories</td>
+      <td>men's shoes</td>
+      <td>Formal Shoes</td>
+    </tr>
+    <tr>
+      <th>979017</th>
+      <td>GROOT Party Wedding Analog Black Color Dial Me...</td>
+      <td>Fashion and Accessories</td>
+      <td>accessories</td>
+      <td>Watches</td>
+    </tr>
+    <tr>
+      <th>295506</th>
+      <td>Happy Cultures Girls and Women Handmade Croche...</td>
+      <td>Fashion and Accessories</td>
+      <td>accessories</td>
+      <td>Handbags &amp; Clutches</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+    <div class="colab-df-buttons">
+  <div class="colab-df-container">
+    <button class="colab-df-convert" onclick="convertToInteractive('df-e3aa984c-6ff7-418d-9e3e-d33c59c6ca2d')" title="Convert this dataframe to an interactive table." style="display:none;">
+  <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960">
+    <path d="M120-120v-720h720v720H120Zm60-500h600v-160H180v160Zm220 220h160v-160H400v160Zm0 220h160v-160H400v160ZM180-400h160v-160H180v160Zm440 0h160v-160H620v160ZM180-180h160v-160H180v160Zm440 0h160v-160H620v160Z"></path>
+  </svg>
+    </button>
+  <style>
+    .colab-df-container {
+      display:flex;
+      gap: 12px;
+    }
+
+    .colab-df-convert {
+      background-color: #E8F0FE;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      display: none;
+      fill: #1967D2;
+      height: 32px;
+      padding: 0 0 0 0;
+      width: 32px;
+    }
+
+    .colab-df-convert:hover {
+      background-color: #E2EBFA;
+      box-shadow: 0px 1px 2px rgba(60, 64, 67, 0.3), 0px 1px 3px 1px rgba(60, 64, 67, 0.15);
+      fill: #174EA6;
+    }
+
+    .colab-df-buttons div {
+      margin-bottom: 4px;
+    }
+
+    [theme=dark] .colab-df-convert {
+      background-color: #3B4455;
+      fill: #D2E3FC;
+    }
+
+    [theme=dark] .colab-df-convert:hover {
+      background-color: #434B5C;
+      box-shadow: 0px 1px 3px 1px rgba(0, 0, 0, 0.15);
+      filter: drop-shadow(0px 1px 2px rgba(0, 0, 0, 0.3));
+      fill: #FFFFFF;
+    }
+  </style>
+<p><script><br>
+const buttonEl =<br>
+document.querySelector('#df-e3aa984c-6ff7-418d-9e3e-d33c59c6ca2d button.colab-df-convert');<br>
+buttonEl.style.display =<br>
 google.colab.kernel.accessAllowed ? 'block' : 'none';</p>
-<p>async function convertToInteractive(key) {
-const element = document.querySelector('#df-e3aa984c-6ff7-418d-9e3e-d33c59c6ca2d');
-const dataTable =
-await google.colab.kernel.invokeFunction('convertToInteractive',
-[key], {});
+<p>async function convertToInteractive(key) {<br>
+const element = document.querySelector('#df-e3aa984c-6ff7-418d-9e3e-d33c59c6ca2d');<br>
+const dataTable =<br>
+await google.colab.kernel.invokeFunction('convertToInteractive',<br>
+[key], {});<br>
 if (!dataTable) return;</p>
-<p>const docLinkHtml = 'Like what you see? Visit the ' +
-'&lt;a target=&quot;_blank&quot; href=https://colab.research.google.com/notebooks/data_table.ipynb&gt;data table notebook&lt;/a&gt;'
-+ ' to learn more about interactive tables.';
-element.innerHTML = '';
-dataTable['output_type'] = 'display_data';
-await google.colab.output.renderOutput(dataTable, element);
-const docLink = document.createElement('div');
-docLink.innerHTML = docLinkHtml;
-element.appendChild(docLink);
-}
-&lt;/script&gt;
-&lt;/div&gt;</p>
-<p>&lt;div id=&quot;df-f3c06226-a7bf-4d60-8a6c-c2d7f8da4da1&quot;&gt;
-&lt;button class=&quot;colab-df-quickchart&quot; onclick=&quot;quickchart('df-f3c06226-a7bf-4d60-8a6c-c2d7f8da4da1')&quot;
-title=&quot;Suggest charts&quot;
-style=&quot;display:none;&quot;&gt;</p>
-<p>&lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot; height=&quot;24px&quot;viewBox=&quot;0 0 24 24&quot;
-width=&quot;24px&quot;&gt;
-&lt;g&gt;
-&lt;path d=&quot;M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z&quot;/&gt;
-&lt;/g&gt;
-&lt;/svg&gt;
-&lt;/button&gt;</p>
-<p>&lt;style&gt;
-.colab-df-quickchart {
---bg-color: #E8F0FE;
---fill-color: #1967D2;
---hover-bg-color: #E2EBFA;
---hover-fill-color: #174EA6;
---disabled-fill-color: #AAA;
---disabled-bg-color: #DDD;
-}</p>
-<p>[theme=dark] .colab-df-quickchart {
---bg-color: #3B4455;
---fill-color: #D2E3FC;
---hover-bg-color: #434B5C;
---hover-fill-color: #FFFFFF;
---disabled-bg-color: #3B4455;
---disabled-fill-color: #666;
-}</p>
-<p>.colab-df-quickchart {
-background-color: var(--bg-color);
-border: none;
-border-radius: 50%;
-cursor: pointer;
-display: none;
-fill: var(--fill-color);
-height: 32px;
-padding: 0;
-width: 32px;
-}</p>
-<p>.colab-df-quickchart:hover {
-background-color: var(--hover-bg-color);
-box-shadow: 0 1px 2px rgba(60, 64, 67, 0.3), 0 1px 3px 1px rgba(60, 64, 67, 0.15);
-fill: var(--button-hover-fill-color);
-}</p>
-<p>.colab-df-quickchart-complete:disabled,
-.colab-df-quickchart-complete:disabled:hover {
-background-color: var(--disabled-bg-color);
-fill: var(--disabled-fill-color);
-box-shadow: none;
-}</p>
-<p>.colab-df-spinner {
-border: 2px solid var(--fill-color);
-border-color: transparent;
-border-bottom-color: var(--fill-color);
-animation:
-spin 1s steps(1) infinite;
-}</p>
-<p>@keyframes spin {
-0% {
-border-color: transparent;
-border-bottom-color: var(--fill-color);
-border-left-color: var(--fill-color);
-}
-20% {
-border-color: transparent;
-border-left-color: var(--fill-color);
-border-top-color: var(--fill-color);
-}
-30% {
-border-color: transparent;
-border-left-color: var(--fill-color);
-border-top-color: var(--fill-color);
-border-right-color: var(--fill-color);
-}
-40% {
-border-color: transparent;
-border-right-color: var(--fill-color);
-border-top-color: var(--fill-color);
-}
-60% {
-border-color: transparent;
-border-right-color: var(--fill-color);
-}
-80% {
-border-color: transparent;
-border-right-color: var(--fill-color);
-border-bottom-color: var(--fill-color);
-}
-90% {
-border-color: transparent;
-border-bottom-color: var(--fill-color);
-}
-}
-&lt;/style&gt;</p>
-<p>&lt;script&gt;
-async function quickchart(key) {
-const quickchartButtonEl =
-document.querySelector('#' + key + ' button');
-quickchartButtonEl.disabled = true;  // To prevent multiple clicks.
-quickchartButtonEl.classList.add('colab-df-spinner');
-try {
-const charts = await google.colab.kernel.invokeFunction(
-'suggestCharts', [key], {});
-} catch (error) {
-console.error('Error during call to suggestCharts:', error);
-}
-quickchartButtonEl.classList.remove('colab-df-spinner');
-quickchartButtonEl.classList.add('colab-df-quickchart-complete');
-}
-(() =&gt; {
-let quickchartButtonEl =
-document.querySelector('#df-f3c06226-a7bf-4d60-8a6c-c2d7f8da4da1 button');
-quickchartButtonEl.style.display =
-google.colab.kernel.accessAllowed ? 'block' : 'none';
-})();
-&lt;/script&gt;
-&lt;/div&gt;</p>
-<p>&lt;/div&gt;
-&lt;/div&gt;</p>
+<p>const docLinkHtml = 'Like what you see? Visit the ' +<br>
+'<a target="_blank" href=https://colab.research.google.com/notebooks/data_table.ipynb>data table notebook</a>'<br>
++ ' to learn more about interactive tables.';<br>
+element.innerHTML = '';<br>
+dataTable['output_type'] = 'display_data';<br>
+await google.colab.output.renderOutput(dataTable, element);<br>
+const docLink = document.createElement('div');<br>
+docLink.innerHTML = docLinkHtml;<br>
+element.appendChild(docLink);<br>
+}<br>
+</script></p>
+  </div>
+<div id="df-f3c06226-a7bf-4d60-8a6c-c2d7f8da4da1">
+  <button class="colab-df-quickchart" onclick="quickchart('df-f3c06226-a7bf-4d60-8a6c-c2d7f8da4da1')" title="Suggest charts" style="display:none;">
+<p>&lt;svg xmlns=&quot;<a href="http://www.w3.org/2000/svg">http://www.w3.org/2000/svg</a>&quot; height=&quot;24px&quot;viewBox=&quot;0 0 24 24&quot;<br>
+width=&quot;24px&quot;&gt;<br>
+<g><br>
+<path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"><br>
+</path></g><br>
+<br>
+</p></button><p></p>
+<style>
+  .colab-df-quickchart {
+      --bg-color: #E8F0FE;
+      --fill-color: #1967D2;
+      --hover-bg-color: #E2EBFA;
+      --hover-fill-color: #174EA6;
+      --disabled-fill-color: #AAA;
+      --disabled-bg-color: #DDD;
+  }
+
+  [theme=dark] .colab-df-quickchart {
+      --bg-color: #3B4455;
+      --fill-color: #D2E3FC;
+      --hover-bg-color: #434B5C;
+      --hover-fill-color: #FFFFFF;
+      --disabled-bg-color: #3B4455;
+      --disabled-fill-color: #666;
+  }
+
+  .colab-df-quickchart {
+    background-color: var(--bg-color);
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    display: none;
+    fill: var(--fill-color);
+    height: 32px;
+    padding: 0;
+    width: 32px;
+  }
+
+  .colab-df-quickchart:hover {
+    background-color: var(--hover-bg-color);
+    box-shadow: 0 1px 2px rgba(60, 64, 67, 0.3), 0 1px 3px 1px rgba(60, 64, 67, 0.15);
+    fill: var(--button-hover-fill-color);
+  }
+
+  .colab-df-quickchart-complete:disabled,
+  .colab-df-quickchart-complete:disabled:hover {
+    background-color: var(--disabled-bg-color);
+    fill: var(--disabled-fill-color);
+    box-shadow: none;
+  }
+
+  .colab-df-spinner {
+    border: 2px solid var(--fill-color);
+    border-color: transparent;
+    border-bottom-color: var(--fill-color);
+    animation:
+      spin 1s steps(1) infinite;
+  }
+
+  @keyframes spin {
+    0% {
+      border-color: transparent;
+      border-bottom-color: var(--fill-color);
+      border-left-color: var(--fill-color);
+    }
+    20% {
+      border-color: transparent;
+      border-left-color: var(--fill-color);
+      border-top-color: var(--fill-color);
+    }
+    30% {
+      border-color: transparent;
+      border-left-color: var(--fill-color);
+      border-top-color: var(--fill-color);
+      border-right-color: var(--fill-color);
+    }
+    40% {
+      border-color: transparent;
+      border-right-color: var(--fill-color);
+      border-top-color: var(--fill-color);
+    }
+    60% {
+      border-color: transparent;
+      border-right-color: var(--fill-color);
+    }
+    80% {
+      border-color: transparent;
+      border-right-color: var(--fill-color);
+      border-bottom-color: var(--fill-color);
+    }
+    90% {
+      border-color: transparent;
+      border-bottom-color: var(--fill-color);
+    }
+  }
+</style>
+  <script>
+    async function quickchart(key) {
+      const quickchartButtonEl =
+        document.querySelector('#' + key + ' button');
+      quickchartButtonEl.disabled = true;  // To prevent multiple clicks.
+      quickchartButtonEl.classList.add('colab-df-spinner');
+      try {
+        const charts = await google.colab.kernel.invokeFunction(
+            'suggestCharts', [key], {});
+      } catch (error) {
+        console.error('Error during call to suggestCharts:', error);
+      }
+      quickchartButtonEl.classList.remove('colab-df-spinner');
+      quickchartButtonEl.classList.add('colab-df-quickchart-complete');
+    }
+    (() => {
+      let quickchartButtonEl =
+        document.querySelector('#df-f3c06226-a7bf-4d60-8a6c-c2d7f8da4da1 button');
+      quickchartButtonEl.style.display =
+        google.colab.kernel.accessAllowed ? 'block' : 'none';
+    })();
+  </script>
+</div>
+<p></p></div><p></p>
+  </div>
 <p>So now, we have a nice dataset with three levels of hierarchy.</p>
 <p>For this experiment, I won't focus on text processing, but I believe that it could be beneficial for future improvements.</p>
 <p>There are two main choices we need to make for this task:</p>
 <ol>
 <li>
-<p><strong>How do we vectorize (embed) the item names?</strong>
+<p><strong>How do we vectorize (embed) the item names?</strong><br>
 Should we use simple vectorizers like TF-IDF or more advanced embeddings like BERT (maybe compare multiple BERT models)? The choice of embedding can have a significant impact on the clustering quality.</p>
 </li>
 <li>
@@ -1166,289 +1173,296 @@ plt<span class="token punctuation">.</span>savefig<span class="token punctuation
 </code></pre>
 <p><picture><source type="image/avif" srcset="/blog/Evaluating-Hierarchical-Clustering/hierarchical-clustering-eval/nuhY2ExpUH-640.avif 640w"><source type="image/webp" srcset="/blog/Evaluating-Hierarchical-Clustering/hierarchical-clustering-eval/nuhY2ExpUH-640.webp 640w"><img loading="lazy" decoding="async" src="/blog/Evaluating-Hierarchical-Clustering/hierarchical-clustering-eval/nuhY2ExpUH-640.png" alt="png" width="640" height="480"></picture></p>
 <pre class="language-python" tabindex="0"><code class="language-python">df<span class="token punctuation">.</span>reset_index<span class="token punctuation">(</span>drop<span class="token operator">=</span><span class="token boolean">True</span><span class="token punctuation">)</span><span class="token punctuation">.</span>head<span class="token punctuation">(</span><span class="token number">10</span><span class="token punctuation">)</span></code></pre>
-<p>&lt;div id=&quot;df-9ddc9fa2-05ea-45f8-ae6d-5235f9435ee4&quot; class=&quot;colab-df-container&quot;&gt;
-&lt;div&gt;
-&lt;style scoped&gt;
-.dataframe tbody tr th:only-of-type {
-vertical-align: middle;
+  <div id="df-9ddc9fa2-05ea-45f8-ae6d-5235f9435ee4" class="colab-df-container">
+    <div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+<p>.dataframe tbody tr th {<br>
+vertical-align: top;<br>
 }</p>
-<p>.dataframe tbody tr th {
-vertical-align: top;
-}</p>
-<p>.dataframe thead th {
-text-align: right;
-}
-&lt;/style&gt;
-&lt;table border=&quot;1&quot; class=&quot;dataframe&quot;&gt;
-&lt;thead&gt;
-&lt;tr style=&quot;text-align: right;&quot;&gt;
-&lt;th&gt;&lt;/th&gt;
-&lt;th&gt;name&lt;/th&gt;
-&lt;th&gt;1st_level_category&lt;/th&gt;
-&lt;th&gt;2nd_level_category&lt;/th&gt;
-&lt;th&gt;3rd_level_category&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;th&gt;0&lt;/th&gt;
-&lt;td&gt;Metro Womens Synthetic Antic Gold Slip Ons (Si...&lt;/td&gt;
-&lt;td&gt;Fashion and Accessories&lt;/td&gt;
-&lt;td&gt;women's shoes&lt;/td&gt;
-&lt;td&gt;Fashion Sandals&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;th&gt;1&lt;/th&gt;
-&lt;td&gt;Beingelegant - Pack of 100 Women's Organza Net...&lt;/td&gt;
-&lt;td&gt;Fashion and Accessories&lt;/td&gt;
-&lt;td&gt;accessories&lt;/td&gt;
-&lt;td&gt;Bags &amp; Luggage&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;th&gt;2&lt;/th&gt;
-&lt;td&gt;Wolven Handcrafted Men's Termoli Black Burnish...&lt;/td&gt;
-&lt;td&gt;Fashion and Accessories&lt;/td&gt;
-&lt;td&gt;men's shoes&lt;/td&gt;
-&lt;td&gt;Formal Shoes&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;th&gt;3&lt;/th&gt;
-&lt;td&gt;GROOT Party Wedding Analog Black Color Dial Me...&lt;/td&gt;
-&lt;td&gt;Fashion and Accessories&lt;/td&gt;
-&lt;td&gt;accessories&lt;/td&gt;
-&lt;td&gt;Watches&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;th&gt;4&lt;/th&gt;
-&lt;td&gt;Happy Cultures Girls and Women Handmade Croche...&lt;/td&gt;
-&lt;td&gt;Fashion and Accessories&lt;/td&gt;
-&lt;td&gt;accessories&lt;/td&gt;
-&lt;td&gt;Handbags &amp; Clutches&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;th&gt;5&lt;/th&gt;
-&lt;td&gt;ZOUK Women's Handcrafted Ikat Shoulder Tote Ba...&lt;/td&gt;
-&lt;td&gt;Fashion and Accessories&lt;/td&gt;
-&lt;td&gt;accessories&lt;/td&gt;
-&lt;td&gt;Handbags &amp; Clutches&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;th&gt;6&lt;/th&gt;
-&lt;td&gt;NEUTRON Present Analog Orange and Blue Color D...&lt;/td&gt;
-&lt;td&gt;Fashion and Accessories&lt;/td&gt;
-&lt;td&gt;accessories&lt;/td&gt;
-&lt;td&gt;Watches&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;th&gt;7&lt;/th&gt;
-&lt;td&gt;PC Jeweller The Giancarlo 18KT White Gold and ...&lt;/td&gt;
-&lt;td&gt;Fashion and Accessories&lt;/td&gt;
-&lt;td&gt;accessories&lt;/td&gt;
-&lt;td&gt;Gold &amp; Diamond Jewellery&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;th&gt;8&lt;/th&gt;
-&lt;td&gt;Blue/Black Light wash 5-Pocket Slim Fit high-R...&lt;/td&gt;
-&lt;td&gt;Fashion and Accessories&lt;/td&gt;
-&lt;td&gt;men's clothing&lt;/td&gt;
-&lt;td&gt;Jeans&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;th&gt;9&lt;/th&gt;
-&lt;td&gt;KBNBJ Women's Pure Cotton Regular Nighty&lt;/td&gt;
-&lt;td&gt;Fashion and Accessories&lt;/td&gt;
-&lt;td&gt;women's clothing&lt;/td&gt;
-&lt;td&gt;Lingerie &amp; Nightwear&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-&lt;/div&gt;
-&lt;div class=&quot;colab-df-buttons&quot;&gt;</p>
-<p>&lt;div class=&quot;colab-df-container&quot;&gt;
-&lt;button class=&quot;colab-df-convert&quot; onclick=&quot;convertToInteractive('df-9ddc9fa2-05ea-45f8-ae6d-5235f9435ee4')&quot;
-title=&quot;Convert this dataframe to an interactive table.&quot;
-style=&quot;display:none;&quot;&gt;</p>
-<p>&lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot; height=&quot;24px&quot; viewBox=&quot;0 -960 960 960&quot;&gt;
-&lt;path d=&quot;M120-120v-720h720v720H120Zm60-500h600v-160H180v160Zm220 220h160v-160H400v160Zm0 220h160v-160H400v160ZM180-400h160v-160H180v160Zm440 0h160v-160H620v160ZM180-180h160v-160H180v160Zm440 0h160v-160H620v160Z&quot;/&gt;
-&lt;/svg&gt;
-&lt;/button&gt;</p>
-<p>&lt;style&gt;
-.colab-df-container {
-display:flex;
-gap: 12px;
-}</p>
-<p>.colab-df-convert {
-background-color: #E8F0FE;
-border: none;
-border-radius: 50%;
-cursor: pointer;
-display: none;
-fill: #1967D2;
-height: 32px;
-padding: 0 0 0 0;
-width: 32px;
-}</p>
-<p>.colab-df-convert:hover {
-background-color: #E2EBFA;
-box-shadow: 0px 1px 2px rgba(60, 64, 67, 0.3), 0px 1px 3px 1px rgba(60, 64, 67, 0.15);
-fill: #174EA6;
-}</p>
-<p>.colab-df-buttons div {
-margin-bottom: 4px;
-}</p>
-<p>[theme=dark] .colab-df-convert {
-background-color: #3B4455;
-fill: #D2E3FC;
-}</p>
-<p>[theme=dark] .colab-df-convert:hover {
-background-color: #434B5C;
-box-shadow: 0px 1px 3px 1px rgba(0, 0, 0, 0.15);
-filter: drop-shadow(0px 1px 2px rgba(0, 0, 0, 0.3));
-fill: #FFFFFF;
-}
-&lt;/style&gt;</p>
-<p>&lt;script&gt;
-const buttonEl =
-document.querySelector('#df-9ddc9fa2-05ea-45f8-ae6d-5235f9435ee4 button.colab-df-convert');
-buttonEl.style.display =
+<p>.dataframe thead th {<br>
+text-align: right;<br>
+}<br>
+</style><p></p>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>name</th>
+      <th>1st_level_category</th>
+      <th>2nd_level_category</th>
+      <th>3rd_level_category</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>Metro Womens Synthetic Antic Gold Slip Ons (Si...</td>
+      <td>Fashion and Accessories</td>
+      <td>women's shoes</td>
+      <td>Fashion Sandals</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>Beingelegant - Pack of 100 Women's Organza Net...</td>
+      <td>Fashion and Accessories</td>
+      <td>accessories</td>
+      <td>Bags &amp; Luggage</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>Wolven Handcrafted Men's Termoli Black Burnish...</td>
+      <td>Fashion and Accessories</td>
+      <td>men's shoes</td>
+      <td>Formal Shoes</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>GROOT Party Wedding Analog Black Color Dial Me...</td>
+      <td>Fashion and Accessories</td>
+      <td>accessories</td>
+      <td>Watches</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>Happy Cultures Girls and Women Handmade Croche...</td>
+      <td>Fashion and Accessories</td>
+      <td>accessories</td>
+      <td>Handbags &amp; Clutches</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>ZOUK Women's Handcrafted Ikat Shoulder Tote Ba...</td>
+      <td>Fashion and Accessories</td>
+      <td>accessories</td>
+      <td>Handbags &amp; Clutches</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>NEUTRON Present Analog Orange and Blue Color D...</td>
+      <td>Fashion and Accessories</td>
+      <td>accessories</td>
+      <td>Watches</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>PC Jeweller The Giancarlo 18KT White Gold and ...</td>
+      <td>Fashion and Accessories</td>
+      <td>accessories</td>
+      <td>Gold &amp; Diamond Jewellery</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>Blue/Black Light wash 5-Pocket Slim Fit high-R...</td>
+      <td>Fashion and Accessories</td>
+      <td>men's clothing</td>
+      <td>Jeans</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>KBNBJ Women's Pure Cotton Regular Nighty</td>
+      <td>Fashion and Accessories</td>
+      <td>women's clothing</td>
+      <td>Lingerie &amp; Nightwear</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+    <div class="colab-df-buttons">
+  <div class="colab-df-container">
+    <button class="colab-df-convert" onclick="convertToInteractive('df-9ddc9fa2-05ea-45f8-ae6d-5235f9435ee4')" title="Convert this dataframe to an interactive table." style="display:none;">
+  <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960">
+    <path d="M120-120v-720h720v720H120Zm60-500h600v-160H180v160Zm220 220h160v-160H400v160Zm0 220h160v-160H400v160ZM180-400h160v-160H180v160Zm440 0h160v-160H620v160ZM180-180h160v-160H180v160Zm440 0h160v-160H620v160Z"></path>
+  </svg>
+    </button>
+  <style>
+    .colab-df-container {
+      display:flex;
+      gap: 12px;
+    }
+
+    .colab-df-convert {
+      background-color: #E8F0FE;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      display: none;
+      fill: #1967D2;
+      height: 32px;
+      padding: 0 0 0 0;
+      width: 32px;
+    }
+
+    .colab-df-convert:hover {
+      background-color: #E2EBFA;
+      box-shadow: 0px 1px 2px rgba(60, 64, 67, 0.3), 0px 1px 3px 1px rgba(60, 64, 67, 0.15);
+      fill: #174EA6;
+    }
+
+    .colab-df-buttons div {
+      margin-bottom: 4px;
+    }
+
+    [theme=dark] .colab-df-convert {
+      background-color: #3B4455;
+      fill: #D2E3FC;
+    }
+
+    [theme=dark] .colab-df-convert:hover {
+      background-color: #434B5C;
+      box-shadow: 0px 1px 3px 1px rgba(0, 0, 0, 0.15);
+      filter: drop-shadow(0px 1px 2px rgba(0, 0, 0, 0.3));
+      fill: #FFFFFF;
+    }
+  </style>
+<p><script><br>
+const buttonEl =<br>
+document.querySelector('#df-9ddc9fa2-05ea-45f8-ae6d-5235f9435ee4 button.colab-df-convert');<br>
+buttonEl.style.display =<br>
 google.colab.kernel.accessAllowed ? 'block' : 'none';</p>
-<p>async function convertToInteractive(key) {
-const element = document.querySelector('#df-9ddc9fa2-05ea-45f8-ae6d-5235f9435ee4');
-const dataTable =
-await google.colab.kernel.invokeFunction('convertToInteractive',
-[key], {});
+<p>async function convertToInteractive(key) {<br>
+const element = document.querySelector('#df-9ddc9fa2-05ea-45f8-ae6d-5235f9435ee4');<br>
+const dataTable =<br>
+await google.colab.kernel.invokeFunction('convertToInteractive',<br>
+[key], {});<br>
 if (!dataTable) return;</p>
-<p>const docLinkHtml = 'Like what you see? Visit the ' +
-'&lt;a target=&quot;_blank&quot; href=https://colab.research.google.com/notebooks/data_table.ipynb&gt;data table notebook&lt;/a&gt;'
-+ ' to learn more about interactive tables.';
-element.innerHTML = '';
-dataTable['output_type'] = 'display_data';
-await google.colab.output.renderOutput(dataTable, element);
-const docLink = document.createElement('div');
-docLink.innerHTML = docLinkHtml;
-element.appendChild(docLink);
-}
-&lt;/script&gt;
-&lt;/div&gt;</p>
-<p>&lt;div id=&quot;df-536a2b15-29d9-4f9e-8b8f-0ded85f1a798&quot;&gt;
-&lt;button class=&quot;colab-df-quickchart&quot; onclick=&quot;quickchart('df-536a2b15-29d9-4f9e-8b8f-0ded85f1a798')&quot;
-title=&quot;Suggest charts&quot;
-style=&quot;display:none;&quot;&gt;</p>
-<p>&lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot; height=&quot;24px&quot;viewBox=&quot;0 0 24 24&quot;
-width=&quot;24px&quot;&gt;
-&lt;g&gt;
-&lt;path d=&quot;M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z&quot;/&gt;
-&lt;/g&gt;
-&lt;/svg&gt;
-&lt;/button&gt;</p>
-<p>&lt;style&gt;
-.colab-df-quickchart {
---bg-color: #E8F0FE;
---fill-color: #1967D2;
---hover-bg-color: #E2EBFA;
---hover-fill-color: #174EA6;
---disabled-fill-color: #AAA;
---disabled-bg-color: #DDD;
-}</p>
-<p>[theme=dark] .colab-df-quickchart {
---bg-color: #3B4455;
---fill-color: #D2E3FC;
---hover-bg-color: #434B5C;
---hover-fill-color: #FFFFFF;
---disabled-bg-color: #3B4455;
---disabled-fill-color: #666;
-}</p>
-<p>.colab-df-quickchart {
-background-color: var(--bg-color);
-border: none;
-border-radius: 50%;
-cursor: pointer;
-display: none;
-fill: var(--fill-color);
-height: 32px;
-padding: 0;
-width: 32px;
-}</p>
-<p>.colab-df-quickchart:hover {
-background-color: var(--hover-bg-color);
-box-shadow: 0 1px 2px rgba(60, 64, 67, 0.3), 0 1px 3px 1px rgba(60, 64, 67, 0.15);
-fill: var(--button-hover-fill-color);
-}</p>
-<p>.colab-df-quickchart-complete:disabled,
-.colab-df-quickchart-complete:disabled:hover {
-background-color: var(--disabled-bg-color);
-fill: var(--disabled-fill-color);
-box-shadow: none;
-}</p>
-<p>.colab-df-spinner {
-border: 2px solid var(--fill-color);
-border-color: transparent;
-border-bottom-color: var(--fill-color);
-animation:
-spin 1s steps(1) infinite;
-}</p>
-<p>@keyframes spin {
-0% {
-border-color: transparent;
-border-bottom-color: var(--fill-color);
-border-left-color: var(--fill-color);
-}
-20% {
-border-color: transparent;
-border-left-color: var(--fill-color);
-border-top-color: var(--fill-color);
-}
-30% {
-border-color: transparent;
-border-left-color: var(--fill-color);
-border-top-color: var(--fill-color);
-border-right-color: var(--fill-color);
-}
-40% {
-border-color: transparent;
-border-right-color: var(--fill-color);
-border-top-color: var(--fill-color);
-}
-60% {
-border-color: transparent;
-border-right-color: var(--fill-color);
-}
-80% {
-border-color: transparent;
-border-right-color: var(--fill-color);
-border-bottom-color: var(--fill-color);
-}
-90% {
-border-color: transparent;
-border-bottom-color: var(--fill-color);
-}
-}
-&lt;/style&gt;</p>
-<p>&lt;script&gt;
-async function quickchart(key) {
-const quickchartButtonEl =
-document.querySelector('#' + key + ' button');
-quickchartButtonEl.disabled = true;  // To prevent multiple clicks.
-quickchartButtonEl.classList.add('colab-df-spinner');
-try {
-const charts = await google.colab.kernel.invokeFunction(
-'suggestCharts', [key], {});
-} catch (error) {
-console.error('Error during call to suggestCharts:', error);
-}
-quickchartButtonEl.classList.remove('colab-df-spinner');
-quickchartButtonEl.classList.add('colab-df-quickchart-complete');
-}
-(() =&gt; {
-let quickchartButtonEl =
-document.querySelector('#df-536a2b15-29d9-4f9e-8b8f-0ded85f1a798 button');
-quickchartButtonEl.style.display =
-google.colab.kernel.accessAllowed ? 'block' : 'none';
-})();
-&lt;/script&gt;
-&lt;/div&gt;</p>
-<p>&lt;/div&gt;
-&lt;/div&gt;</p>
+<p>const docLinkHtml = 'Like what you see? Visit the ' +<br>
+'<a target="_blank" href=https://colab.research.google.com/notebooks/data_table.ipynb>data table notebook</a>'<br>
++ ' to learn more about interactive tables.';<br>
+element.innerHTML = '';<br>
+dataTable['output_type'] = 'display_data';<br>
+await google.colab.output.renderOutput(dataTable, element);<br>
+const docLink = document.createElement('div');<br>
+docLink.innerHTML = docLinkHtml;<br>
+element.appendChild(docLink);<br>
+}<br>
+</script></p>
+  </div>
+<div id="df-536a2b15-29d9-4f9e-8b8f-0ded85f1a798">
+  <button class="colab-df-quickchart" onclick="quickchart('df-536a2b15-29d9-4f9e-8b8f-0ded85f1a798')" title="Suggest charts" style="display:none;">
+<p>&lt;svg xmlns=&quot;<a href="http://www.w3.org/2000/svg">http://www.w3.org/2000/svg</a>&quot; height=&quot;24px&quot;viewBox=&quot;0 0 24 24&quot;<br>
+width=&quot;24px&quot;&gt;<br>
+<g><br>
+<path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"><br>
+</path></g><br>
+<br>
+</p></button><p></p>
+<style>
+  .colab-df-quickchart {
+      --bg-color: #E8F0FE;
+      --fill-color: #1967D2;
+      --hover-bg-color: #E2EBFA;
+      --hover-fill-color: #174EA6;
+      --disabled-fill-color: #AAA;
+      --disabled-bg-color: #DDD;
+  }
+
+  [theme=dark] .colab-df-quickchart {
+      --bg-color: #3B4455;
+      --fill-color: #D2E3FC;
+      --hover-bg-color: #434B5C;
+      --hover-fill-color: #FFFFFF;
+      --disabled-bg-color: #3B4455;
+      --disabled-fill-color: #666;
+  }
+
+  .colab-df-quickchart {
+    background-color: var(--bg-color);
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    display: none;
+    fill: var(--fill-color);
+    height: 32px;
+    padding: 0;
+    width: 32px;
+  }
+
+  .colab-df-quickchart:hover {
+    background-color: var(--hover-bg-color);
+    box-shadow: 0 1px 2px rgba(60, 64, 67, 0.3), 0 1px 3px 1px rgba(60, 64, 67, 0.15);
+    fill: var(--button-hover-fill-color);
+  }
+
+  .colab-df-quickchart-complete:disabled,
+  .colab-df-quickchart-complete:disabled:hover {
+    background-color: var(--disabled-bg-color);
+    fill: var(--disabled-fill-color);
+    box-shadow: none;
+  }
+
+  .colab-df-spinner {
+    border: 2px solid var(--fill-color);
+    border-color: transparent;
+    border-bottom-color: var(--fill-color);
+    animation:
+      spin 1s steps(1) infinite;
+  }
+
+  @keyframes spin {
+    0% {
+      border-color: transparent;
+      border-bottom-color: var(--fill-color);
+      border-left-color: var(--fill-color);
+    }
+    20% {
+      border-color: transparent;
+      border-left-color: var(--fill-color);
+      border-top-color: var(--fill-color);
+    }
+    30% {
+      border-color: transparent;
+      border-left-color: var(--fill-color);
+      border-top-color: var(--fill-color);
+      border-right-color: var(--fill-color);
+    }
+    40% {
+      border-color: transparent;
+      border-right-color: var(--fill-color);
+      border-top-color: var(--fill-color);
+    }
+    60% {
+      border-color: transparent;
+      border-right-color: var(--fill-color);
+    }
+    80% {
+      border-color: transparent;
+      border-right-color: var(--fill-color);
+      border-bottom-color: var(--fill-color);
+    }
+    90% {
+      border-color: transparent;
+      border-bottom-color: var(--fill-color);
+    }
+  }
+</style>
+  <script>
+    async function quickchart(key) {
+      const quickchartButtonEl =
+        document.querySelector('#' + key + ' button');
+      quickchartButtonEl.disabled = true;  // To prevent multiple clicks.
+      quickchartButtonEl.classList.add('colab-df-spinner');
+      try {
+        const charts = await google.colab.kernel.invokeFunction(
+            'suggestCharts', [key], {});
+      } catch (error) {
+        console.error('Error during call to suggestCharts:', error);
+      }
+      quickchartButtonEl.classList.remove('colab-df-spinner');
+      quickchartButtonEl.classList.add('colab-df-quickchart-complete');
+    }
+    (() => {
+      let quickchartButtonEl =
+        document.querySelector('#df-536a2b15-29d9-4f9e-8b8f-0ded85f1a798 button');
+      quickchartButtonEl.style.display =
+        google.colab.kernel.accessAllowed ? 'block' : 'none';
+    })();
+  </script>
+</div>
+<p></p></div><p></p>
+  </div>
 <p>We can see that some of the items share exactly the same clusters across all levels of the hierarchy. These items receive the maximum score of 1.</p>
 <p>Some items differ in only one or two levels, resulting in intermediate scores like 0.5 or 0.25.</p>
 <p>Finally, there are pairs of items that have nothing in common across all levels, so their similarity score is 0.</p>
@@ -1636,4 +1650,4 @@ plt<span class="token punctuation">.</span>show<span class="token punctuation">(
     <a href="mailto:yonatanlou@gmail.com" target="_blank" title="Email">
         <i class="fa-solid fa-envelope"></i>
     </a>
-</div></footer><!-- This page `/blog/Evaluating-Hierarchical-Clustering/hierarchical-clustering-eval/` was built on 2025-06-21T07:33:33.307Z --><script type="module" src="/dist/rJ3_G-2ArF.js"></script>
+</div></footer><!-- This page `/blog/Evaluating-Hierarchical-Clustering/hierarchical-clustering-eval/` was built on 2025-06-21T07:43:23.623Z --><script type="module" src="/dist/rJ3_G-2ArF.js"></script>
