@@ -10,10 +10,10 @@ tags: posts
 
 When working on hierarchical clustering tasks, evaluation is often limited to the **leaves of the tree** or relies on plots that look impressive but don't tell the whole story.What if we could assess the entire tree structure? Wouldn't that give us a more nuanced view of our clustering methods, linkage techniques, or embedding models?
 
-In this short article, I'll introduce you to a clever method invented by **Sanjoy Dasgupta** for evaluating hierarchical clustering—not just at the leaves but across the whole tree structure.
+In this short article, I'll introduce you to a clever method invented by **Sanjoy Dasgupta** for evaluating hierarchical clustering-not just at the leaves but across the whole tree structure.
 
 Most people who implement hierarchical clustering tend to evaluate it using well-known unsupervised learning metrics (like the ones mentioned in [scikit-learn's clustering evaluation](https://scikit-learn.org/1.5/modules/clustering.html#clustering-performance-evaluation)).  
-These metrics typically require you to "flatten" the clusters. In other words, they convert your hierarchical structure into a flat list of cluster assignments \( f(\hat{y}, y) \). When that happens, all the benefits of hierarchical clustering go straight out the window.
+These metrics typically require you to "flatten" the clusters. In other words, they convert your hierarchical structure into a flat list of cluster assignments $f(\hat{y}, y)$. When that happens, all the benefits of hierarchical clustering go straight out the window.
 
 Let's say you have a dataset organized into **three levels of hierarchy**. If an object ends up in the wrong cluster at the **third level** (the lowest), is it really wrong? What if it's correctly grouped at the **second level**? That's valuable information you lose when you flatten everything into a single level.
 
@@ -25,7 +25,7 @@ Dasgupta's cost function is designed to capture exactly that nuance. Instead of 
 
 
 #### **Input:**  
-In Dasgupta's formulation, the input to a clustering problem consists of similarity scores between certain pairs of elements, represented as an **undirected graph** \( G = (V, E) \), with the elements as its vertices and non-negative real weights on its edges.
+In Dasgupta's formulation, the input to a clustering problem consists of similarity scores between certain pairs of elements, represented as an **undirected graph** $G = (V, E)$, with the elements as its vertices and non-negative real weights on its edges.
 
 
 #### **Cost Function Definition:**  

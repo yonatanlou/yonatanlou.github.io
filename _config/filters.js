@@ -1,5 +1,4 @@
 import { DateTime } from "luxon";
-
 export default function(eleventyConfig) {
 	eleventyConfig.addFilter("readableDate", (dateObj, format, zone) => {
 		// Formatting tokens for Luxon: https://moment.github.io/luxon/#/formatting?id=table-of-tokens
@@ -36,5 +35,6 @@ export default function(eleventyConfig) {
 	eleventyConfig.addFilter("filterTagList", function filterTagList(tags) {
 		return (tags || []).filter(tag => ["all", "posts"].indexOf(tag) === -1);
 	});
+}
 
-};
+
