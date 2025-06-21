@@ -5,6 +5,10 @@ date: 2025-06-18
 tags: posts
 ---
 
+<a target="_blank" href="https://colab.research.google.com/github/yonatanlou/notebooks/blob/main/unsupervised-gae-clustering.ipynb">
+  <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
+</a>
+
 ## Unsupervised text clustering using GNN
 
 Graph neural networks (GNNs) have received a fair amount of attention over the past few years. That said, some of the initial excitement has faded-especially in certain research domains. Part of this decline is due to the rise of transformer models, which in many ways behave like fully connected GNNs. This has led some people to question whether GNNs are still relevant or necessary. ([Transformers vs GNNs – Taewoon Kim](https://taewoon.kim/2024-10-15-transformer-vs-gnn/), [Transformers are GNNs – Graph Deep Learning](https://graphdeeplearning.github.io/post/transformers-are-gnns/), [Reddit discussion: Are GNNs obsolete?](https://www.reddit.com/r/MachineLearning/comments/1jgwjjk/d_are_gnns_obsolete_because_of_transformers/)).
