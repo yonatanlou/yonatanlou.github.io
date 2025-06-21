@@ -3,11 +3,8 @@ import { eleventyImageTransformPlugin } from "@11ty/eleventy-img";
 import pluginNavigation from "@11ty/eleventy-navigation";
 import { feedPlugin } from "@11ty/eleventy-plugin-rss";
 import pluginSyntaxHighlight from "@11ty/eleventy-plugin-syntaxhighlight";
-
+import markdownIt from "markdown-it";
 import pluginFilters from "./_config/filters.js";
-
-
-
 
 /** @param {import("@11ty/eleventy").UserConfig} eleventyConfig */
 export default async function (eleventyConfig) {
@@ -42,6 +39,14 @@ export default async function (eleventyConfig) {
 		toFileDirectory: "dist",
 	});
 	eleventyConfig.addPassthroughCopy({ "img/favicon": "/" });
+
+
+	//my packages
+	const { katex } = (await import("@mdit/plugin-katex"));
+  eleventyConfig.setLibrary(
+  	"md", 
+  	markdownIt().use(katex, {output: "mathml"})
+  );
 
 	// Official plugins
 	eleventyConfig.addPlugin(pluginSyntaxHighlight, {
@@ -151,4 +156,5 @@ export const config = {
 	// folder name and does **not** affect where things go in the output folder.
 
 	// pathPrefix: "/",
+	
 };
