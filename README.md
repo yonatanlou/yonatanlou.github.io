@@ -1,4 +1,4 @@
-# My website
+# Personal Blog
 Based on [Eleventy base blog](https://github.com/11ty/eleventy-base-blog)
 
 to run locally: 
