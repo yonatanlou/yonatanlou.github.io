@@ -26,48 +26,10 @@ That's probably due to the PageRank algorithm of google, SEO stuff, GenAI shitty
 The current best solution is to use diverse search engine (an [awesome article](https://vickiboykis.com/2024/04/25/how-i-search-in-2024/) by Vicki Boykis), or to follow the right people in twitter, but for myself, im saving the best content that ive encounter in [Links](/quality-content). -->
 
 ## Blogs
-- [Andrew Heiss' Blog](https://www.andrewheiss.com/blog/)
-- [Nicholas Carlini's Writing](https://nicholas.carlini.com/writing)
-- [Nikita Sobolev's Blog](https://sobolevn.me/)
-- [Darek Kłeczek's Blog](https://skok.ai/posts)
-- [Kenneth Tay Blog](https://statisticaloddsandends.wordpress.com/)
-- [Dan MacKinlay’s Blog](https://danmackinlay.name/)
-- [Theia Vogel's Blog](https://vgel.me/posts/)
-- [Vincent Warmerdam's Blog](https://koaning.io/)
-- [Hamel Husain’s Blog](https://hamel.dev/)
-- [Hasolidit: Financial Independence in Hebrew](https://www.hasolidit.com/)
-- [Chip Huyen](https://huyenchip.com/blog/)
-- [Jay Alammar](https://jalammar.github.io/)
-- [Max Halford](https://maxhalford.github.io/)
-- [Simon Willison’s Weblog](https://simonwillison.net/)
-- [Tom Silver](https://tomsilver.github.io/)
-- [Irene Li's](https://ireneli.eu/)
-- [Yury Zhauniarovich](https://zhauniarovich.com/)
-- [Keith Schacht’s Blog](https://keithschacht.com/)
+{{ "" | generateBlogLinks }}
 
 
 
-## Subreddits
-- [r/AskStatistics](https://www.reddit.com/r/AskStatistics/)
-- [r/CausalInference](https://www.reddit.com/r/CausalInference/)
-- [r/coolguides](https://www.reddit.com/r/coolguides/)
-- [r/deeplearning](https://www.reddit.com/r/deeplearning/)
-- [r/educationalgifs](https://www.reddit.com/r/educationalgifs/)
-- [r/explainlikeimfive](https://www.reddit.com/r/explainlikeimfive/)
-- [r/howto](https://www.reddit.com/r/howto/)
-- [r/lectures](https://www.reddit.com/r/lectures/)
-- [r/LocalLLaMA](https://www.reddit.com/r/LocalLLaMA/)
-- [r/MachineLearning](https://www.reddit.com/r/MachineLearning/)
-- [r/madeinpython](https://www.reddit.com/r/madeinpython/)
-- [r/programming](https://www.reddit.com/r/programming/)
-- [r/Python](https://www.reddit.com/r/Python/)
-- [r/statistics](https://www.reddit.com/r/statistics/)
-- [r/StatisticsExperts](https://www.reddit.com/r/StatisticsExperts/)
-- [r/statisticsmemes](https://www.reddit.com/r/statisticsmemes/)
-- [r/todayilearned](https://www.reddit.com/r/todayilearned/)
-- [r/trackers](https://www.reddit.com/r/trackers/)
-- [r/ValueInvesting](https://www.reddit.com/r/ValueInvesting/)
-- [r/YouShouldKnow](https://www.reddit.com/r/YouShouldKnow/)
 
 
 ## Buy it for life
@@ -77,15 +39,3 @@ Things that i bought and i think that are worth the money:
 - [Amazon Kindle (16 GB)](https://amzn.to/4i0BwlB) - I read a lot because of this (specially while traveling).
 - [Philips Norelco Multigroom 7000](https://amzn.to/42XV1qT) - Very good, for more than 4 years now.
 
-
-## Youtube people
-- [Andrej Karpathy](https://www.youtube.com/@AndrejKarpathy) 
-- [One Shot Learning](https://www.youtube.com/@OneShotLearning)
-- [El Estepario Siberiano](https://www.youtube.com/@ElEsteparioSiberiano)
-- [Mutual Information](https://www.youtube.com/@ElEsteparioSiberiano)
-- [Normalized Nerd](https://www.youtube.com/@NormalizedNerd)
-- [Numberphile](https://www.youtube.com/@numberphile)
-- [StatQuest](https://www.youtube.com/@statquest)
-- [3Blue1Brown](https://www.youtube.com/@3blue1brown)
-- [ritvikmath](ritvikmath)
-- [Dr. Knudson](https://www.youtube.com/@ProfessorKnudson)
