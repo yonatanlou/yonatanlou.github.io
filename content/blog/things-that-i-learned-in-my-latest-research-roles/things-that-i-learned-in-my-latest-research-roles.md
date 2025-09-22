@@ -5,8 +5,6 @@ date: 2025-09-22
 tags: posts
 ---
 
-# Things I learned in my research roles over the last 5 years
-
 In the last ~5 years I've done a lot of research across various topics and places. I learned a ton, so this is where I'm dumping the main lessons from those years.
 
 [Statistics Student, Analyst in the public sector, Analyst + Data Scientist at Forter, MSc in deep learning, LLM research in academia]
@@ -52,6 +50,9 @@ load data from s3, then doing some preprocessing to data and showing some EDA.
 Then we want to check if the data is imbalanced or not. if its imbalanced, generate data with llm via openrouter and save it. if the data is balanced, continue to model training, evaluation
 ```
 
+<div style="display: flex; align-items: flex-start; gap: 20px;">
+<div style="flex: 1;">
+
 **Output:** 
 ```
 graph TD
@@ -64,8 +65,14 @@ graph TD
     F --> G
     G --> H[Model Evaluation]
 ```
-![png](media/excalidraw.png)
+
+</div>
+<div style="flex: 1; text-align: center;">
+<img src="media/excalidraw.png" alt="Workflow diagram" eleventy:widths="400">
+</div>
+</div>
     
 
-
 This has been super helpful for explaining stuff to people and catching issues in my own thinking before I start coding.
+
+8. **Always start with a baseline** - Too many times I jump right into the problem, using some unique features or super complex model without even trying the most easy thing. This is mainly happening when you developing something from scratch and you don’t have anything to compare to so it's pretty easy to forget it. I see a ton of papers which implements a very niche deep learning architecture which have very good metrics, but they don’t trying the very easy (and actual good) model such as representing text with TF-IDF with a simple model on top of it.
