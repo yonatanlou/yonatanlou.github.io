@@ -64,16 +64,8 @@ graph TD
     F --> G
     G --> H[Model Evaluation]
 ```
-```mermaid
-graph TD
-    A[Load data from S3] --> B[Preprocess data]
-    B --> C[Show EDA]
-    C --> D{Is data imbalanced?}
-    D -->|Yes| E[Generate data with LLM via OpenRouter]
-    E --> F[Save generated data]
-    D -->|No| G[Model Training]
-    F --> G
-    G --> H[Model Evaluation]
-```
+![png](media/excalidraw.png)
+    
+
 
 This has been super helpful for explaining stuff to people and catching issues in my own thinking before I start coding.
