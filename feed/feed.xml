@@ -51,15 +51,7 @@ Then we want to check if the data is imbalanced or not. if its imbalanced, gener
     F --&amp;gt; G
     G --&amp;gt; H[Model Evaluation]
 &lt;/code&gt;&lt;/pre&gt;
-&lt;pre class=&quot;language-mermaid&quot; tabindex=&quot;0&quot;&gt;&lt;code class=&quot;language-mermaid&quot;&gt;&lt;span class=&quot;token keyword&quot;&gt;graph&lt;/span&gt; TD
-    A&lt;span class=&quot;token text string&quot;&gt;[Load data from S3]&lt;/span&gt; &lt;span class=&quot;token arrow operator&quot;&gt;--&gt;&lt;/span&gt; B&lt;span class=&quot;token text string&quot;&gt;[Preprocess data]&lt;/span&gt;
-    B &lt;span class=&quot;token arrow operator&quot;&gt;--&gt;&lt;/span&gt; C&lt;span class=&quot;token text string&quot;&gt;[Show EDA]&lt;/span&gt;
-    C &lt;span class=&quot;token arrow operator&quot;&gt;--&gt;&lt;/span&gt; D&lt;span class=&quot;token text string&quot;&gt;{Is data imbalanced?}&lt;/span&gt;
-    D &lt;span class=&quot;token arrow operator&quot;&gt;--&gt;&lt;/span&gt;&lt;span class=&quot;token label property&quot;&gt;|Yes|&lt;/span&gt; E&lt;span class=&quot;token text string&quot;&gt;[Generate data with LLM via OpenRouter]&lt;/span&gt;
-    E &lt;span class=&quot;token arrow operator&quot;&gt;--&gt;&lt;/span&gt; F&lt;span class=&quot;token text string&quot;&gt;[Save generated data]&lt;/span&gt;
-    D &lt;span class=&quot;token arrow operator&quot;&gt;--&gt;&lt;/span&gt;&lt;span class=&quot;token label property&quot;&gt;|No|&lt;/span&gt; G&lt;span class=&quot;token text string&quot;&gt;[Model Training]&lt;/span&gt;
-    F &lt;span class=&quot;token arrow operator&quot;&gt;--&gt;&lt;/span&gt; G
-    G &lt;span class=&quot;token arrow operator&quot;&gt;--&gt;&lt;/span&gt; H&lt;span class=&quot;token text string&quot;&gt;[Model Evaluation]&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;picture&gt;&lt;source type=&quot;image/avif&quot; srcset=&quot;https://yonatanlou.github.io/blog/things-that-i-learned-in-my-latest-research-roles/lIhh5SYv8d-1062.avif 1062w&quot;&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://yonatanlou.github.io/blog/things-that-i-learned-in-my-latest-research-roles/lIhh5SYv8d-1062.webp 1062w&quot;&gt;&lt;img loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://yonatanlou.github.io/blog/things-that-i-learned-in-my-latest-research-roles/lIhh5SYv8d-1062.png&quot; alt=&quot;png&quot; width=&quot;1062&quot; height=&quot;2030&quot;&gt;&lt;/picture&gt;&lt;/p&gt;
 &lt;p&gt;This has been super helpful for explaining stuff to people and catching issues in my own thinking before I start coding.&lt;/p&gt;
 </content>
   </entry>
