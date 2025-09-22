@@ -21,7 +21,9 @@ export default async function (eleventyConfig) {
 		.addPassthroughCopy({
 			"./public/": "/"
 		})
-		.addPassthroughCopy("./content/feed/pretty-atom-feed.xsl");
+		.addPassthroughCopy("./content/feed/pretty-atom-feed.xsl")
+		.addPassthroughCopy({ "content/img": "img" })
+		.addPassthroughCopy({ "content/img/favicon": "/" });
 
 	// Run Eleventy when these files change:
 	// https://www.11ty.dev/docs/watch-serve/#add-your-own-watch-targets
@@ -38,7 +40,6 @@ export default async function (eleventyConfig) {
 	eleventyConfig.addBundle("js", {
 		toFileDirectory: "dist",
 	});
-	eleventyConfig.addPassthroughCopy({ "img/favicon": "/" });
 
 
 	//my packages
