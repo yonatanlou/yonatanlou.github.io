@@ -15,8 +15,7 @@
     <link href="https://yonatanlou.github.io/blog/things-that-i-learned-in-my-latest-research-roles/" />
     <updated>2025-09-22T00:00:00Z</updated>
     <id>https://yonatanlou.github.io/blog/things-that-i-learned-in-my-latest-research-roles/</id>
-    <content type="html">&lt;h1 id=&quot;things-i-learned-in-my-research-roles-over-the-last-5-years&quot;&gt;Things I learned in my research roles over the last 5 years&lt;/h1&gt;
-&lt;p&gt;In the last ~5 years I&#39;ve done a lot of research across various topics and places. I learned a ton, so this is where I&#39;m dumping the main lessons from those years.&lt;/p&gt;
+    <content type="html">&lt;p&gt;In the last ~5 years I&#39;ve done a lot of research across various topics and places. I learned a ton, so this is where I&#39;m dumping the main lessons from those years.&lt;/p&gt;
 &lt;p&gt;[Statistics Student, Analyst in the public sector, Analyst + Data Scientist at Forter, MSc in deep learning, LLM research in academia]&lt;/p&gt;
 &lt;p&gt;&lt;em&gt;This list is random, not sorted by importance&lt;/em&gt;&lt;/p&gt;
 &lt;h2 id=&quot;1-always-write-clean-code&quot;&gt;1. Always write clean code&lt;/h2&gt;
@@ -40,6 +39,8 @@
 load data from s3, then doing some preprocessing to data and showing some EDA.
 Then we want to check if the data is imbalanced or not. if its imbalanced, generate data with llm via openrouter and save it. if the data is balanced, continue to model training, evaluation
 &lt;/code&gt;&lt;/pre&gt;
+&lt;div style=&quot;display: flex; align-items: flex-start; gap: 20px;&quot;&gt;
+&lt;div style=&quot;flex: 1;&quot;&gt;
 &lt;p&gt;&lt;strong&gt;Output:&lt;/strong&gt;&lt;/p&gt;
 &lt;pre&gt;&lt;code&gt;graph TD
     A[Load data from S3] --&amp;gt; B[Preprocess data]
@@ -51,8 +52,15 @@ Then we want to check if the data is imbalanced or not. if its imbalanced, gener
     F --&amp;gt; G
     G --&amp;gt; H[Model Evaluation]
 &lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;picture&gt;&lt;source type=&quot;image/avif&quot; srcset=&quot;https://yonatanlou.github.io/blog/things-that-i-learned-in-my-latest-research-roles/lIhh5SYv8d-1062.avif 1062w&quot;&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://yonatanlou.github.io/blog/things-that-i-learned-in-my-latest-research-roles/lIhh5SYv8d-1062.webp 1062w&quot;&gt;&lt;img loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://yonatanlou.github.io/blog/things-that-i-learned-in-my-latest-research-roles/lIhh5SYv8d-1062.png&quot; alt=&quot;png&quot; width=&quot;1062&quot; height=&quot;2030&quot;&gt;&lt;/picture&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div style=&quot;flex: 1; text-align: center;&quot;&gt;
+&lt;picture&gt;&lt;source type=&quot;image/avif&quot; srcset=&quot;https://yonatanlou.github.io/blog/things-that-i-learned-in-my-latest-research-roles/lIhh5SYv8d-400.avif 400w&quot;&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://yonatanlou.github.io/blog/things-that-i-learned-in-my-latest-research-roles/lIhh5SYv8d-400.webp 400w&quot;&gt;&lt;img loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://yonatanlou.github.io/blog/things-that-i-learned-in-my-latest-research-roles/lIhh5SYv8d-400.png&quot; alt=&quot;Workflow diagram&quot; width=&quot;400&quot; height=&quot;764&quot;&gt;&lt;/picture&gt;
+&lt;/div&gt;
+&lt;/div&gt;
 &lt;p&gt;This has been super helpful for explaining stuff to people and catching issues in my own thinking before I start coding.&lt;/p&gt;
+&lt;ol start=&quot;8&quot;&gt;
+&lt;li&gt;&lt;strong&gt;Always start with a baseline&lt;/strong&gt; - Too many times I jump right into the problem, using some unique features or super complex model without even trying the most easy thing. This is mainly happening when you developing something from scratch and you don’t have anything to compare to so it&#39;s pretty easy to forget it. I see a ton of papers which implements a very niche deep learning architecture which have very good metrics, but they don’t trying the very easy (and actual good) model such as representing text with TF-IDF with a simple model on top of it.&lt;/li&gt;
+&lt;/ol&gt;
 </content>
   </entry>
   <entry>
