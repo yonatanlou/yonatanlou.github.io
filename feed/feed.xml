@@ -5,11 +5,64 @@
   <subtitle>Just a solid place to have a proper virtual identity.</subtitle>
   <link href="https://yonatanlou.github.io/feed/feed.xml" rel="self" />
   <link href="https://yonatanlou.github.io/" />
-  <updated>2025-06-18T00:00:00Z</updated>
+  <updated>2025-09-22T00:00:00Z</updated>
   <id>https://yonatanlou.github.io/</id>
   <author>
     <name>Yonatan Lourie</name>
   </author>
+  <entry>
+    <title>Things I learned in my research roles over the last 5 years</title>
+    <link href="https://yonatanlou.github.io/blog/things-that-i-learned-in-my-latest-research-roles/" />
+    <updated>2025-09-22T00:00:00Z</updated>
+    <id>https://yonatanlou.github.io/blog/things-that-i-learned-in-my-latest-research-roles/</id>
+    <content type="html">&lt;h1 id=&quot;things-i-learned-in-my-research-roles-over-the-last-5-years&quot;&gt;Things I learned in my research roles over the last 5 years&lt;/h1&gt;
+&lt;p&gt;In the last ~5 years I&#39;ve done a lot of research across various topics and places. I learned a ton, so this is where I&#39;m dumping the main lessons from those years.&lt;/p&gt;
+&lt;p&gt;[Statistics Student, Analyst in the public sector, Analyst + Data Scientist at Forter, MSc in deep learning, LLM research in academia]&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;This list is random, not sorted by importance&lt;/em&gt;&lt;/p&gt;
+&lt;h2 id=&quot;1-always-write-clean-code&quot;&gt;1. Always write clean code&lt;/h2&gt;
+&lt;p&gt;Most of the time, you&#39;re building a pipeline, and you simply don&#39;t know that it will go to production or be used hundreds of times. It&#39;s so easy to try different pandas operations in a Jupyter notebook and call things &lt;code&gt;tmp&lt;/code&gt; or &lt;code&gt;sss&lt;/code&gt;, but eventually, somebody will read this code. The amount of extra work it takes to write cleaner code isn&#39;t that hard, but the payoff is huge.&lt;/p&gt;
+&lt;h2 id=&quot;2-managing-experiments-is-harder-than-you-think&quot;&gt;2. Managing experiments is harder than you think&lt;/h2&gt;
+&lt;p&gt;As a researcher, you&#39;ll do a lot of experiments along the way. Doing multiple experiments can be very, very hard because the code changes, the data might not be linked to the code that ran the experiment, the data could change which means the analysis code needs to change, etc.&lt;/p&gt;
+&lt;p&gt;While there are tons of companies helping with managing experiments in the ML/LLM world (MLFlow, WB, LangFuse, and dozens more), for many cases you want something flexible that&#39;s easy to use for yourself. Personally, I like creating simple runnable code using CLI, where the output gets written to a dedicated folder with logs of the run. Then I use git for saving the data (or data path if it&#39;s heavy) along with the code that ran it. When you&#39;re working at a big company you&#39;ll have much better tools, but if you can do it by yourself, you can do it on any platform.&lt;/p&gt;
+&lt;h2 id=&quot;3-learn-to-actually-debug-your-code&quot;&gt;3. Learn to actually debug your code&lt;/h2&gt;
+&lt;p&gt;Many data people only use notebooks, which is nice and convenient, but it&#39;s important to be able to actually debug your code step by step. I feel like juniors don&#39;t have this skill because they can just &amp;quot;vibe code&amp;quot; the problems with some LLM (which works sometimes!), but if you want to actually understand what&#39;s going on with a complex project, you&#39;ll have to debug it properly at some point.&lt;/p&gt;
+&lt;h2 id=&quot;4-present-clear-results-but-keep-the-details-somewhere&quot;&gt;4. Present clear results (but keep the details somewhere)&lt;/h2&gt;
+&lt;p&gt;When you work on hard, multi-level problems, you have to make a lot of important decisions. When I started research, I read tons of papers and got frustrated that they didn&#39;t elaborate on small things that mattered (or only mattered to me). So when I needed to write about my problem, methodology and results, I always tried to include every tiny detail, and got mad when my advisor kept trying to cut things I was writing (which was annoying, especially when you wrote about good results that you worked hard on but weren&#39;t that important to the main story).&lt;/p&gt;
+&lt;p&gt;But now I understand that when presenting your problem, you have to focus on the important details so the reader can follow along. This doesn&#39;t mean dropping the tiny details—they can be somewhere else, like appendices or supplementary material.&lt;/p&gt;
+&lt;h2 id=&quot;5-use-graphs&quot;&gt;5. Use graphs&lt;/h2&gt;
+&lt;p&gt;Seriously, just visualize your data. Makes everything clearer.&lt;/p&gt;
+&lt;h2 id=&quot;6-learn-how-to-manage-python-environments&quot;&gt;6. Learn how to manage Python environments&lt;/h2&gt;
+&lt;p&gt;I switched from pyenv to uv this last year, and it&#39;s been tremendous. This stuff matters more than you think.&lt;/p&gt;
+&lt;h2 id=&quot;7-when-you-have-a-complex-workflow-draw-it&quot;&gt;7. When you have a complex workflow, draw it&lt;/h2&gt;
+&lt;p&gt;I just found out that Excalidraw works with Mermaid, so you can simply write your pipeline description to an LLM in free text, get Mermaid code, and then render it in Excalidraw:&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Prompt:&lt;/strong&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;write the following workflow in mermaid code:
+load data from s3, then doing some preprocessing to data and showing some EDA.
+Then we want to check if the data is imbalanced or not. if its imbalanced, generate data with llm via openrouter and save it. if the data is balanced, continue to model training, evaluation
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;strong&gt;Output:&lt;/strong&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;graph TD
+    A[Load data from S3] --&amp;gt; B[Preprocess data]
+    B --&amp;gt; C[Show EDA]
+    C --&amp;gt; D{Is data imbalanced?}
+    D --&amp;gt;|Yes| E[Generate data with LLM via OpenRouter]
+    E --&amp;gt; F[Save generated data]
+    D --&amp;gt;|No| G[Model Training]
+    F --&amp;gt; G
+    G --&amp;gt; H[Model Evaluation]
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&quot;language-mermaid&quot; tabindex=&quot;0&quot;&gt;&lt;code class=&quot;language-mermaid&quot;&gt;&lt;span class=&quot;token keyword&quot;&gt;graph&lt;/span&gt; TD
+    A&lt;span class=&quot;token text string&quot;&gt;[Load data from S3]&lt;/span&gt; &lt;span class=&quot;token arrow operator&quot;&gt;--&gt;&lt;/span&gt; B&lt;span class=&quot;token text string&quot;&gt;[Preprocess data]&lt;/span&gt;
+    B &lt;span class=&quot;token arrow operator&quot;&gt;--&gt;&lt;/span&gt; C&lt;span class=&quot;token text string&quot;&gt;[Show EDA]&lt;/span&gt;
+    C &lt;span class=&quot;token arrow operator&quot;&gt;--&gt;&lt;/span&gt; D&lt;span class=&quot;token text string&quot;&gt;{Is data imbalanced?}&lt;/span&gt;
+    D &lt;span class=&quot;token arrow operator&quot;&gt;--&gt;&lt;/span&gt;&lt;span class=&quot;token label property&quot;&gt;|Yes|&lt;/span&gt; E&lt;span class=&quot;token text string&quot;&gt;[Generate data with LLM via OpenRouter]&lt;/span&gt;
+    E &lt;span class=&quot;token arrow operator&quot;&gt;--&gt;&lt;/span&gt; F&lt;span class=&quot;token text string&quot;&gt;[Save generated data]&lt;/span&gt;
+    D &lt;span class=&quot;token arrow operator&quot;&gt;--&gt;&lt;/span&gt;&lt;span class=&quot;token label property&quot;&gt;|No|&lt;/span&gt; G&lt;span class=&quot;token text string&quot;&gt;[Model Training]&lt;/span&gt;
+    F &lt;span class=&quot;token arrow operator&quot;&gt;--&gt;&lt;/span&gt; G
+    G &lt;span class=&quot;token arrow operator&quot;&gt;--&gt;&lt;/span&gt; H&lt;span class=&quot;token text string&quot;&gt;[Model Evaluation]&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;This has been super helpful for explaining stuff to people and catching issues in my own thinking before I start coding.&lt;/p&gt;
+</content>
+  </entry>
   <entry>
     <title>Unsupervised text clustering using GNN (Graph Auto Encoder)</title>
     <link href="https://yonatanlou.github.io/blog/unsupervised-text-clustering-gnn/unsupervised-gae-clustering/" />
