@@ -5,6 +5,7 @@ import { feedPlugin } from "@11ty/eleventy-plugin-rss";
 import pluginSyntaxHighlight from "@11ty/eleventy-plugin-syntaxhighlight";
 import markdownIt from "markdown-it";
 import pluginFilters from "./_config/filters.js";
+import codeClipboard from "eleventy-plugin-code-clipboard";
 
 /** @param {import("@11ty/eleventy").UserConfig} eleventyConfig */
 export default async function (eleventyConfig) {
@@ -51,10 +52,16 @@ export default async function (eleventyConfig) {
             breaks: true, // Often useful for simple line breaks
             linkify: true, // Auto-converts URLs to links
         }).use(katex, {output: "mathml"})
+        .use(codeClipboard.markdownItCopyButton)
     );
 	// Official plugins
 	eleventyConfig.addPlugin(pluginSyntaxHighlight, {
 		preAttributes: { tabindex: 0 }
+	});
+	eleventyConfig.addPlugin(codeClipboard, {
+		buttonClass: 'code-copy',
+		successMessage: 'Copied!',
+		failureMessage: 'Failed to copy'
 	});
 	eleventyConfig.addPlugin(pluginNavigation);
 	eleventyConfig.addPlugin(HtmlBasePlugin);

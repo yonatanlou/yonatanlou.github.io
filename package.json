@@ -47,6 +47,7 @@
 	},
 	"dependencies": {
 		"@mdit/plugin-katex": "^0.23.1",
-		"@zachleat/heading-anchors": "^1.0.1"
+		"@zachleat/heading-anchors": "^1.0.1",
+		"eleventy-plugin-code-clipboard": "^0.2.0"
 	}
 }

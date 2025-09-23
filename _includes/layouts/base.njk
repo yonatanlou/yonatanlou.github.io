@@ -17,6 +17,7 @@
         <meta name="description" content="{{ description or metadata.description }}">
         <link rel="alternate" href="feed/feed.xml" type="application/atom+xml" title="{{ metadata.title }}">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Primer/19.1.1/tooltips.min.css">
         
         <!-- Google Analytics -->
         <script async src="https://www.googletagmanager.com/gtag/js?id={{ metadata.gtag }}"></script>
@@ -32,6 +33,30 @@
         {#- CSS Bundle #}
         {%- css %}
         {% include "public/css/index.css" %}
+        {% endcss %}
+        
+        {%- css %}
+        /* Code copy button styles */
+        .code-copy {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            padding: 0.25rem 0.5rem;
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            z-index: 10;
+        }
+        
+        .code-copy:hover {
+            background: white;
+        }
+        
+        pre {
+            position: relative;
+        }
         {% endcss %}
         
         <style>
@@ -99,5 +124,6 @@
         
         <!-- This page `{{ page.url | htmlBaseUrl }}` was built on {% currentBuildDate %} -->
         <script type="module" src="{% getBundleFileUrl "js" %}"></script>
+        {% initClipboardJS %}
     </body>
 </html>
