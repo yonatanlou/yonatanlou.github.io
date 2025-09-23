@@ -17,6 +17,7 @@
         <meta name="description" content="In case you got curious and want to do some cool stuff with one of the ancient texts ever found.">
         <link rel="alternate" href="feed/feed.xml" type="application/atom+xml" title="Yonatan Lourie">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Primer/19.1.1/tooltips.min.css">
         
         <!-- Google Analytics -->
         <script async="" src="https://www.googletagmanager.com/gtag/js?id=G-C6PG57BBFC"></script>
@@ -523,6 +524,27 @@ footer {
 	margin: 0 auto;
 	/* Center the logo */
 }
+/* Code copy button styles */
+        .code-copy {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            padding: 0.25rem 0.5rem;
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            z-index: 10;
+        }
+        
+        .code-copy:hover {
+            background: white;
+        }
+        
+        pre {
+            position: relative;
+        }
         </style>
     </head>
     <body>
@@ -582,40 +604,77 @@ If you having problems, you can try to install it with: <code>pip instal 'text-f
 <p>(For more comprehensive guide check the <a href="https://annotation.github.io/text-fabric/tf/index.html">documentation</a>)<br>
 To get started, you’ll need to install <code>text-fabric</code> and load a dataset.<br>
 Here’s an example using the ETCBC Hebrew Bible dataset:</p>
-<pre class="language-python" tabindex="0"><code class="language-python"><span class="token comment"># Import Text-Fabric and load a dataset</span>
+
+<div style="position: relative" id="code-container-30">
+  <pre class="language-python" tabindex="0"><code id="code-30" class="language-python"><span class="token comment"># Import Text-Fabric and load a dataset</span>
 <span class="token keyword">from</span> tf<span class="token punctuation">.</span>app <span class="token keyword">import</span> use
 
 <span class="token comment"># Load the Hebrew Bible (ETCBC dataset)</span>
 A <span class="token operator">=</span> use<span class="token punctuation">(</span><span class="token string">'etcbc/bhsa'</span><span class="token punctuation">,</span> hoist<span class="token operator">=</span><span class="token builtin">globals</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span></code></pre>
+
+  <button class="code-copy " data-clipboard-target="#code-30" style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
+    <span style="display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;" class=""></span>
+  </button>
+</div>
 <p><strong>Some basic operations:</strong></p>
 <ul>
 <li>Get the Text Structure: You can load text elements by type (book, chapter, verse) and navigate through them.</li>
 </ul>
-<pre class="language-python" tabindex="0"><code class="language-python"><span class="token comment"># Get all books</span>
+
+<div style="position: relative" id="code-container-41">
+  <pre class="language-python" tabindex="0"><code id="code-41" class="language-python"><span class="token comment"># Get all books</span>
 <span class="token keyword">for</span> book <span class="token keyword">in</span> F<span class="token punctuation">.</span>otype<span class="token punctuation">.</span>s<span class="token punctuation">(</span><span class="token string">'book'</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
     <span class="token keyword">print</span><span class="token punctuation">(</span>F<span class="token punctuation">.</span>book<span class="token punctuation">.</span>v<span class="token punctuation">(</span>book<span class="token punctuation">)</span><span class="token punctuation">)</span>  <span class="token comment"># Prints book names</span></code></pre>
+
+  <button class="code-copy " data-clipboard-target="#code-41" style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
+    <span style="display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;" class=""></span>
+  </button>
+</div>
 <ul>
 <li>Accessing Specific Text Data: Let’s retrieve a verse in Genesis.</li>
 </ul>
-<pre class="language-python" tabindex="0"><code class="language-python"><span class="token comment"># Get Genesis 1:1</span>
+
+<div style="position: relative" id="code-container-49">
+  <pre class="language-python" tabindex="0"><code id="code-49" class="language-python"><span class="token comment"># Get Genesis 1:1</span>
 verse_node <span class="token operator">=</span> T<span class="token punctuation">.</span>nodeFromSection<span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token string">'Genesis'</span><span class="token punctuation">,</span> <span class="token number">1</span><span class="token punctuation">,</span> <span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
 <span class="token keyword">print</span><span class="token punctuation">(</span>T<span class="token punctuation">.</span>text<span class="token punctuation">(</span>verse_node<span class="token punctuation">)</span><span class="token punctuation">)</span>  <span class="token comment"># Outputs the text of Genesis 1:1</span>
 </code></pre>
+
+  <button class="code-copy " data-clipboard-target="#code-49" style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
+    <span style="display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;" class=""></span>
+  </button>
+</div>
 <ul>
 <li>Accessing Metadata: You can retrieve metadata for specific elements like morphology or part of speech.</li>
 </ul>
-<pre class="language-python" tabindex="0"><code class="language-python"><span class="token comment"># Get morphological and part of speech info for a specific word in Genesis 1:1</span>
+
+<div style="position: relative" id="code-container-57">
+  <pre class="language-python" tabindex="0"><code id="code-57" class="language-python"><span class="token comment"># Get morphological and part of speech info for a specific word in Genesis 1:1</span>
 word_node <span class="token operator">=</span> L<span class="token punctuation">.</span>d<span class="token punctuation">(</span>verse_node<span class="token punctuation">,</span> otype<span class="token operator">=</span><span class="token string">'word'</span><span class="token punctuation">)</span><span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span>  <span class="token comment"># First word in Genesis 1:1</span>
 <span class="token keyword">print</span><span class="token punctuation">(</span>F<span class="token punctuation">.</span>lex<span class="token punctuation">.</span>v<span class="token punctuation">(</span>word_node<span class="token punctuation">)</span><span class="token punctuation">,</span> F<span class="token punctuation">.</span>sp<span class="token punctuation">.</span>v<span class="token punctuation">(</span>word_node<span class="token punctuation">)</span><span class="token punctuation">,</span> F<span class="token punctuation">.</span>g_cons<span class="token punctuation">.</span>v<span class="token punctuation">(</span>word_node<span class="token punctuation">)</span><span class="token punctuation">)</span>
 </code></pre>
+
+  <button class="code-copy " data-clipboard-target="#code-57" style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
+    <span style="display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;" class=""></span>
+  </button>
+</div>
 <h2 id="implementation">Implementation</h2>
 <p>For my case, i wanted to use the DSS dataset. the implementation is pretty straight forward: run over each scroll, store each word as a dict (each word have few attributes). That means we eventually end up with a dict of dict of dicts</p>
-<pre class="language-cmd" tabindex="0"><code class="language-cmd">{scroll1:[{text:ושמע, lex:שמע, ...}, {text:ה׳, lex:ה, ...}], 
+
+<div style="position: relative" id="code-container-64">
+  <pre class="language-cmd" tabindex="0"><code id="code-64" class="language-cmd">{scroll1:[{text:ושמע, lex:שמע, ...}, {text:ה׳, lex:ה, ...}], 
 scroll2:[{text:רצה, lex:רצה, ...}, {text:משה, lex:משה, ...}]}</code></pre>
+
+  <button class="code-copy " data-clipboard-target="#code-64" style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
+    <span style="display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;" class=""></span>
+  </button>
+</div>
 <p>The value for each scroll is simply a list of the words of this scroll (with a lot features expect from the raw text).</p>
 <h3 id="simple-run">Simple run</h3>
 <p>In here, we will iterate over the whole corpus (scroll by scroll), and gather the words for each scroll (with the corresponding location in the scroll).</p>
-<pre class="language-python" tabindex="0"><code class="language-python"><span class="token keyword">from</span> collections <span class="token keyword">import</span> defaultdict
+
+<div style="position: relative" id="code-container-74">
+  <pre class="language-python" tabindex="0"><code id="code-74" class="language-python"><span class="token keyword">from</span> collections <span class="token keyword">import</span> defaultdict
 <span class="token keyword">from</span> tf<span class="token punctuation">.</span>app <span class="token keyword">import</span> use
 <span class="token keyword">from</span> tqdm <span class="token keyword">import</span> tqdm
 
@@ -653,8 +712,15 @@ all_scrolls <span class="token operator">=</span> defaultdict<span class="token 
     scroll_data <span class="token operator">=</span> process_word<span class="token punctuation">(</span>scroll_node<span class="token punctuation">,</span> word_line_num<span class="token punctuation">,</span> sub_word_num<span class="token punctuation">)</span>
     all_scrolls<span class="token punctuation">.</span>update<span class="token punctuation">(</span>scroll_data<span class="token punctuation">)</span>
 </code></pre>
+
+  <button class="code-copy " data-clipboard-target="#code-74" style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
+    <span style="display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;" class=""></span>
+  </button>
+</div>
 <p>But in case you want to get much rich data you can use something more complex like:</p>
-<pre class="language-python" tabindex="0"><code class="language-python"><span class="token keyword">def</span> <span class="token function">get_morphological_features</span><span class="token punctuation">(</span>word<span class="token punctuation">)</span><span class="token punctuation">:</span>
+
+<div style="position: relative" id="code-container-78">
+  <pre class="language-python" tabindex="0"><code id="code-78" class="language-python"><span class="token keyword">def</span> <span class="token function">get_morphological_features</span><span class="token punctuation">(</span>word<span class="token punctuation">)</span><span class="token punctuation">:</span>
     <span class="token triple-quoted-string string">"""Extract morphological features for a given word node."""</span>
     <span class="token keyword">return</span> <span class="token punctuation">{</span>
         <span class="token string">"sp"</span><span class="token punctuation">:</span> F<span class="token punctuation">.</span>sp<span class="token punctuation">.</span>v<span class="token punctuation">(</span>word<span class="token punctuation">)</span><span class="token punctuation">,</span>
@@ -722,6 +788,11 @@ all_scrolls <span class="token operator">=</span> defaultdict<span class="token 
         single_scroll_data<span class="token punctuation">[</span>scroll<span class="token punctuation">]</span><span class="token punctuation">.</span>append<span class="token punctuation">(</span>word_entry<span class="token punctuation">)</span>
     <span class="token keyword">return</span> single_scroll_data
 </code></pre>
+
+  <button class="code-copy " data-clipboard-target="#code-78" style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
+    <span style="display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;" class=""></span>
+  </button>
+</div>
 <p>That's it, from here you can do whatever you want with the data.<br>
 For more context and much ordered pipeline you can take a peek in here: <a href="https://github.com/yonatanlou/QumranNLP/blob/main/src/ETL/main_ETL.py">main_ETL.py</a>.</p>
 
@@ -757,7 +828,9 @@ For more context and much ordered pipeline you can take a peek in here: <a href=
             </div>
         </footer>
         
-        <!-- This page `/blog/data-pipeline-for-qumran-scrolls/data-pipeline-for-the-qumran-scrolls-using-text-fabric/` was built on 2025-09-23T21:26:15.715Z -->
+        <!-- This page `/blog/data-pipeline-for-qumran-scrolls/data-pipeline-for-the-qumran-scrolls-using-text-fabric/` was built on 2025-09-23T21:38:17.335Z -->
         <script type="module" src="/dist/rJ3_G-2ArF.js"></script>
+        <script>function showTooltip(o,e){o.trigger.className.includes("tooltipped")||(o.trigger.children[0].className="tooltipped tooltipped-s",o.trigger.children[0].ariaLabel=e)}window.addEventListener("load",()=>{var o=new ClipboardJS(".code-copy");o.on("success",o=>showTooltip(o,"Copied!")),o.on("error",o=>showTooltip(o,"Failed to copy"))});</script>
+<script async="" src="https://cdn.jsdelivr.net/npm/clipboard@2.0.11/dist/clipboard.min.js"></script>
     </body>
 </html>

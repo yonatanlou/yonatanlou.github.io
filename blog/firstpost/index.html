@@ -17,6 +17,7 @@
         <meta name="description" content="Why i decided to move from Jekyll to Eleventy.">
         <link rel="alternate" href="feed/feed.xml" type="application/atom+xml" title="Yonatan Lourie">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Primer/19.1.1/tooltips.min.css">
         
         <!-- Google Analytics -->
         <script async="" src="https://www.googletagmanager.com/gtag/js?id=G-C6PG57BBFC"></script>
@@ -523,6 +524,27 @@ footer {
 	margin: 0 auto;
 	/* Center the logo */
 }
+/* Code copy button styles */
+        .code-copy {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            padding: 0.25rem 0.5rem;
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            z-index: 10;
+        }
+        
+        .code-copy:hover {
+            background: white;
+        }
+        
+        pre {
+            position: relative;
+        }
         </style>
     </head>
     <body>
@@ -605,7 +627,9 @@ footer {
             </div>
         </footer>
         
-        <!-- This page `/blog/firstpost/` was built on 2025-09-23T21:26:15.714Z -->
+        <!-- This page `/blog/firstpost/` was built on 2025-09-23T21:38:17.334Z -->
         <script type="module" src="/dist/rJ3_G-2ArF.js"></script>
+        <script>function showTooltip(o,e){o.trigger.className.includes("tooltipped")||(o.trigger.children[0].className="tooltipped tooltipped-s",o.trigger.children[0].ariaLabel=e)}window.addEventListener("load",()=>{var o=new ClipboardJS(".code-copy");o.on("success",o=>showTooltip(o,"Copied!")),o.on("error",o=>showTooltip(o,"Failed to copy"))});</script>
+<script async="" src="https://cdn.jsdelivr.net/npm/clipboard@2.0.11/dist/clipboard.min.js"></script>
     </body>
 </html>

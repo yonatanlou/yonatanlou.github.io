@@ -17,6 +17,7 @@
         <meta name="description" content="Hierarchical clustering evaluation with the Dasgupta cost.">
         <link rel="alternate" href="feed/feed.xml" type="application/atom+xml" title="Yonatan Lourie">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Primer/19.1.1/tooltips.min.css">
         
         <!-- Google Analytics -->
         <script async="" src="https://www.googletagmanager.com/gtag/js?id=G-C6PG57BBFC"></script>
@@ -523,6 +524,27 @@ footer {
 	margin: 0 auto;
 	/* Center the logo */
 }
+/* Code copy button styles */
+        .code-copy {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            padding: 0.25rem 0.5rem;
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            z-index: 10;
+        }
+        
+        .code-copy:hover {
+            background: white;
+        }
+        
+        pre {
+            position: relative;
+        }
         </style>
     </head>
     <body>
@@ -596,15 +618,24 @@ The <strong>size</strong> <span class="katex"><math xmlns="http://www.w3.org/199
 <p>For a clear example, check out this presentation from <a href="https://www.irif.fr/_media/users/claire/talkcolle_gedefrance7juin2018.pdf">IRIF</a>.</p>
 <p>Also, <a href="https://perso.esiee.fr/~perretb/">Benjamin Perret</a> has implemented this objective in an easy-to-use <a href="https://higra.readthedocs.io/en/stable/python/hierarchical_cost.html">Python package</a>. 🎉</p>
 <p>I will show here a nice example with hierarchial text clustering for items from Amazon.</p>
-<pre class="language-python" tabindex="0"><code class="language-python"><span class="token keyword">try</span><span class="token punctuation">:</span>
+
+<div style="position: relative" id="code-container-68">
+  <pre class="language-python" tabindex="0"><code id="code-68" class="language-python"><span class="token keyword">try</span><span class="token punctuation">:</span>
   <span class="token keyword">import</span> sknetwork
 <span class="token keyword">except</span><span class="token punctuation">:</span>
   !pip install scikit<span class="token operator">-</span>network
 
 <span class="token keyword">from</span> google<span class="token punctuation">.</span>colab <span class="token keyword">import</span> drive
 drive<span class="token punctuation">.</span>mount<span class="token punctuation">(</span><span class="token string">"/content/gdrive"</span><span class="token punctuation">,</span> force_remount<span class="token operator">=</span><span class="token boolean">True</span><span class="token punctuation">)</span></code></pre>
+
+  <button class="code-copy " data-clipboard-target="#code-68" style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
+    <span style="display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;" class=""></span>
+  </button>
+</div>
 <p>Mounted at /content/gdrive</p>
-<pre class="language-python" tabindex="0"><code class="language-python"><span class="token keyword">import</span> os
+
+<div style="position: relative" id="code-container-72">
+  <pre class="language-python" tabindex="0"><code id="code-72" class="language-python"><span class="token keyword">import</span> os
 <span class="token keyword">import</span> random
 
 <span class="token keyword">import</span> pandas <span class="token keyword">as</span> pd
@@ -642,7 +673,14 @@ os<span class="token punctuation">.</span>makedirs<span class="token punctuation
 
 set_seed_globally<span class="token punctuation">(</span><span class="token number">42</span><span class="token punctuation">)</span>
 device <span class="token operator">=</span> torch<span class="token punctuation">.</span>device<span class="token punctuation">(</span><span class="token string">"cuda"</span> <span class="token keyword">if</span> torch<span class="token punctuation">.</span>cuda<span class="token punctuation">.</span>is_available<span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token keyword">else</span> <span class="token string">"cpu"</span><span class="token punctuation">)</span></code></pre>
-<pre class="language-python" tabindex="0"><code class="language-python">
+
+  <button class="code-copy " data-clipboard-target="#code-72" style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
+    <span style="display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;" class=""></span>
+  </button>
+</div>
+
+<div style="position: relative" id="code-container-73">
+  <pre class="language-python" tabindex="0"><code id="code-73" class="language-python">
 path <span class="token operator">=</span> kagglehub<span class="token punctuation">.</span>dataset_download<span class="token punctuation">(</span><span class="token string">"lokeshparab/amazon-products-dataset"</span><span class="token punctuation">)</span>
 
 <span class="token comment"># print("Path to dataset files:", path)</span>
@@ -654,9 +692,16 @@ dfs <span class="token operator">=</span> <span class="token punctuation">[</spa
     df <span class="token operator">=</span> pd<span class="token punctuation">.</span>read_csv<span class="token punctuation">(</span>file_path<span class="token punctuation">)</span>
     dfs<span class="token punctuation">.</span>append<span class="token punctuation">(</span>df<span class="token punctuation">)</span>
 combined_df <span class="token operator">=</span> pd<span class="token punctuation">.</span>concat<span class="token punctuation">(</span>dfs<span class="token punctuation">,</span> ignore_index<span class="token operator">=</span><span class="token boolean">True</span><span class="token punctuation">)</span></code></pre>
+
+  <button class="code-copy " data-clipboard-target="#code-73" style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
+    <span style="display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;" class=""></span>
+  </button>
+</div>
 <p>This dataset contains only <strong>two levels</strong> of hierarchy, so I created an additional level to enrich the structure.</p>
 <p>By adding this third level, the hierarchy becomes more informative and allows for a deeper evaluation of clustering performance across multiple granularities.</p>
-<pre class="language-python" tabindex="0"><code class="language-python">categories <span class="token operator">=</span> <span class="token punctuation">{</span>
+
+<div style="position: relative" id="code-container-80">
+  <pre class="language-python" tabindex="0"><code id="code-80" class="language-python">categories <span class="token operator">=</span> <span class="token punctuation">{</span>
     <span class="token string">"Fashion and Accessories"</span><span class="token punctuation">:</span> <span class="token punctuation">[</span>
         <span class="token string">"men's shoes"</span><span class="token punctuation">,</span> <span class="token string">"men's clothing"</span><span class="token punctuation">,</span> <span class="token string">"women's shoes"</span><span class="token punctuation">,</span>
         <span class="token string">"women's clothing"</span><span class="token punctuation">,</span> <span class="token string">"kids' fashion"</span><span class="token punctuation">,</span> <span class="token string">"bags &amp; luggage"</span><span class="token punctuation">,</span> <span class="token string">"accessories"</span>
@@ -680,6 +725,11 @@ combined_df <span class="token operator">=</span> combined_df<span class="token 
 <span class="token punctuation">}</span><span class="token punctuation">)</span>
 
 combined_df<span class="token punctuation">.</span>groupby<span class="token punctuation">(</span><span class="token punctuation">[</span><span class="token string">"1st_level_category"</span><span class="token punctuation">,</span> <span class="token string">"2nd_level_category"</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">[</span><span class="token string">"3rd_level_category"</span><span class="token punctuation">]</span><span class="token punctuation">.</span>nunique<span class="token punctuation">(</span><span class="token punctuation">)</span></code></pre>
+
+  <button class="code-copy " data-clipboard-target="#code-80" style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
+    <span style="display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;" class=""></span>
+  </button>
+</div>
 <div>
 <style scoped="">
     .dataframe tbody tr th:only-of-type {
@@ -793,10 +843,17 @@ text-align: right;<br>
   </tbody>
 </table>
 </div><br><label><b>dtype:</b> int64</label>
-<pre class="language-python" tabindex="0"><code class="language-python">N_SAMPLES <span class="token operator">=</span> <span class="token number">100</span>
+
+<div style="position: relative" id="code-container-89">
+  <pre class="language-python" tabindex="0"><code id="code-89" class="language-python">N_SAMPLES <span class="token operator">=</span> <span class="token number">100</span>
 df <span class="token operator">=</span> combined_df<span class="token punctuation">[</span><span class="token punctuation">[</span><span class="token string">"name"</span><span class="token punctuation">,</span> <span class="token string">"1st_level_category"</span><span class="token punctuation">,</span> <span class="token string">"2nd_level_category"</span><span class="token punctuation">,</span> <span class="token string">"3rd_level_category"</span><span class="token punctuation">]</span><span class="token punctuation">]</span>
 df <span class="token operator">=</span> df<span class="token punctuation">.</span>sample<span class="token punctuation">(</span>N_SAMPLES<span class="token punctuation">)</span>
 df<span class="token punctuation">.</span>head<span class="token punctuation">(</span><span class="token punctuation">)</span></code></pre>
+
+  <button class="code-copy " data-clipboard-target="#code-89" style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
+    <span style="display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;" class=""></span>
+  </button>
+</div>
   <div id="df-e3aa984c-6ff7-418d-9e3e-d33c59c6ca2d" class="colab-df-container">
     <div>
 <style scoped="">
@@ -1073,7 +1130,9 @@ Do we stick to standard metrics like silhouette score or adjusted Rand index, or
 <li><strong>BERT</strong> - specifically the <a href="https://huggingface.co/sentence-transformers/paraphrase-MiniLM-L6-v2">paraphrase-MiniLM-L6-v2</a> model, which provides contextual embeddings that capture semantic meaning.</li>
 <li><strong>TF-IDF</strong> - a method that balances word frequency by down-weighting common words and up-weighting more informative ones.</li>
 </ol>
-<pre class="language-python" tabindex="0"><code class="language-python">bert_model <span class="token operator">=</span> SentenceTransformer<span class="token punctuation">(</span><span class="token string">'paraphrase-MiniLM-L6-v2'</span><span class="token punctuation">)</span>
+
+<div style="position: relative" id="code-container-169">
+  <pre class="language-python" tabindex="0"><code id="code-169" class="language-python">bert_model <span class="token operator">=</span> SentenceTransformer<span class="token punctuation">(</span><span class="token string">'paraphrase-MiniLM-L6-v2'</span><span class="token punctuation">)</span>
 bert_model<span class="token punctuation">.</span>to<span class="token punctuation">(</span>device<span class="token punctuation">)</span>
 
 <span class="token keyword">def</span> <span class="token function">generate_embeddings</span><span class="token punctuation">(</span>texts<span class="token punctuation">,</span> method<span class="token operator">=</span><span class="token string">"tf-idf"</span><span class="token punctuation">,</span> vectorizer_params<span class="token operator">=</span><span class="token boolean">None</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
@@ -1099,8 +1158,15 @@ bert_model<span class="token punctuation">.</span>to<span class="token punctuati
 
 vectorizer_params <span class="token operator">=</span> <span class="token punctuation">{</span><span class="token string">"ngram_range"</span><span class="token punctuation">:</span> <span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">,</span> <span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token string">"max_features"</span><span class="token punctuation">:</span> <span class="token number">1000</span><span class="token punctuation">,</span> <span class="token string">"analyzer"</span><span class="token punctuation">:</span><span class="token string">"word"</span><span class="token punctuation">}</span>
 embeddings <span class="token operator">=</span> generate_embeddings<span class="token punctuation">(</span>df<span class="token punctuation">[</span><span class="token string">"name"</span><span class="token punctuation">]</span><span class="token punctuation">.</span>to_list<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span> method<span class="token operator">=</span><span class="token string">"n-gram"</span><span class="token punctuation">,</span> vectorizer_params<span class="token operator">=</span>vectorizer_params<span class="token punctuation">)</span></code></pre>
+
+  <button class="code-copy " data-clipboard-target="#code-169" style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
+    <span style="display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;" class=""></span>
+  </button>
+</div>
 <h3 id="hierarchical-clustering">Hierarchical clustering</h3>
-<pre class="language-python" tabindex="0"><code class="language-python"><span class="token keyword">def</span> <span class="token function">perform_hierarchical_clustering</span><span class="token punctuation">(</span>embeddings<span class="token punctuation">,</span> method<span class="token operator">=</span><span class="token string">"ward"</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+
+<div style="position: relative" id="code-container-173">
+  <pre class="language-python" tabindex="0"><code id="code-173" class="language-python"><span class="token keyword">def</span> <span class="token function">perform_hierarchical_clustering</span><span class="token punctuation">(</span>embeddings<span class="token punctuation">,</span> method<span class="token operator">=</span><span class="token string">"ward"</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
     <span class="token keyword">if</span> <span class="token keyword">not</span> <span class="token builtin">isinstance</span><span class="token punctuation">(</span>embeddings<span class="token punctuation">,</span> np<span class="token punctuation">.</span>ndarray<span class="token punctuation">)</span><span class="token punctuation">:</span>
         <span class="token keyword">raise</span> ValueError<span class="token punctuation">(</span><span class="token string">"Embeddings must be a NumPy array."</span><span class="token punctuation">)</span>
 
@@ -1123,9 +1189,16 @@ embeddings <span class="token operator">=</span> generate_embeddings<span class=
     <span class="token keyword">return</span> labels<span class="token punctuation">.</span>astype<span class="token punctuation">(</span><span class="token builtin">int</span><span class="token punctuation">)</span>
 
 </code></pre>
+
+  <button class="code-copy " data-clipboard-target="#code-173" style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
+    <span style="display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;" class=""></span>
+  </button>
+</div>
 <h3 id="evaluation">Evaluation</h3>
 <h4 id="classical-unsupervised-clustering-evaluation">Classical unsupervised clustering evaluation</h4>
-<pre class="language-python" tabindex="0"><code class="language-python"><span class="token keyword">def</span> <span class="token function">clustering_accuracy</span><span class="token punctuation">(</span>y_true<span class="token punctuation">,</span> y_pred<span class="token punctuation">)</span><span class="token punctuation">:</span>
+
+<div style="position: relative" id="code-container-180">
+  <pre class="language-python" tabindex="0"><code id="code-180" class="language-python"><span class="token keyword">def</span> <span class="token function">clustering_accuracy</span><span class="token punctuation">(</span>y_true<span class="token punctuation">,</span> y_pred<span class="token punctuation">)</span><span class="token punctuation">:</span>
     cm <span class="token operator">=</span> confusion_matrix<span class="token punctuation">(</span>y_true<span class="token punctuation">,</span> y_pred<span class="token punctuation">)</span>
     row_ind<span class="token punctuation">,</span> col_ind <span class="token operator">=</span> linear_sum_assignment<span class="token punctuation">(</span><span class="token operator">-</span>cm<span class="token punctuation">)</span>
     total_correct <span class="token operator">=</span> cm<span class="token punctuation">[</span>row_ind<span class="token punctuation">,</span> col_ind<span class="token punctuation">]</span><span class="token punctuation">.</span><span class="token builtin">sum</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
@@ -1148,6 +1221,11 @@ embeddings <span class="token operator">=</span> generate_embeddings<span class=
         <span class="token keyword">raise</span> ValueError<span class="token punctuation">(</span><span class="token string">"Invalid metric. Choose from 'silhouette', 'adjusted_rand'."</span><span class="token punctuation">)</span>
 
     <span class="token keyword">return</span> score</code></pre>
+
+  <button class="code-copy " data-clipboard-target="#code-180" style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
+    <span style="display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;" class=""></span>
+  </button>
+</div>
 <h4 id="dasgupta-objective">Dasgupta Objective</h4>
 <p>For the Dasgupta objective, we need a linkage method and a similarity matrix between different items.</p>
 <p>This similarity matrix can be constructed in various ways. For this experiment, I decided to build it as follows:</p>
@@ -1158,7 +1236,9 @@ embeddings <span class="token operator">=</span> generate_embeddings<span class=
 </ul>
 <p>This scoring reflects the idea that closely related items (at the lowest level) should have a higher similarity score than those grouped at broader levels.</p>
 <p>To better visualize this, here's the heatmap for the similarity matrix of the first 10 items:</p>
-<pre class="language-python" tabindex="0"><code class="language-python"><span class="token keyword">def</span> <span class="token function">create_adjacency_matrix</span><span class="token punctuation">(</span>df<span class="token punctuation">)</span><span class="token punctuation">:</span>
+
+<div style="position: relative" id="code-container-213">
+  <pre class="language-python" tabindex="0"><code id="code-213" class="language-python"><span class="token keyword">def</span> <span class="token function">create_adjacency_matrix</span><span class="token punctuation">(</span>df<span class="token punctuation">)</span><span class="token punctuation">:</span>
     <span class="token keyword">if</span> <span class="token keyword">not</span> <span class="token builtin">all</span><span class="token punctuation">(</span>col <span class="token keyword">in</span> df<span class="token punctuation">.</span>columns <span class="token keyword">for</span> col <span class="token keyword">in</span> <span class="token punctuation">[</span><span class="token string">'1st_level_category'</span><span class="token punctuation">,</span> <span class="token string">'2nd_level_category'</span><span class="token punctuation">,</span> <span class="token string">'3rd_level_category'</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
         <span class="token keyword">raise</span> ValueError<span class="token punctuation">(</span><span class="token string">"The DataFrame must contain '1st_level_category', '2nd_level_category', and '3rd_level_category' columns."</span><span class="token punctuation">)</span>
 
@@ -1183,8 +1263,20 @@ adjacency_matrix <span class="token operator">=</span> create_adjacency_matrix<s
 fig <span class="token operator">=</span> sns<span class="token punctuation">.</span>heatmap<span class="token punctuation">(</span>adjacency_matrix<span class="token punctuation">[</span><span class="token punctuation">:</span><span class="token number">10</span><span class="token punctuation">,</span><span class="token punctuation">:</span><span class="token number">10</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
 plt<span class="token punctuation">.</span>savefig<span class="token punctuation">(</span><span class="token string-interpolation"><span class="token string">f"</span><span class="token interpolation"><span class="token punctuation">{</span>FIGS_PATH<span class="token punctuation">}</span></span><span class="token string">/adj_mat.png"</span></span><span class="token punctuation">,</span> transparent<span class="token operator">=</span><span class="token boolean">True</span><span class="token punctuation">)</span>
 </code></pre>
+
+  <button class="code-copy " data-clipboard-target="#code-213" style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
+    <span style="display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;" class=""></span>
+  </button>
+</div>
 <p><picture><source type="image/avif" srcset="/blog/Evaluating-Hierarchical-Clustering/hierarchical-clustering-eval/nuhY2ExpUH-640.avif 640w"><source type="image/webp" srcset="/blog/Evaluating-Hierarchical-Clustering/hierarchical-clustering-eval/nuhY2ExpUH-640.webp 640w"><img loading="lazy" decoding="async" src="/blog/Evaluating-Hierarchical-Clustering/hierarchical-clustering-eval/nuhY2ExpUH-640.png" alt="png" width="640" height="480"></picture></p>
-<pre class="language-python" tabindex="0"><code class="language-python">df<span class="token punctuation">.</span>reset_index<span class="token punctuation">(</span>drop<span class="token operator">=</span><span class="token boolean">True</span><span class="token punctuation">)</span><span class="token punctuation">.</span>head<span class="token punctuation">(</span><span class="token number">10</span><span class="token punctuation">)</span></code></pre>
+
+<div style="position: relative" id="code-container-217">
+  <pre class="language-python" tabindex="0"><code id="code-217" class="language-python">df<span class="token punctuation">.</span>reset_index<span class="token punctuation">(</span>drop<span class="token operator">=</span><span class="token boolean">True</span><span class="token punctuation">)</span><span class="token punctuation">.</span>head<span class="token punctuation">(</span><span class="token number">10</span><span class="token punctuation">)</span></code></pre>
+
+  <button class="code-copy " data-clipboard-target="#code-217" style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
+    <span style="display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;" class=""></span>
+  </button>
+</div>
   <div id="df-9ddc9fa2-05ea-45f8-ae6d-5235f9435ee4" class="colab-df-container">
     <div>
 <style scoped="">
@@ -1480,7 +1572,9 @@ width=&quot;24px&quot;&gt;<br>
 <p>Finally, there are pairs of items that have nothing in common across all levels, so their similarity score is 0.</p>
 <h4 id="comparison">Comparison</h4>
 <p>Let's compare the different embedding models by analyzing their dendrograms and the corresponding scores we calculated.</p>
-<pre class="language-python" tabindex="0"><code class="language-python"><span class="token keyword">from</span> scipy<span class="token punctuation">.</span>cluster<span class="token punctuation">.</span>hierarchy <span class="token keyword">import</span> cophenet
+
+<div style="position: relative" id="code-container-265">
+  <pre class="language-python" tabindex="0"><code id="code-265" class="language-python"><span class="token keyword">from</span> scipy<span class="token punctuation">.</span>cluster<span class="token punctuation">.</span>hierarchy <span class="token keyword">import</span> cophenet
 <span class="token keyword">from</span> scipy<span class="token punctuation">.</span>spatial<span class="token punctuation">.</span>distance <span class="token keyword">import</span> pdist
 <span class="token keyword">def</span> <span class="token function">evaluate_clustering</span><span class="token punctuation">(</span>df<span class="token punctuation">,</span> vectorizer<span class="token punctuation">,</span> vectorizer_params<span class="token punctuation">,</span> level_for_eval<span class="token punctuation">)</span><span class="token punctuation">:</span>
 
@@ -1509,7 +1603,14 @@ width=&quot;24px&quot;&gt;<br>
   <span class="token keyword">return</span> metrics
 
 </code></pre>
-<pre class="language-python" tabindex="0"><code class="language-python">df <span class="token operator">=</span> combined_df<span class="token punctuation">[</span><span class="token punctuation">[</span><span class="token string">"name"</span><span class="token punctuation">,</span> <span class="token string">"1st_level_category"</span><span class="token punctuation">,</span> <span class="token string">"2nd_level_category"</span><span class="token punctuation">,</span> <span class="token string">"3rd_level_category"</span><span class="token punctuation">]</span><span class="token punctuation">]</span>
+
+  <button class="code-copy " data-clipboard-target="#code-265" style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
+    <span style="display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;" class=""></span>
+  </button>
+</div>
+
+<div style="position: relative" id="code-container-266">
+  <pre class="language-python" tabindex="0"><code id="code-266" class="language-python">df <span class="token operator">=</span> combined_df<span class="token punctuation">[</span><span class="token punctuation">[</span><span class="token string">"name"</span><span class="token punctuation">,</span> <span class="token string">"1st_level_category"</span><span class="token punctuation">,</span> <span class="token string">"2nd_level_category"</span><span class="token punctuation">,</span> <span class="token string">"3rd_level_category"</span><span class="token punctuation">]</span><span class="token punctuation">]</span>
 
 n_iters <span class="token operator">=</span> <span class="token number">20</span>
 N_SAMPLES_EVAL <span class="token operator">=</span> <span class="token number">1000</span>
@@ -1533,7 +1634,14 @@ vectorizers <span class="token operator">=</span> <span class="token punctuation
 
 comparison_df <span class="token operator">=</span> pd<span class="token punctuation">.</span>DataFrame<span class="token punctuation">(</span>results<span class="token punctuation">)</span>
 </code></pre>
-<pre class="language-python" tabindex="0"><code class="language-python">sns<span class="token punctuation">.</span>set_theme<span class="token punctuation">(</span>style<span class="token operator">=</span><span class="token string">"white"</span><span class="token punctuation">)</span>
+
+  <button class="code-copy " data-clipboard-target="#code-266" style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
+    <span style="display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;" class=""></span>
+  </button>
+</div>
+
+<div style="position: relative" id="code-container-267">
+  <pre class="language-python" tabindex="0"><code id="code-267" class="language-python">sns<span class="token punctuation">.</span>set_theme<span class="token punctuation">(</span>style<span class="token operator">=</span><span class="token string">"white"</span><span class="token punctuation">)</span>
 sns<span class="token punctuation">.</span>boxplot<span class="token punctuation">(</span>data<span class="token operator">=</span>comparison_df<span class="token punctuation">,</span> x<span class="token operator">=</span><span class="token string">"vectorizer"</span><span class="token punctuation">,</span> y<span class="token operator">=</span><span class="token string">"clustering_accuracy_score"</span><span class="token punctuation">,</span> hue<span class="token operator">=</span><span class="token string">"eval_level"</span><span class="token punctuation">)</span>
 plt<span class="token punctuation">.</span>xlabel<span class="token punctuation">(</span><span class="token string">"Vectorizer"</span><span class="token punctuation">)</span>
 plt<span class="token punctuation">.</span>ylabel<span class="token punctuation">(</span><span class="token string">"clustering_accuracy_score"</span><span class="token punctuation">.</span>replace<span class="token punctuation">(</span><span class="token string">"_"</span><span class="token punctuation">,</span> <span class="token string">" "</span><span class="token punctuation">)</span><span class="token punctuation">.</span>capitalize<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
@@ -1541,6 +1649,11 @@ plt<span class="token punctuation">.</span>title<span class="token punctuation">
 plt<span class="token punctuation">.</span>tight_layout<span class="token punctuation">(</span><span class="token punctuation">)</span>
 plt<span class="token punctuation">.</span>savefig<span class="token punctuation">(</span><span class="token string-interpolation"><span class="token string">f"</span><span class="token interpolation"><span class="token punctuation">{</span>FIGS_PATH<span class="token punctuation">}</span></span><span class="token string">/clustering_accuracy.png"</span></span><span class="token punctuation">,</span> transparent<span class="token operator">=</span><span class="token boolean">True</span><span class="token punctuation">)</span>
 plt<span class="token punctuation">.</span>show<span class="token punctuation">(</span><span class="token punctuation">)</span></code></pre>
+
+  <button class="code-copy " data-clipboard-target="#code-267" style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
+    <span style="display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;" class=""></span>
+  </button>
+</div>
 <p><picture><source type="image/avif" srcset="/blog/Evaluating-Hierarchical-Clustering/hierarchical-clustering-eval/aOIMg_qJqd-640.avif 640w"><source type="image/webp" srcset="/blog/Evaluating-Hierarchical-Clustering/hierarchical-clustering-eval/aOIMg_qJqd-640.webp 640w"><img loading="lazy" decoding="async" src="/blog/Evaluating-Hierarchical-Clustering/hierarchical-clustering-eval/aOIMg_qJqd-640.png" alt="png" width="640" height="480"></picture></p>
 <p>Yes, it's pretty hard to make sense of everything at first glance.<br>
 First of all, we can see that the BERT model performs the best across all evaluation levels.</p>
@@ -1548,16 +1661,25 @@ First of all, we can see that the BERT model performs the best across all evalua
 For the accuracy metric, it seems that TF-IDF performs better at the 1st level, but performs worse at the other levels.</p>
 <p>The Dasgupta score provides a single score for all levels by taking into account the overall cost we defined earlier. This allows us to evaluate the entire hierarchy in a more holistic way, rather than focusing on individual levels.</p>
 <p>This approach makes it easier to compare different embedding models and understand how they perform across the full tree structure.</p>
-<pre class="language-python" tabindex="0"><code class="language-python">
+
+<div style="position: relative" id="code-container-283">
+  <pre class="language-python" tabindex="0"><code id="code-283" class="language-python">
 sns<span class="token punctuation">.</span>boxplot<span class="token punctuation">(</span>data<span class="token operator">=</span>comparison_df<span class="token punctuation">,</span> x<span class="token operator">=</span><span class="token string">"vectorizer"</span><span class="token punctuation">,</span> y<span class="token operator">=</span><span class="token string">"dasgupta"</span><span class="token punctuation">,</span> hue<span class="token operator">=</span><span class="token string">"eval_level"</span><span class="token punctuation">)</span>
 plt<span class="token punctuation">.</span>savefig<span class="token punctuation">(</span><span class="token string-interpolation"><span class="token string">f"</span><span class="token interpolation"><span class="token punctuation">{</span>FIGS_PATH<span class="token punctuation">}</span></span><span class="token string">/dasgupta.png"</span></span><span class="token punctuation">,</span> transparent<span class="token operator">=</span><span class="token boolean">True</span><span class="token punctuation">)</span>
 plt<span class="token punctuation">.</span>title<span class="token punctuation">(</span><span class="token string">"Score by dasgupta"</span><span class="token punctuation">)</span></code></pre>
+
+  <button class="code-copy " data-clipboard-target="#code-283" style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
+    <span style="display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;" class=""></span>
+  </button>
+</div>
 <p><picture><source type="image/avif" srcset="/blog/Evaluating-Hierarchical-Clustering/hierarchical-clustering-eval/eiS0S-DYas-640.avif 640w"><source type="image/webp" srcset="/blog/Evaluating-Hierarchical-Clustering/hierarchical-clustering-eval/eiS0S-DYas-640.webp 640w"><img loading="lazy" decoding="async" src="/blog/Evaluating-Hierarchical-Clustering/hierarchical-clustering-eval/eiS0S-DYas-640.png" alt="png" width="640" height="480"></picture></p>
 <h4 id="dendrogram">Dendrogram</h4>
 <p>While it's really hard to read a dendrogram with more than ~100 points, it remains an important tool for evaluation and for ensuring that the clustering results align with our expectations.</p>
 <p>Dendrograms allow us to visually inspect how items are grouped at different levels of the hierarchy, which can reveal unexpected patterns or potential issues.</p>
 <p>Let's try to compare the dendrograms of BERT and TF-IDF side-by-side to see how they differ. By observing them &quot;by eye,&quot; we can get a sense of how the embedding models influence the structure of the hierarchy.</p>
-<pre class="language-python" tabindex="0"><code class="language-python"><span class="token keyword">import</span> matplotlib<span class="token punctuation">.</span>pyplot <span class="token keyword">as</span> plt
+
+<div style="position: relative" id="code-container-299">
+  <pre class="language-python" tabindex="0"><code id="code-299" class="language-python"><span class="token keyword">import</span> matplotlib<span class="token punctuation">.</span>pyplot <span class="token keyword">as</span> plt
 <span class="token keyword">from</span> matplotlib <span class="token keyword">import</span> cm
 <span class="token keyword">from</span> scipy<span class="token punctuation">.</span>cluster<span class="token punctuation">.</span>hierarchy <span class="token keyword">import</span> dendrogram
 
@@ -1615,8 +1737,15 @@ color_by_level <span class="token operator">=</span> <span class="token string">
 fig <span class="token operator">=</span> colored_dendrogram<span class="token punctuation">(</span>df_sampled<span class="token punctuation">,</span> linkage_matrix<span class="token punctuation">,</span> text_by_level<span class="token punctuation">,</span> color_by_level<span class="token punctuation">)</span>
 plt<span class="token punctuation">.</span>savefig<span class="token punctuation">(</span><span class="token string-interpolation"><span class="token string">f"</span><span class="token interpolation"><span class="token punctuation">{</span>FIGS_PATH<span class="token punctuation">}</span></span><span class="token string">/dend_bert.png"</span></span><span class="token punctuation">,</span> transparent<span class="token operator">=</span><span class="token boolean">True</span><span class="token punctuation">)</span>
 plt<span class="token punctuation">.</span>show<span class="token punctuation">(</span><span class="token punctuation">)</span></code></pre>
+
+  <button class="code-copy " data-clipboard-target="#code-299" style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
+    <span style="display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;" class=""></span>
+  </button>
+</div>
 <p><picture><source type="image/avif" srcset="/blog/Evaluating-Hierarchical-Clustering/hierarchical-clustering-eval/YSLALxcm1a-1040.avif 1040w"><source type="image/webp" srcset="/blog/Evaluating-Hierarchical-Clustering/hierarchical-clustering-eval/YSLALxcm1a-1040.webp 1040w"><img loading="lazy" decoding="async" src="/blog/Evaluating-Hierarchical-Clustering/hierarchical-clustering-eval/YSLALxcm1a-1040.png" alt="png" width="1040" height="1249"></picture></p>
-<pre class="language-python" tabindex="0"><code class="language-python">metrics<span class="token punctuation">,</span> linkage_matrix <span class="token operator">=</span> evaluate_clustering<span class="token punctuation">(</span>df_sampled<span class="token punctuation">,</span> <span class="token string">"tf-idf"</span><span class="token punctuation">,</span> <span class="token boolean">None</span><span class="token punctuation">,</span> <span class="token string">"3rd_level_category"</span><span class="token punctuation">)</span>
+
+<div style="position: relative" id="code-container-303">
+  <pre class="language-python" tabindex="0"><code id="code-303" class="language-python">metrics<span class="token punctuation">,</span> linkage_matrix <span class="token operator">=</span> evaluate_clustering<span class="token punctuation">(</span>df_sampled<span class="token punctuation">,</span> <span class="token string">"tf-idf"</span><span class="token punctuation">,</span> <span class="token boolean">None</span><span class="token punctuation">,</span> <span class="token string">"3rd_level_category"</span><span class="token punctuation">)</span>
 
 text_by_level <span class="token operator">=</span> <span class="token string">"3rd_level_category"</span>
 color_by_level <span class="token operator">=</span> <span class="token string">"2nd_level_category"</span>
@@ -1626,15 +1755,27 @@ fig <span class="token operator">=</span> colored_dendrogram<span class="token p
 plt<span class="token punctuation">.</span>savefig<span class="token punctuation">(</span><span class="token string-interpolation"><span class="token string">f"</span><span class="token interpolation"><span class="token punctuation">{</span>FIGS_PATH<span class="token punctuation">}</span></span><span class="token string">/dend_tf_idf.png"</span></span><span class="token punctuation">,</span> transparent<span class="token operator">=</span><span class="token boolean">True</span><span class="token punctuation">)</span>
 plt<span class="token punctuation">.</span>show<span class="token punctuation">(</span><span class="token punctuation">)</span>
 </code></pre>
+
+  <button class="code-copy " data-clipboard-target="#code-303" style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
+    <span style="display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;" class=""></span>
+  </button>
+</div>
 <p><picture><source type="image/avif" srcset="/blog/Evaluating-Hierarchical-Clustering/hierarchical-clustering-eval/ejt_WjjIxq-1040.avif 1040w"><source type="image/webp" srcset="/blog/Evaluating-Hierarchical-Clustering/hierarchical-clustering-eval/ejt_WjjIxq-1040.webp 1040w"><img loading="lazy" decoding="async" src="/blog/Evaluating-Hierarchical-Clustering/hierarchical-clustering-eval/ejt_WjjIxq-1040.png" alt="png" width="1040" height="1249"></picture></p>
 <p>We can clearly see that indeed the bert model have much better clustering results.</p>
-<pre class="language-bibtex" tabindex="0"><code class="language-bibtex">@misc{lou2025hierarchical,
+
+<div style="position: relative" id="code-container-310">
+  <pre class="language-bibtex" tabindex="0"><code id="code-310" class="language-bibtex">@misc{lou2025hierarchical,
   author       = {Yonatan Lourie},
   title        = {Evaluating Hierarchical Clustering Beyond the Leaves},
   year         = {2025},
   howpublished = {\url{https://yonatanlou.github.io/blog/Evaluating-Hierarchical-Clustering/hierarchical-clustering-eval/}},
   note         = {Accessed: 2025-01-12}
 }</code></pre>
+
+  <button class="code-copy " data-clipboard-target="#code-310" style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
+    <span style="display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;" class=""></span>
+  </button>
+</div>
 
 <ul class="links-nextprev"><li class="links-nextprev-prev">← Previous<br> <a href="/blog/jaccard-index-unsupervised/Jaccard_index_for_unsupervised_clustering/">Jaccard index for unsupervised clustering</a></li><li class="links-nextprev-next">Next →<br><a href="/blog/unsupervised-text-clustering-gnn/unsupervised-gae-clustering/">Unsupervised text clustering using GNN (Graph Auto Encoder)</a></li>
 </ul>
@@ -1668,7 +1809,9 @@ plt<span class="token punctuation">.</span>show<span class="token punctuation">(
             </div>
         </footer>
         
-        <!-- This page `/blog/Evaluating-Hierarchical-Clustering/hierarchical-clustering-eval/` was built on 2025-09-23T21:26:15.714Z -->
+        <!-- This page `/blog/Evaluating-Hierarchical-Clustering/hierarchical-clustering-eval/` was built on 2025-09-23T21:38:17.335Z -->
         <script type="module" src="/dist/rJ3_G-2ArF.js"></script>
+        <script>function showTooltip(o,e){o.trigger.className.includes("tooltipped")||(o.trigger.children[0].className="tooltipped tooltipped-s",o.trigger.children[0].ariaLabel=e)}window.addEventListener("load",()=>{var o=new ClipboardJS(".code-copy");o.on("success",o=>showTooltip(o,"Copied!")),o.on("error",o=>showTooltip(o,"Failed to copy"))});</script>
+<script async="" src="https://cdn.jsdelivr.net/npm/clipboard@2.0.11/dist/clipboard.min.js"></script>
     </body>
 </html>

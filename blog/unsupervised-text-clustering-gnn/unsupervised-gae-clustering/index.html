@@ -17,6 +17,7 @@
         <meta name="description" content="Unsupervised text clustering using GNN (Graph Auto Encoder).">
         <link rel="alternate" href="feed/feed.xml" type="application/atom+xml" title="Yonatan Lourie">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Primer/19.1.1/tooltips.min.css">
         
         <!-- Google Analytics -->
         <script async="" src="https://www.googletagmanager.com/gtag/js?id=G-C6PG57BBFC"></script>
@@ -523,6 +524,27 @@ footer {
 	margin: 0 auto;
 	/* Center the logo */
 }
+/* Code copy button styles */
+        .code-copy {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            padding: 0.25rem 0.5rem;
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            z-index: 10;
+        }
+        
+        .code-copy:hover {
+            background: white;
+        }
+        
+        pre {
+            position: relative;
+        }
         </style>
     </head>
     <body>
@@ -580,7 +602,9 @@ footer {
 <p>This is more of a quick-and-dirty prototype than a polished package. I wrote it mainly because I couldn’t find a simple example of unsupervised text clustering using GNNs online.</p>
 <p>If you're looking for a more customizable and production-ready version, you can check out the <a href="https://github.com/yonatanlou/QumranNLP"><code>QumranNLP</code></a> repository. It's built around a fascinating dataset-texts from the Dead Sea Scrolls-and uses a more refined version of the same approach.</p>
 <p>First of all, we will import some important libraries, make some constants (which can be optimize in the future), and collect the data.</p>
-<pre class="language-python" tabindex="0"><code class="language-python"><span class="token keyword">import</span> torch<span class="token punctuation">,</span> random<span class="token punctuation">,</span> numpy <span class="token keyword">as</span> np
+
+<div style="position: relative" id="code-container-31">
+  <pre class="language-python" tabindex="0"><code id="code-31" class="language-python"><span class="token keyword">import</span> torch<span class="token punctuation">,</span> random<span class="token punctuation">,</span> numpy <span class="token keyword">as</span> np
 <span class="token keyword">from</span> tqdm<span class="token punctuation">.</span>auto <span class="token keyword">import</span> tqdm
 <span class="token keyword">from</span> sklearn<span class="token punctuation">.</span>datasets <span class="token keyword">import</span> fetch_20newsgroups
 <span class="token keyword">from</span> sklearn<span class="token punctuation">.</span>feature_extraction<span class="token punctuation">.</span>text <span class="token keyword">import</span> TfidfVectorizer<span class="token punctuation">,</span> CountVectorizer
@@ -620,6 +644,11 @@ texts<span class="token punctuation">,</span> y <span class="token operator">=</
 set_seed_globally<span class="token punctuation">(</span>SEED<span class="token punctuation">)</span>
 
 </code></pre>
+
+  <button class="code-copy " data-clipboard-target="#code-31" style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
+    <span style="display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;" class=""></span>
+  </button>
+</div>
 <p>Now, we'll represent the text using three different methods. These are just examples-you can easily swap them out or tweak the configurations to fit your own data or preferences.</p>
 <p>The methods we'll use are:</p>
 <ul>
@@ -627,7 +656,9 @@ set_seed_globally<span class="token punctuation">(</span>SEED<span class="token 
 <li><strong>TF-IDF</strong> – a classic, sparse representation that captures term importance across the corpus.</li>
 <li><strong>Character n-grams</strong> – helpful for capturing subword patterns, especially in noisy texts.</li>
 </ul>
-<pre class="language-python" tabindex="0"><code class="language-python"><span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">"Step 2 | DistilBERT embeddings …"</span><span class="token punctuation">)</span>
+
+<div style="position: relative" id="code-container-55">
+  <pre class="language-python" tabindex="0"><code id="code-55" class="language-python"><span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">"Step 2 | DistilBERT embeddings …"</span><span class="token punctuation">)</span>
 tokenizer <span class="token operator">=</span> AutoTokenizer<span class="token punctuation">.</span>from_pretrained<span class="token punctuation">(</span><span class="token string">"distilbert-base-uncased"</span><span class="token punctuation">)</span>
 model_bert <span class="token operator">=</span> AutoModel<span class="token punctuation">.</span>from_pretrained<span class="token punctuation">(</span><span class="token string">"distilbert-base-uncased"</span><span class="token punctuation">)</span><span class="token punctuation">.</span>to<span class="token punctuation">(</span>DEVICE<span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token builtin">eval</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
 
@@ -647,6 +678,11 @@ Xb <span class="token operator">=</span> bert_embed<span class="token punctuatio
 Xt <span class="token operator">=</span> TfidfVectorizer<span class="token punctuation">(</span>max_features<span class="token operator">=</span><span class="token number">1500</span><span class="token punctuation">)</span><span class="token punctuation">.</span>fit_transform<span class="token punctuation">(</span>texts<span class="token punctuation">)</span><span class="token punctuation">.</span>toarray<span class="token punctuation">(</span><span class="token punctuation">)</span>
 Xn <span class="token operator">=</span> CountVectorizer<span class="token punctuation">(</span>analyzer<span class="token operator">=</span><span class="token string">"char"</span><span class="token punctuation">,</span> ngram_range<span class="token operator">=</span><span class="token punctuation">(</span><span class="token number">3</span><span class="token punctuation">,</span> <span class="token number">3</span><span class="token punctuation">)</span><span class="token punctuation">,</span> max_features<span class="token operator">=</span><span class="token number">1500</span><span class="token punctuation">)</span><span class="token punctuation">.</span>fit_transform<span class="token punctuation">(</span>texts<span class="token punctuation">)</span><span class="token punctuation">.</span>toarray<span class="token punctuation">(</span><span class="token punctuation">)</span>
 </code></pre>
+
+  <button class="code-copy " data-clipboard-target="#code-55" style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
+    <span style="display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;" class=""></span>
+  </button>
+</div>
 <p>At this point, we're building the graph based on the TF-IDF and character n-gram features.</p>
 <p>There are quite a few parameters you can tweak here, and each choice can significantly affect your model. Some key considerations:</p>
 <ul>
@@ -659,7 +695,9 @@ Xn <span class="token operator">=</span> CountVectorizer<span class="token punct
 If this threshold is set too low, you’ll end up with a massive graph-which means you'll need a lot of GPU's just to train the model.<br>
 Through trial and error, I’ve found that using a <strong>higher threshold</strong> often results in <strong>better performance</strong> and <strong>faster training</strong>.</p>
 </blockquote>
-<pre class="language-python" tabindex="0"><code class="language-python"><span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">"Step 4 | Building graph edges (k‑NN) …"</span><span class="token punctuation">)</span>
+
+<div style="position: relative" id="code-container-82">
+  <pre class="language-python" tabindex="0"><code id="code-82" class="language-python"><span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">"Step 4 | Building graph edges (k‑NN) …"</span><span class="token punctuation">)</span>
 
 <span class="token keyword">def</span> <span class="token function">adj_cosine</span><span class="token punctuation">(</span>mat<span class="token punctuation">,</span> q<span class="token operator">=</span><span class="token number">0.99</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
     norm <span class="token operator">=</span> mat <span class="token operator">/</span> <span class="token punctuation">(</span>np<span class="token punctuation">.</span>linalg<span class="token punctuation">.</span>norm<span class="token punctuation">(</span>mat<span class="token punctuation">,</span> axis<span class="token operator">=</span><span class="token number">1</span><span class="token punctuation">,</span> keepdims<span class="token operator">=</span><span class="token boolean">True</span><span class="token punctuation">)</span> <span class="token operator">+</span> <span class="token number">1e-8</span><span class="token punctuation">)</span>
@@ -682,10 +720,22 @@ adj_comb  <span class="token operator">=</span> <span class="token punctuation">
 E <span class="token operator">=</span> adj_to_edge<span class="token punctuation">(</span>adj_comb<span class="token punctuation">)</span>
 
 </code></pre>
-<pre class="language-bash" tabindex="0"><code class="language-bash">Step <span class="token number">4</span> <span class="token operator">|</span> Building graph edges <span class="token punctuation">(</span>k‑NN<span class="token punctuation">)</span>
+
+  <button class="code-copy " data-clipboard-target="#code-82" style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
+    <span style="display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;" class=""></span>
+  </button>
+</div>
+
+<div style="position: relative" id="code-container-83">
+  <pre class="language-bash" tabindex="0"><code id="code-83" class="language-bash">Step <span class="token number">4</span> <span class="token operator">|</span> Building graph edges <span class="token punctuation">(</span>k‑NN<span class="token punctuation">)</span>
     TF-IDF edges:  <span class="token number">1032</span>
     N-gram edges: <span class="token number">1028</span>
     Combined edges: <span class="token number">1056</span></code></pre>
+
+  <button class="code-copy " data-clipboard-target="#code-83" style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
+    <span style="display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;" class=""></span>
+  </button>
+</div>
 <p>Now we move on to training the model.<br>
 In my original implementation, I included early stopping to avoid overfitting-but for the sake of this simplified version, I skipped it (I was lazy 😅).</p>
 <p>Just like before, this part is highly customizable. You can experiment with:</p>
@@ -702,7 +752,9 @@ In my original implementation, I included early stopping to avoid overfitting-bu
 Still, I think <a href="https://scikit-learn.org/stable/modules/clustering.html#clustering-performance-evaluation">Scikit-learn’s guide on Clustering Performance Evaluation</a> is one of the best overviews available online.</p>
 <p>I also wrote about a more niche but useful method in my post on<br>
 <a href="https://yonatanlou.github.io/blog/Evaluating-Hierarchical-Clustering/hierarchical-clustering-eval/">Evaluating Hierarchical Clustering</a>, which dives into metrics like the Dasgupta cost (specific for hierarchial clustering).</p>
-<pre class="language-python" tabindex="0"><code class="language-python">
+
+<div style="position: relative" id="code-container-127">
+  <pre class="language-python" tabindex="0"><code id="code-127" class="language-python">
 <span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">"Step 5 | Training Graph Auto‑Encoder …"</span><span class="token punctuation">)</span>
 
 graph <span class="token operator">=</span> Data<span class="token punctuation">(</span>x<span class="token operator">=</span>torch<span class="token punctuation">.</span>tensor<span class="token punctuation">(</span>Xb<span class="token punctuation">,</span> dtype<span class="token operator">=</span>torch<span class="token punctuation">.</span><span class="token builtin">float</span><span class="token punctuation">)</span><span class="token punctuation">,</span> edge_index<span class="token operator">=</span>E<span class="token punctuation">)</span>
@@ -729,7 +781,14 @@ opt <span class="token operator">=</span> torch<span class="token punctuation">.
 
 
 </code></pre>
-<pre class="language-bash" tabindex="0"><code class="language-bash">    Step <span class="token number">5</span> <span class="token operator">|</span> Training Graph Auto‑Encoder …
+
+  <button class="code-copy " data-clipboard-target="#code-127" style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
+    <span style="display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;" class=""></span>
+  </button>
+</div>
+
+<div style="position: relative" id="code-container-128">
+  <pre class="language-bash" tabindex="0"><code id="code-128" class="language-bash">    Step <span class="token number">5</span> <span class="token operator">|</span> Training Graph Auto‑Encoder …
     Epoch 010 <span class="token operator">|</span> Loss <span class="token number">1.1351</span>
     Epoch 020 <span class="token operator">|</span> Loss <span class="token number">1.0478</span>
     Epoch 030 <span class="token operator">|</span> Loss <span class="token number">0.9715</span>
@@ -766,7 +825,14 @@ opt <span class="token operator">=</span> torch<span class="token punctuation">.
     Epoch <span class="token number">340</span> <span class="token operator">|</span> Loss <span class="token number">0.7836</span>
     Epoch <span class="token number">350</span> <span class="token operator">|</span> Loss <span class="token number">0.7654</span>
 </code></pre>
-<pre class="language-python" tabindex="0"><code class="language-python"><span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">"Step 6 | Clustering latent space …"</span><span class="token punctuation">)</span>
+
+  <button class="code-copy " data-clipboard-target="#code-128" style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
+    <span style="display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;" class=""></span>
+  </button>
+</div>
+
+<div style="position: relative" id="code-container-129">
+  <pre class="language-python" tabindex="0"><code id="code-129" class="language-python"><span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">"Step 6 | Clustering latent space …"</span><span class="token punctuation">)</span>
 gae<span class="token punctuation">.</span><span class="token builtin">eval</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
 <span class="token keyword">with</span> torch<span class="token punctuation">.</span>no_grad<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
     embeddings <span class="token operator">=</span> gae<span class="token punctuation">.</span>encode<span class="token punctuation">(</span>graph<span class="token punctuation">.</span>x<span class="token punctuation">,</span> graph<span class="token punctuation">.</span>edge_index<span class="token punctuation">)</span><span class="token punctuation">.</span>cpu<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span>detach<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span>numpy<span class="token punctuation">(</span><span class="token punctuation">)</span>
@@ -784,19 +850,38 @@ base_ari <span class="token operator">=</span> adjusted_rand_score<span class="t
 <span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string-interpolation"><span class="token string">f"Baseline (BERT + k‑means) → V: </span><span class="token interpolation"><span class="token punctuation">{</span>base_v<span class="token punctuation">:</span><span class="token format-spec">.3f</span><span class="token punctuation">}</span></span><span class="token string"> | ARI: </span><span class="token interpolation"><span class="token punctuation">{</span>base_ari<span class="token punctuation">:</span><span class="token format-spec">.3f</span><span class="token punctuation">}</span></span><span class="token string">"</span></span><span class="token punctuation">)</span>
 <span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string-interpolation"><span class="token string">f"GAE (BERT + TF-IDF + N-grams)   → V: </span><span class="token interpolation"><span class="token punctuation">{</span>gae_v<span class="token punctuation">:</span><span class="token format-spec">.3f</span><span class="token punctuation">}</span></span><span class="token string"> | ARI: </span><span class="token interpolation"><span class="token punctuation">{</span>gae_ari<span class="token punctuation">:</span><span class="token format-spec">.3f</span><span class="token punctuation">}</span></span><span class="token string">"</span></span><span class="token punctuation">)</span>
 <span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string-interpolation"><span class="token string">f"Improvement: V </span><span class="token interpolation"><span class="token punctuation">{</span><span class="token punctuation">(</span>gae_v<span class="token operator">/</span>base_v<span class="token punctuation">)</span><span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">:</span><span class="token format-spec">.3%</span><span class="token punctuation">}</span></span><span class="token string"> | ARI </span><span class="token interpolation"><span class="token punctuation">{</span><span class="token punctuation">(</span>gae_ari<span class="token operator">/</span>base_ari<span class="token punctuation">)</span><span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">:</span><span class="token format-spec">.3%</span><span class="token punctuation">}</span></span><span class="token string">"</span></span><span class="token punctuation">)</span></code></pre>
-<pre class="language-bash" tabindex="0"><code class="language-bash">    Step <span class="token number">6</span> <span class="token operator">|</span> Clustering latent space …
+
+  <button class="code-copy " data-clipboard-target="#code-129" style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
+    <span style="display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;" class=""></span>
+  </button>
+</div>
+
+<div style="position: relative" id="code-container-130">
+  <pre class="language-bash" tabindex="0"><code id="code-130" class="language-bash">    Step <span class="token number">6</span> <span class="token operator">|</span> Clustering latent space …
     
     Results
     Baseline <span class="token punctuation">(</span>BERT + k‑means<span class="token punctuation">)</span> → V: <span class="token number">0.317</span> <span class="token operator">|</span> ARI: <span class="token number">0.124</span>
     GAE <span class="token punctuation">(</span>BERT + TF-IDF + N-grams<span class="token punctuation">)</span>   → V: <span class="token number">0.355</span> <span class="token operator">|</span> ARI: <span class="token number">0.153</span>
     Improvement: V <span class="token number">12.082</span>% <span class="token operator">|</span> ARI <span class="token number">23.501</span>%</code></pre>
-<pre class="language-bibtex" tabindex="0"><code class="language-bibtex">@misc{lou2025gae-Unsupervised-text-clustering-using-GNN,
+
+  <button class="code-copy " data-clipboard-target="#code-130" style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
+    <span style="display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;" class=""></span>
+  </button>
+</div>
+
+<div style="position: relative" id="code-container-131">
+  <pre class="language-bibtex" tabindex="0"><code id="code-131" class="language-bibtex">@misc{lou2025gae-Unsupervised-text-clustering-using-GNN,
   author       = {Yonatan Lourie},
   title        = {Evaluating Hierarchical Clustering Beyond the Leaves},
   year         = {2025},
   howpublished = {\url{https://yonatanlou.github.io/blog/unsupervised-text-clustering-gnn/unsupervised-gae-clustering/}},
   note         = {Accessed: 2025-06-20}
 }</code></pre>
+
+  <button class="code-copy " data-clipboard-target="#code-131" style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
+    <span style="display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;" class=""></span>
+  </button>
+</div>
 
 <ul class="links-nextprev"><li class="links-nextprev-prev">← Previous<br> <a href="/blog/Evaluating-Hierarchical-Clustering/hierarchical-clustering-eval/">Evaluating Hierarchical Clustering Beyond the Leaves 🌳</a></li><li class="links-nextprev-next">Next →<br><a href="/blog/things-that-i-learned-in-my-latest-research-roles/">Things I learned in my research roles over the last 5 years</a></li>
 </ul>
@@ -830,7 +915,9 @@ base_ari <span class="token operator">=</span> adjusted_rand_score<span class="t
             </div>
         </footer>
         
-        <!-- This page `/blog/unsupervised-text-clustering-gnn/unsupervised-gae-clustering/` was built on 2025-09-23T21:26:15.716Z -->
+        <!-- This page `/blog/unsupervised-text-clustering-gnn/unsupervised-gae-clustering/` was built on 2025-09-23T21:38:17.336Z -->
         <script type="module" src="/dist/rJ3_G-2ArF.js"></script>
+        <script>function showTooltip(o,e){o.trigger.className.includes("tooltipped")||(o.trigger.children[0].className="tooltipped tooltipped-s",o.trigger.children[0].ariaLabel=e)}window.addEventListener("load",()=>{var o=new ClipboardJS(".code-copy");o.on("success",o=>showTooltip(o,"Copied!")),o.on("error",o=>showTooltip(o,"Failed to copy"))});</script>
+<script async="" src="https://cdn.jsdelivr.net/npm/clipboard@2.0.11/dist/clipboard.min.js"></script>
     </body>
 </html>

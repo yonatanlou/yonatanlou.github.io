@@ -17,6 +17,7 @@
         <meta name="description" content="Why Jaccard Index (as implemented in sklearn.metrics) will not work in unsupervised clustering, and how to implement it.">
         <link rel="alternate" href="feed/feed.xml" type="application/atom+xml" title="Yonatan Lourie">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Primer/19.1.1/tooltips.min.css">
         
         <!-- Google Analytics -->
         <script async="" src="https://www.googletagmanager.com/gtag/js?id=G-C6PG57BBFC"></script>
@@ -523,6 +524,27 @@ footer {
 	margin: 0 auto;
 	/* Center the logo */
 }
+/* Code copy button styles */
+        .code-copy {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            padding: 0.25rem 0.5rem;
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            z-index: 10;
+        }
+        
+        .code-copy:hover {
+            background: white;
+        }
+        
+        pre {
+            position: relative;
+        }
         </style>
     </head>
     <body>
@@ -577,7 +599,9 @@ footer {
 <p>For instance, consider two cluster assignments: <code>[0, 0, 1, 1]</code> and <code>[1, 1, 0, 0]</code>. While these assignments represent the same clustering, the scikit-learn <code>jaccard_score</code> would incorrectly report a low similarity.</p>
 <h3 id="custom-implementation-for-unsupervised-clustering">Custom Implementation for Unsupervised Clustering</h3>
 <p>To address this limitation, we can implement a custom Jaccard Index calculation that is agnostic to label permutations, here is the function with example:</p>
-<pre class="language-python" tabindex="0"><code class="language-python"><span class="token keyword">import</span> numpy <span class="token keyword">as</span> np
+
+<div style="position: relative" id="code-container-22">
+  <pre class="language-python" tabindex="0"><code id="code-22" class="language-python"><span class="token keyword">import</span> numpy <span class="token keyword">as</span> np
 <span class="token keyword">import</span> matplotlib<span class="token punctuation">.</span>pyplot <span class="token keyword">as</span> plt
 <span class="token keyword">import</span> seaborn <span class="token keyword">as</span> sns
 <span class="token keyword">import</span> matplotlib <span class="token keyword">as</span> mpl
@@ -633,10 +657,17 @@ plt<span class="token punctuation">.</span>show<span class="token punctuation">(
 
 
 </code></pre>
+
+  <button class="code-copy " data-clipboard-target="#code-22" style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
+    <span style="display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;" class=""></span>
+  </button>
+</div>
 <p><picture><source type="image/avif" srcset="/blog/jaccard-index-unsupervised/Jaccard_index_for_unsupervised_clustering/ogJ0yDkBbE-1040.avif 1040w"><source type="image/webp" srcset="/blog/jaccard-index-unsupervised/Jaccard_index_for_unsupervised_clustering/ogJ0yDkBbE-1040.webp 1040w"><img loading="lazy" decoding="async" src="/blog/jaccard-index-unsupervised/Jaccard_index_for_unsupervised_clustering/ogJ0yDkBbE-1040.png" alt="png" width="1040" height="495"></picture></p>
 <p>This implementation first creates pairwise comparison matrices for both true and predicted labels. Then, it calculates the intersection and union of these matrices, accounting for the fact that cluster labels can be permuted.</p>
 <p>First, i will make a function that will simulate data based on number of classes and how simliar those clusters are.</p>
-<pre class="language-python" tabindex="0"><code class="language-python"><span class="token keyword">try</span><span class="token punctuation">:</span>
+
+<div style="position: relative" id="code-container-32">
+  <pre class="language-python" tabindex="0"><code id="code-32" class="language-python"><span class="token keyword">try</span><span class="token punctuation">:</span>
     <span class="token keyword">import</span> umap
 <span class="token keyword">except</span><span class="token punctuation">:</span>
     !pip install umap<span class="token operator">-</span>learn
@@ -650,7 +681,14 @@ plt<span class="token punctuation">.</span>show<span class="token punctuation">(
 <span class="token keyword">from</span> umap <span class="token keyword">import</span> UMAP
 
 </code></pre>
-<pre class="language-python" tabindex="0"><code class="language-python">
+
+  <button class="code-copy " data-clipboard-target="#code-32" style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
+    <span style="display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;" class=""></span>
+  </button>
+</div>
+
+<div style="position: relative" id="code-container-33">
+  <pre class="language-python" tabindex="0"><code id="code-33" class="language-python">
 <span class="token keyword">def</span> <span class="token function">simulate_data</span><span class="token punctuation">(</span>num_samples<span class="token punctuation">,</span> num_features<span class="token punctuation">,</span> similarity<span class="token punctuation">,</span> num_classes<span class="token punctuation">,</span> random_seed<span class="token operator">=</span><span class="token number">42</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
     <span class="token triple-quoted-string string">"""
     Generates synthetic data with a certain level of similarity between classes.
@@ -716,10 +754,17 @@ similarity2 <span class="token operator">=</span> <span class="token number">0.9
 data2<span class="token punctuation">,</span> labels2 <span class="token operator">=</span> simulate_data<span class="token punctuation">(</span>num_samples<span class="token punctuation">,</span> num_features<span class="token punctuation">,</span> similarity2<span class="token punctuation">,</span> num_classes<span class="token punctuation">)</span>
 
 plot_umap_projections<span class="token punctuation">(</span>data1<span class="token punctuation">,</span> labels1<span class="token punctuation">,</span> data2<span class="token punctuation">,</span> labels2<span class="token punctuation">,</span> num_classes<span class="token punctuation">,</span> similarity1<span class="token punctuation">,</span> similarity2<span class="token punctuation">)</span></code></pre>
+
+  <button class="code-copy " data-clipboard-target="#code-33" style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
+    <span style="display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;" class=""></span>
+  </button>
+</div>
 <p><picture><source type="image/avif" srcset="/blog/jaccard-index-unsupervised/Jaccard_index_for_unsupervised_clustering/WxCZBTDUAQ-1002.avif 1002w"><source type="image/webp" srcset="/blog/jaccard-index-unsupervised/Jaccard_index_for_unsupervised_clustering/WxCZBTDUAQ-1002.webp 1002w"><img loading="lazy" decoding="async" src="/blog/jaccard-index-unsupervised/Jaccard_index_for_unsupervised_clustering/WxCZBTDUAQ-1002.png" alt="png" width="1002" height="340"></picture></p>
 <p>Nice! So we can now control on the similiarity between clusters and the number of clusters.<br>
 Let's run a bigger simulation and measure the Jaccard measure:</p>
-<pre class="language-python" tabindex="0"><code class="language-python"><span class="token keyword">import</span> numpy <span class="token keyword">as</span> np
+
+<div style="position: relative" id="code-container-40">
+  <pre class="language-python" tabindex="0"><code id="code-40" class="language-python"><span class="token keyword">import</span> numpy <span class="token keyword">as</span> np
 <span class="token keyword">import</span> matplotlib<span class="token punctuation">.</span>pyplot <span class="token keyword">as</span> plt
 <span class="token keyword">from</span> sklearn<span class="token punctuation">.</span>metrics <span class="token keyword">import</span> jaccard_score
 <span class="token keyword">from</span> sklearn<span class="token punctuation">.</span>preprocessing <span class="token keyword">import</span> LabelBinarizer
@@ -822,7 +867,14 @@ results <span class="token operator">=</span> <span class="token punctuation">{<
 
 
 </code></pre>
-<pre class="language-python" tabindex="0"><code class="language-python"><span class="token comment"># Create plots</span>
+
+  <button class="code-copy " data-clipboard-target="#code-40" style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
+    <span style="display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;" class=""></span>
+  </button>
+</div>
+
+<div style="position: relative" id="code-container-41">
+  <pre class="language-python" tabindex="0"><code id="code-41" class="language-python"><span class="token comment"># Create plots</span>
 fig<span class="token punctuation">,</span> <span class="token punctuation">(</span>ax1<span class="token punctuation">,</span> ax2<span class="token punctuation">)</span> <span class="token operator">=</span> plt<span class="token punctuation">.</span>subplots<span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">,</span> <span class="token number">2</span><span class="token punctuation">,</span> figsize<span class="token operator">=</span>FIGSIZE<span class="token punctuation">)</span>
 
 colors <span class="token operator">=</span> plt<span class="token punctuation">.</span>cm<span class="token punctuation">.</span>viridis<span class="token punctuation">(</span>np<span class="token punctuation">.</span>linspace<span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">1</span><span class="token punctuation">,</span> <span class="token builtin">len</span><span class="token punctuation">(</span>similarities<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
@@ -855,6 +907,11 @@ ax2<span class="token punctuation">.</span>grid<span class="token punctuation">(
 
 plt<span class="token punctuation">.</span>tight_layout<span class="token punctuation">(</span><span class="token punctuation">)</span>
 plt<span class="token punctuation">.</span>show<span class="token punctuation">(</span><span class="token punctuation">)</span></code></pre>
+
+  <button class="code-copy " data-clipboard-target="#code-41" style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
+    <span style="display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;" class=""></span>
+  </button>
+</div>
 <p><picture><source type="image/avif" srcset="/blog/jaccard-index-unsupervised/Jaccard_index_for_unsupervised_clustering/c6jHoN4adD-1039.avif 1039w"><source type="image/webp" srcset="/blog/jaccard-index-unsupervised/Jaccard_index_for_unsupervised_clustering/c6jHoN4adD-1039.webp 1039w"><img loading="lazy" decoding="async" src="/blog/jaccard-index-unsupervised/Jaccard_index_for_unsupervised_clustering/c6jHoN4adD-1039.png" alt="png" width="1039" height="340"></picture></p>
 <p>What we will expect to see in this simulation?<br>
 We will expect the data with high similiarity (clusters more dense), will get higher jaccard score.<br>
@@ -872,13 +929,20 @@ jaccard_score(a,b,average=&quot;weighted&quot;)
 <p>Which is not what we want when we doing unsupervised clustering.</p>
 <h3 id="conclusion">Conclusion</h3>
 <p>When evaluating unsupervised clustering algorithms, it's crucial to use metrics that are robust to label permutations. The custom Jaccard Index implementation presented here provides a reliable way to assess the similarity between true and predicted cluster assignments. By understanding the limitations of scikit-learn's jaccard_score in this context, we can make more informed decisions about the performance of our clustering models.</p>
-<pre class="language-bibtex" tabindex="0"><code class="language-bibtex">@misc{lou2025jaccard,
+
+<div style="position: relative" id="code-container-64">
+  <pre class="language-bibtex" tabindex="0"><code id="code-64" class="language-bibtex">@misc{lou2025jaccard,
   author       = {Yonatan Lou},
   title        = {Jaccard Index for Unsupervised Clustering:},
   year         = {2024},
   howpublished = {\url{https://yonatanlou.github.io/blog/jaccard-index-unsupervised/Jaccard_index_for_unsupervised_clustering/}},
   note         = {Accessed: 2024-11-10}
 }</code></pre>
+
+  <button class="code-copy " data-clipboard-target="#code-64" style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
+    <span style="display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;" class=""></span>
+  </button>
+</div>
 
 <ul class="links-nextprev"><li class="links-nextprev-prev">← Previous<br> <a href="/blog/data-pipeline-for-qumran-scrolls/data-pipeline-for-the-qumran-scrolls-using-text-fabric/">How to use the Qumran scrolls for NLP tasks using text-fabric</a></li><li class="links-nextprev-next">Next →<br><a href="/blog/Evaluating-Hierarchical-Clustering/hierarchical-clustering-eval/">Evaluating Hierarchical Clustering Beyond the Leaves 🌳</a></li>
 </ul>
@@ -912,7 +976,9 @@ jaccard_score(a,b,average=&quot;weighted&quot;)
             </div>
         </footer>
         
-        <!-- This page `/blog/jaccard-index-unsupervised/Jaccard_index_for_unsupervised_clustering/` was built on 2025-09-23T21:26:15.715Z -->
+        <!-- This page `/blog/jaccard-index-unsupervised/Jaccard_index_for_unsupervised_clustering/` was built on 2025-09-23T21:38:17.335Z -->
         <script type="module" src="/dist/rJ3_G-2ArF.js"></script>
+        <script>function showTooltip(o,e){o.trigger.className.includes("tooltipped")||(o.trigger.children[0].className="tooltipped tooltipped-s",o.trigger.children[0].ariaLabel=e)}window.addEventListener("load",()=>{var o=new ClipboardJS(".code-copy");o.on("success",o=>showTooltip(o,"Copied!")),o.on("error",o=>showTooltip(o,"Failed to copy"))});</script>
+<script async="" src="https://cdn.jsdelivr.net/npm/clipboard@2.0.11/dist/clipboard.min.js"></script>
     </body>
 </html>

@@ -81,7 +81,9 @@ Then we want to check if the data is imbalanced or not. if its imbalanced, gener
 &lt;p&gt;This is more of a quick-and-dirty prototype than a polished package. I wrote it mainly because I couldn’t find a simple example of unsupervised text clustering using GNNs online.&lt;/p&gt;
 &lt;p&gt;If you&#39;re looking for a more customizable and production-ready version, you can check out the &lt;a href=&quot;https://github.com/yonatanlou/QumranNLP&quot;&gt;&lt;code&gt;QumranNLP&lt;/code&gt;&lt;/a&gt; repository. It&#39;s built around a fascinating dataset-texts from the Dead Sea Scrolls-and uses a more refined version of the same approach.&lt;/p&gt;
 &lt;p&gt;First of all, we will import some important libraries, make some constants (which can be optimize in the future), and collect the data.&lt;/p&gt;
-&lt;pre class=&quot;language-python&quot; tabindex=&quot;0&quot;&gt;&lt;code class=&quot;language-python&quot;&gt;&lt;span class=&quot;token keyword&quot;&gt;import&lt;/span&gt; torch&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; random&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; numpy &lt;span class=&quot;token keyword&quot;&gt;as&lt;/span&gt; np
+
+&lt;div style=&quot;position: relative&quot; id=&quot;code-container-31&quot;&gt;
+  &lt;pre class=&quot;language-python&quot; tabindex=&quot;0&quot;&gt;&lt;code id=&quot;code-31&quot; class=&quot;language-python&quot;&gt;&lt;span class=&quot;token keyword&quot;&gt;import&lt;/span&gt; torch&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; random&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; numpy &lt;span class=&quot;token keyword&quot;&gt;as&lt;/span&gt; np
 &lt;span class=&quot;token keyword&quot;&gt;from&lt;/span&gt; tqdm&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;auto &lt;span class=&quot;token keyword&quot;&gt;import&lt;/span&gt; tqdm
 &lt;span class=&quot;token keyword&quot;&gt;from&lt;/span&gt; sklearn&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;datasets &lt;span class=&quot;token keyword&quot;&gt;import&lt;/span&gt; fetch_20newsgroups
 &lt;span class=&quot;token keyword&quot;&gt;from&lt;/span&gt; sklearn&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;feature_extraction&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;text &lt;span class=&quot;token keyword&quot;&gt;import&lt;/span&gt; TfidfVectorizer&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; CountVectorizer
@@ -121,6 +123,11 @@ texts&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; y &lt;span c
 set_seed_globally&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;SEED&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
 
 &lt;/code&gt;&lt;/pre&gt;
+
+  &lt;button class=&quot;code-copy &quot; data-clipboard-target=&quot;#code-31&quot; style=&quot;position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;&quot; title=&quot;Copy&quot;&gt;
+    &lt;span style=&quot;display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;&quot; class=&quot;&quot;&gt;&lt;/span&gt;
+  &lt;/button&gt;
+&lt;/div&gt;
 &lt;p&gt;Now, we&#39;ll represent the text using three different methods. These are just examples-you can easily swap them out or tweak the configurations to fit your own data or preferences.&lt;/p&gt;
 &lt;p&gt;The methods we&#39;ll use are:&lt;/p&gt;
 &lt;ul&gt;
@@ -128,7 +135,9 @@ set_seed_globally&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;S
 &lt;li&gt;&lt;strong&gt;TF-IDF&lt;/strong&gt; – a classic, sparse representation that captures term importance across the corpus.&lt;/li&gt;
 &lt;li&gt;&lt;strong&gt;Character n-grams&lt;/strong&gt; – helpful for capturing subword patterns, especially in noisy texts.&lt;/li&gt;
 &lt;/ul&gt;
-&lt;pre class=&quot;language-python&quot; tabindex=&quot;0&quot;&gt;&lt;code class=&quot;language-python&quot;&gt;&lt;span class=&quot;token keyword&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot;Step 2 | DistilBERT embeddings …&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+
+&lt;div style=&quot;position: relative&quot; id=&quot;code-container-55&quot;&gt;
+  &lt;pre class=&quot;language-python&quot; tabindex=&quot;0&quot;&gt;&lt;code id=&quot;code-55&quot; class=&quot;language-python&quot;&gt;&lt;span class=&quot;token keyword&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot;Step 2 | DistilBERT embeddings …&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
 tokenizer &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; AutoTokenizer&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;from_pretrained&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot;distilbert-base-uncased&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
 model_bert &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; AutoModel&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;from_pretrained&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot;distilbert-base-uncased&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;to&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;DEVICE&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;token builtin&quot;&gt;eval&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
 
@@ -148,6 +157,11 @@ Xb &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; bert_embed&lt;spa
 Xt &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; TfidfVectorizer&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;max_features&lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;token number&quot;&gt;1500&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;fit_transform&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;texts&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;toarray&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
 Xn &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; CountVectorizer&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;analyzer&lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot;char&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; ngram_range&lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token number&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;token number&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; max_features&lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;token number&quot;&gt;1500&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;fit_transform&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;texts&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;toarray&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;
+
+  &lt;button class=&quot;code-copy &quot; data-clipboard-target=&quot;#code-55&quot; style=&quot;position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;&quot; title=&quot;Copy&quot;&gt;
+    &lt;span style=&quot;display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;&quot; class=&quot;&quot;&gt;&lt;/span&gt;
+  &lt;/button&gt;
+&lt;/div&gt;
 &lt;p&gt;At this point, we&#39;re building the graph based on the TF-IDF and character n-gram features.&lt;/p&gt;
 &lt;p&gt;There are quite a few parameters you can tweak here, and each choice can significantly affect your model. Some key considerations:&lt;/p&gt;
 &lt;ul&gt;
@@ -160,7 +174,9 @@ Xn &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; CountVectorizer&l
 If this threshold is set too low, you’ll end up with a massive graph-which means you&#39;ll need a lot of GPU&#39;s just to train the model.&lt;br&gt;
 Through trial and error, I’ve found that using a &lt;strong&gt;higher threshold&lt;/strong&gt; often results in &lt;strong&gt;better performance&lt;/strong&gt; and &lt;strong&gt;faster training&lt;/strong&gt;.&lt;/p&gt;
 &lt;/blockquote&gt;
-&lt;pre class=&quot;language-python&quot; tabindex=&quot;0&quot;&gt;&lt;code class=&quot;language-python&quot;&gt;&lt;span class=&quot;token keyword&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot;Step 4 | Building graph edges (k‑NN) …&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+
+&lt;div style=&quot;position: relative&quot; id=&quot;code-container-82&quot;&gt;
+  &lt;pre class=&quot;language-python&quot; tabindex=&quot;0&quot;&gt;&lt;code id=&quot;code-82&quot; class=&quot;language-python&quot;&gt;&lt;span class=&quot;token keyword&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot;Step 4 | Building graph edges (k‑NN) …&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
 
 &lt;span class=&quot;token keyword&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;token function&quot;&gt;adj_cosine&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;mat&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; q&lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;token number&quot;&gt;0.99&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
     norm &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; mat &lt;span class=&quot;token operator&quot;&gt;/&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;np&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;linalg&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;norm&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;mat&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; axis&lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;token number&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; keepdims&lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;token boolean&quot;&gt;True&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;token operator&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;token number&quot;&gt;1e-8&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
@@ -183,10 +199,22 @@ adj_comb  &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; &lt;span c
 E &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; adj_to_edge&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;adj_comb&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
 
 &lt;/code&gt;&lt;/pre&gt;
-&lt;pre class=&quot;language-bash&quot; tabindex=&quot;0&quot;&gt;&lt;code class=&quot;language-bash&quot;&gt;Step &lt;span class=&quot;token number&quot;&gt;4&lt;/span&gt; &lt;span class=&quot;token operator&quot;&gt;|&lt;/span&gt; Building graph edges &lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;k‑NN&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+
+  &lt;button class=&quot;code-copy &quot; data-clipboard-target=&quot;#code-82&quot; style=&quot;position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;&quot; title=&quot;Copy&quot;&gt;
+    &lt;span style=&quot;display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;&quot; class=&quot;&quot;&gt;&lt;/span&gt;
+  &lt;/button&gt;
+&lt;/div&gt;
+
+&lt;div style=&quot;position: relative&quot; id=&quot;code-container-83&quot;&gt;
+  &lt;pre class=&quot;language-bash&quot; tabindex=&quot;0&quot;&gt;&lt;code id=&quot;code-83&quot; class=&quot;language-bash&quot;&gt;Step &lt;span class=&quot;token number&quot;&gt;4&lt;/span&gt; &lt;span class=&quot;token operator&quot;&gt;|&lt;/span&gt; Building graph edges &lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;k‑NN&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
     TF-IDF edges:  &lt;span class=&quot;token number&quot;&gt;1032&lt;/span&gt;
     N-gram edges: &lt;span class=&quot;token number&quot;&gt;1028&lt;/span&gt;
     Combined edges: &lt;span class=&quot;token number&quot;&gt;1056&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+
+  &lt;button class=&quot;code-copy &quot; data-clipboard-target=&quot;#code-83&quot; style=&quot;position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;&quot; title=&quot;Copy&quot;&gt;
+    &lt;span style=&quot;display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;&quot; class=&quot;&quot;&gt;&lt;/span&gt;
+  &lt;/button&gt;
+&lt;/div&gt;
 &lt;p&gt;Now we move on to training the model.&lt;br&gt;
 In my original implementation, I included early stopping to avoid overfitting-but for the sake of this simplified version, I skipped it (I was lazy 😅).&lt;/p&gt;
 &lt;p&gt;Just like before, this part is highly customizable. You can experiment with:&lt;/p&gt;
@@ -203,7 +231,9 @@ In my original implementation, I included early stopping to avoid overfitting-bu
 Still, I think &lt;a href=&quot;https://scikit-learn.org/stable/modules/clustering.html#clustering-performance-evaluation&quot;&gt;Scikit-learn’s guide on Clustering Performance Evaluation&lt;/a&gt; is one of the best overviews available online.&lt;/p&gt;
 &lt;p&gt;I also wrote about a more niche but useful method in my post on&lt;br&gt;
 &lt;a href=&quot;https://yonatanlou.github.io/blog/Evaluating-Hierarchical-Clustering/hierarchical-clustering-eval/&quot;&gt;Evaluating Hierarchical Clustering&lt;/a&gt;, which dives into metrics like the Dasgupta cost (specific for hierarchial clustering).&lt;/p&gt;
-&lt;pre class=&quot;language-python&quot; tabindex=&quot;0&quot;&gt;&lt;code class=&quot;language-python&quot;&gt;
+
+&lt;div style=&quot;position: relative&quot; id=&quot;code-container-127&quot;&gt;
+  &lt;pre class=&quot;language-python&quot; tabindex=&quot;0&quot;&gt;&lt;code id=&quot;code-127&quot; class=&quot;language-python&quot;&gt;
 &lt;span class=&quot;token keyword&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot;Step 5 | Training Graph Auto‑Encoder …&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
 
 graph &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; Data&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;x&lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt;torch&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;tensor&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;Xb&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; dtype&lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt;torch&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;token builtin&quot;&gt;float&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; edge_index&lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt;E&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
@@ -230,7 +260,14 @@ opt &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; torch&lt;span cl
 
 
 &lt;/code&gt;&lt;/pre&gt;
-&lt;pre class=&quot;language-bash&quot; tabindex=&quot;0&quot;&gt;&lt;code class=&quot;language-bash&quot;&gt;    Step &lt;span class=&quot;token number&quot;&gt;5&lt;/span&gt; &lt;span class=&quot;token operator&quot;&gt;|&lt;/span&gt; Training Graph Auto‑Encoder …
+
+  &lt;button class=&quot;code-copy &quot; data-clipboard-target=&quot;#code-127&quot; style=&quot;position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;&quot; title=&quot;Copy&quot;&gt;
+    &lt;span style=&quot;display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;&quot; class=&quot;&quot;&gt;&lt;/span&gt;
+  &lt;/button&gt;
+&lt;/div&gt;
+
+&lt;div style=&quot;position: relative&quot; id=&quot;code-container-128&quot;&gt;
+  &lt;pre class=&quot;language-bash&quot; tabindex=&quot;0&quot;&gt;&lt;code id=&quot;code-128&quot; class=&quot;language-bash&quot;&gt;    Step &lt;span class=&quot;token number&quot;&gt;5&lt;/span&gt; &lt;span class=&quot;token operator&quot;&gt;|&lt;/span&gt; Training Graph Auto‑Encoder …
     Epoch 010 &lt;span class=&quot;token operator&quot;&gt;|&lt;/span&gt; Loss &lt;span class=&quot;token number&quot;&gt;1.1351&lt;/span&gt;
     Epoch 020 &lt;span class=&quot;token operator&quot;&gt;|&lt;/span&gt; Loss &lt;span class=&quot;token number&quot;&gt;1.0478&lt;/span&gt;
     Epoch 030 &lt;span class=&quot;token operator&quot;&gt;|&lt;/span&gt; Loss &lt;span class=&quot;token number&quot;&gt;0.9715&lt;/span&gt;
@@ -267,7 +304,14 @@ opt &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; torch&lt;span cl
     Epoch &lt;span class=&quot;token number&quot;&gt;340&lt;/span&gt; &lt;span class=&quot;token operator&quot;&gt;|&lt;/span&gt; Loss &lt;span class=&quot;token number&quot;&gt;0.7836&lt;/span&gt;
     Epoch &lt;span class=&quot;token number&quot;&gt;350&lt;/span&gt; &lt;span class=&quot;token operator&quot;&gt;|&lt;/span&gt; Loss &lt;span class=&quot;token number&quot;&gt;0.7654&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;
-&lt;pre class=&quot;language-python&quot; tabindex=&quot;0&quot;&gt;&lt;code class=&quot;language-python&quot;&gt;&lt;span class=&quot;token keyword&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot;Step 6 | Clustering latent space …&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+
+  &lt;button class=&quot;code-copy &quot; data-clipboard-target=&quot;#code-128&quot; style=&quot;position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;&quot; title=&quot;Copy&quot;&gt;
+    &lt;span style=&quot;display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;&quot; class=&quot;&quot;&gt;&lt;/span&gt;
+  &lt;/button&gt;
+&lt;/div&gt;
+
+&lt;div style=&quot;position: relative&quot; id=&quot;code-container-129&quot;&gt;
+  &lt;pre class=&quot;language-python&quot; tabindex=&quot;0&quot;&gt;&lt;code id=&quot;code-129&quot; class=&quot;language-python&quot;&gt;&lt;span class=&quot;token keyword&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot;Step 6 | Clustering latent space …&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
 gae&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;token builtin&quot;&gt;eval&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
 &lt;span class=&quot;token keyword&quot;&gt;with&lt;/span&gt; torch&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;no_grad&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
     embeddings &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; gae&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;encode&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;graph&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;x&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; graph&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;edge_index&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;cpu&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;detach&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;numpy&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
@@ -285,19 +329,38 @@ base_ari &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; adjusted_ra
 &lt;span class=&quot;token keyword&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token string-interpolation&quot;&gt;&lt;span class=&quot;token string&quot;&gt;f&quot;Baseline (BERT + k‑means) → V: &lt;/span&gt;&lt;span class=&quot;token interpolation&quot;&gt;&lt;span class=&quot;token punctuation&quot;&gt;{&lt;/span&gt;base_v&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;token format-spec&quot;&gt;.3f&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;}&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt; | ARI: &lt;/span&gt;&lt;span class=&quot;token interpolation&quot;&gt;&lt;span class=&quot;token punctuation&quot;&gt;{&lt;/span&gt;base_ari&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;token format-spec&quot;&gt;.3f&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;}&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot;&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
 &lt;span class=&quot;token keyword&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token string-interpolation&quot;&gt;&lt;span class=&quot;token string&quot;&gt;f&quot;GAE (BERT + TF-IDF + N-grams)   → V: &lt;/span&gt;&lt;span class=&quot;token interpolation&quot;&gt;&lt;span class=&quot;token punctuation&quot;&gt;{&lt;/span&gt;gae_v&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;token format-spec&quot;&gt;.3f&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;}&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt; | ARI: &lt;/span&gt;&lt;span class=&quot;token interpolation&quot;&gt;&lt;span class=&quot;token punctuation&quot;&gt;{&lt;/span&gt;gae_ari&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;token format-spec&quot;&gt;.3f&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;}&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot;&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
 &lt;span class=&quot;token keyword&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token string-interpolation&quot;&gt;&lt;span class=&quot;token string&quot;&gt;f&quot;Improvement: V &lt;/span&gt;&lt;span class=&quot;token interpolation&quot;&gt;&lt;span class=&quot;token punctuation&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;gae_v&lt;span class=&quot;token operator&quot;&gt;/&lt;/span&gt;base_v&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token operator&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;token number&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;token format-spec&quot;&gt;.3%&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;}&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt; | ARI &lt;/span&gt;&lt;span class=&quot;token interpolation&quot;&gt;&lt;span class=&quot;token punctuation&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;gae_ari&lt;span class=&quot;token operator&quot;&gt;/&lt;/span&gt;base_ari&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token operator&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;token number&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;token format-spec&quot;&gt;.3%&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;}&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot;&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
-&lt;pre class=&quot;language-bash&quot; tabindex=&quot;0&quot;&gt;&lt;code class=&quot;language-bash&quot;&gt;    Step &lt;span class=&quot;token number&quot;&gt;6&lt;/span&gt; &lt;span class=&quot;token operator&quot;&gt;|&lt;/span&gt; Clustering latent space …
+
+  &lt;button class=&quot;code-copy &quot; data-clipboard-target=&quot;#code-129&quot; style=&quot;position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;&quot; title=&quot;Copy&quot;&gt;
+    &lt;span style=&quot;display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;&quot; class=&quot;&quot;&gt;&lt;/span&gt;
+  &lt;/button&gt;
+&lt;/div&gt;
+
+&lt;div style=&quot;position: relative&quot; id=&quot;code-container-130&quot;&gt;
+  &lt;pre class=&quot;language-bash&quot; tabindex=&quot;0&quot;&gt;&lt;code id=&quot;code-130&quot; class=&quot;language-bash&quot;&gt;    Step &lt;span class=&quot;token number&quot;&gt;6&lt;/span&gt; &lt;span class=&quot;token operator&quot;&gt;|&lt;/span&gt; Clustering latent space …
     
     Results
     Baseline &lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;BERT + k‑means&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt; → V: &lt;span class=&quot;token number&quot;&gt;0.317&lt;/span&gt; &lt;span class=&quot;token operator&quot;&gt;|&lt;/span&gt; ARI: &lt;span class=&quot;token number&quot;&gt;0.124&lt;/span&gt;
     GAE &lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;BERT + TF-IDF + N-grams&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;   → V: &lt;span class=&quot;token number&quot;&gt;0.355&lt;/span&gt; &lt;span class=&quot;token operator&quot;&gt;|&lt;/span&gt; ARI: &lt;span class=&quot;token number&quot;&gt;0.153&lt;/span&gt;
     Improvement: V &lt;span class=&quot;token number&quot;&gt;12.082&lt;/span&gt;% &lt;span class=&quot;token operator&quot;&gt;|&lt;/span&gt; ARI &lt;span class=&quot;token number&quot;&gt;23.501&lt;/span&gt;%&lt;/code&gt;&lt;/pre&gt;
-&lt;pre class=&quot;language-bibtex&quot; tabindex=&quot;0&quot;&gt;&lt;code class=&quot;language-bibtex&quot;&gt;@misc{lou2025gae-Unsupervised-text-clustering-using-GNN,
+
+  &lt;button class=&quot;code-copy &quot; data-clipboard-target=&quot;#code-130&quot; style=&quot;position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;&quot; title=&quot;Copy&quot;&gt;
+    &lt;span style=&quot;display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;&quot; class=&quot;&quot;&gt;&lt;/span&gt;
+  &lt;/button&gt;
+&lt;/div&gt;
+
+&lt;div style=&quot;position: relative&quot; id=&quot;code-container-131&quot;&gt;
+  &lt;pre class=&quot;language-bibtex&quot; tabindex=&quot;0&quot;&gt;&lt;code id=&quot;code-131&quot; class=&quot;language-bibtex&quot;&gt;@misc{lou2025gae-Unsupervised-text-clustering-using-GNN,
   author       = {Yonatan Lourie},
   title        = {Evaluating Hierarchical Clustering Beyond the Leaves},
   year         = {2025},
   howpublished = {&#92;url{https://yonatanlou.github.io/blog/unsupervised-text-clustering-gnn/unsupervised-gae-clustering/}},
   note         = {Accessed: 2025-06-20}
 }&lt;/code&gt;&lt;/pre&gt;
+
+  &lt;button class=&quot;code-copy &quot; data-clipboard-target=&quot;#code-131&quot; style=&quot;position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;&quot; title=&quot;Copy&quot;&gt;
+    &lt;span style=&quot;display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;&quot; class=&quot;&quot;&gt;&lt;/span&gt;
+  &lt;/button&gt;
+&lt;/div&gt;
 </content>
   </entry>
   <entry>
@@ -334,15 +397,24 @@ The &lt;strong&gt;size&lt;/strong&gt; &lt;span class=&quot;katex&quot;&gt;&lt;ma
 &lt;p&gt;For a clear example, check out this presentation from &lt;a href=&quot;https://www.irif.fr/_media/users/claire/talkcolle_gedefrance7juin2018.pdf&quot;&gt;IRIF&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;Also, &lt;a href=&quot;https://perso.esiee.fr/~perretb/&quot;&gt;Benjamin Perret&lt;/a&gt; has implemented this objective in an easy-to-use &lt;a href=&quot;https://higra.readthedocs.io/en/stable/python/hierarchical_cost.html&quot;&gt;Python package&lt;/a&gt;. 🎉&lt;/p&gt;
 &lt;p&gt;I will show here a nice example with hierarchial text clustering for items from Amazon.&lt;/p&gt;
-&lt;pre class=&quot;language-python&quot; tabindex=&quot;0&quot;&gt;&lt;code class=&quot;language-python&quot;&gt;&lt;span class=&quot;token keyword&quot;&gt;try&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
+
+&lt;div style=&quot;position: relative&quot; id=&quot;code-container-68&quot;&gt;
+  &lt;pre class=&quot;language-python&quot; tabindex=&quot;0&quot;&gt;&lt;code id=&quot;code-68&quot; class=&quot;language-python&quot;&gt;&lt;span class=&quot;token keyword&quot;&gt;try&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
   &lt;span class=&quot;token keyword&quot;&gt;import&lt;/span&gt; sknetwork
 &lt;span class=&quot;token keyword&quot;&gt;except&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
   !pip install scikit&lt;span class=&quot;token operator&quot;&gt;-&lt;/span&gt;network
 
 &lt;span class=&quot;token keyword&quot;&gt;from&lt;/span&gt; google&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;colab &lt;span class=&quot;token keyword&quot;&gt;import&lt;/span&gt; drive
 drive&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;mount&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot;/content/gdrive&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; force_remount&lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;token boolean&quot;&gt;True&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+
+  &lt;button class=&quot;code-copy &quot; data-clipboard-target=&quot;#code-68&quot; style=&quot;position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;&quot; title=&quot;Copy&quot;&gt;
+    &lt;span style=&quot;display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;&quot; class=&quot;&quot;&gt;&lt;/span&gt;
+  &lt;/button&gt;
+&lt;/div&gt;
 &lt;p&gt;Mounted at /content/gdrive&lt;/p&gt;
-&lt;pre class=&quot;language-python&quot; tabindex=&quot;0&quot;&gt;&lt;code class=&quot;language-python&quot;&gt;&lt;span class=&quot;token keyword&quot;&gt;import&lt;/span&gt; os
+
+&lt;div style=&quot;position: relative&quot; id=&quot;code-container-72&quot;&gt;
+  &lt;pre class=&quot;language-python&quot; tabindex=&quot;0&quot;&gt;&lt;code id=&quot;code-72&quot; class=&quot;language-python&quot;&gt;&lt;span class=&quot;token keyword&quot;&gt;import&lt;/span&gt; os
 &lt;span class=&quot;token keyword&quot;&gt;import&lt;/span&gt; random
 
 &lt;span class=&quot;token keyword&quot;&gt;import&lt;/span&gt; pandas &lt;span class=&quot;token keyword&quot;&gt;as&lt;/span&gt; pd
@@ -380,7 +452,14 @@ os&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;makedirs&lt;span
 
 set_seed_globally&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token number&quot;&gt;42&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
 device &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; torch&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;device&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot;cuda&quot;&lt;/span&gt; &lt;span class=&quot;token keyword&quot;&gt;if&lt;/span&gt; torch&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;cuda&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;is_available&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;token keyword&quot;&gt;else&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;cpu&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
-&lt;pre class=&quot;language-python&quot; tabindex=&quot;0&quot;&gt;&lt;code class=&quot;language-python&quot;&gt;
+
+  &lt;button class=&quot;code-copy &quot; data-clipboard-target=&quot;#code-72&quot; style=&quot;position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;&quot; title=&quot;Copy&quot;&gt;
+    &lt;span style=&quot;display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;&quot; class=&quot;&quot;&gt;&lt;/span&gt;
+  &lt;/button&gt;
+&lt;/div&gt;
+
+&lt;div style=&quot;position: relative&quot; id=&quot;code-container-73&quot;&gt;
+  &lt;pre class=&quot;language-python&quot; tabindex=&quot;0&quot;&gt;&lt;code id=&quot;code-73&quot; class=&quot;language-python&quot;&gt;
 path &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; kagglehub&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;dataset_download&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot;lokeshparab/amazon-products-dataset&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
 
 &lt;span class=&quot;token comment&quot;&gt;# print(&quot;Path to dataset files:&quot;, path)&lt;/span&gt;
@@ -392,9 +471,16 @@ dfs &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; &lt;span class=&
     df &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; pd&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;read_csv&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;file_path&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
     dfs&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;append&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;df&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
 combined_df &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; pd&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;concat&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;dfs&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; ignore_index&lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;token boolean&quot;&gt;True&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+
+  &lt;button class=&quot;code-copy &quot; data-clipboard-target=&quot;#code-73&quot; style=&quot;position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;&quot; title=&quot;Copy&quot;&gt;
+    &lt;span style=&quot;display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;&quot; class=&quot;&quot;&gt;&lt;/span&gt;
+  &lt;/button&gt;
+&lt;/div&gt;
 &lt;p&gt;This dataset contains only &lt;strong&gt;two levels&lt;/strong&gt; of hierarchy, so I created an additional level to enrich the structure.&lt;/p&gt;
 &lt;p&gt;By adding this third level, the hierarchy becomes more informative and allows for a deeper evaluation of clustering performance across multiple granularities.&lt;/p&gt;
-&lt;pre class=&quot;language-python&quot; tabindex=&quot;0&quot;&gt;&lt;code class=&quot;language-python&quot;&gt;categories &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;{&lt;/span&gt;
+
+&lt;div style=&quot;position: relative&quot; id=&quot;code-container-80&quot;&gt;
+  &lt;pre class=&quot;language-python&quot; tabindex=&quot;0&quot;&gt;&lt;code id=&quot;code-80&quot; class=&quot;language-python&quot;&gt;categories &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;{&lt;/span&gt;
     &lt;span class=&quot;token string&quot;&gt;&quot;Fashion and Accessories&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;[&lt;/span&gt;
         &lt;span class=&quot;token string&quot;&gt;&quot;men&#39;s shoes&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;men&#39;s clothing&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;women&#39;s shoes&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt;
         &lt;span class=&quot;token string&quot;&gt;&quot;women&#39;s clothing&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;kids&#39; fashion&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;bags &amp;amp; luggage&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;accessories&quot;&lt;/span&gt;
@@ -418,6 +504,11 @@ combined_df &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; combined
 &lt;span class=&quot;token punctuation&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
 
 combined_df&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;groupby&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot;1st_level_category&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;2nd_level_category&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot;3rd_level_category&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;nunique&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+
+  &lt;button class=&quot;code-copy &quot; data-clipboard-target=&quot;#code-80&quot; style=&quot;position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;&quot; title=&quot;Copy&quot;&gt;
+    &lt;span style=&quot;display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;&quot; class=&quot;&quot;&gt;&lt;/span&gt;
+  &lt;/button&gt;
+&lt;/div&gt;
 &lt;div&gt;
 &lt;style scoped=&quot;&quot;&gt;
     .dataframe tbody tr th:only-of-type {
@@ -531,10 +622,17 @@ text-align: right;&lt;br&gt;
   &lt;/tbody&gt;
 &lt;/table&gt;
 &lt;/div&gt;&lt;br&gt;&lt;label&gt;&lt;b&gt;dtype:&lt;/b&gt; int64&lt;/label&gt;
-&lt;pre class=&quot;language-python&quot; tabindex=&quot;0&quot;&gt;&lt;code class=&quot;language-python&quot;&gt;N_SAMPLES &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;token number&quot;&gt;100&lt;/span&gt;
+
+&lt;div style=&quot;position: relative&quot; id=&quot;code-container-89&quot;&gt;
+  &lt;pre class=&quot;language-python&quot; tabindex=&quot;0&quot;&gt;&lt;code id=&quot;code-89&quot; class=&quot;language-python&quot;&gt;N_SAMPLES &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;token number&quot;&gt;100&lt;/span&gt;
 df &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; combined_df&lt;span class=&quot;token punctuation&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot;name&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;1st_level_category&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;2nd_level_category&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;3rd_level_category&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;]&lt;/span&gt;
 df &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; df&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;sample&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;N_SAMPLES&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
 df&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;head&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+
+  &lt;button class=&quot;code-copy &quot; data-clipboard-target=&quot;#code-89&quot; style=&quot;position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;&quot; title=&quot;Copy&quot;&gt;
+    &lt;span style=&quot;display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;&quot; class=&quot;&quot;&gt;&lt;/span&gt;
+  &lt;/button&gt;
+&lt;/div&gt;
   &lt;div id=&quot;df-e3aa984c-6ff7-418d-9e3e-d33c59c6ca2d&quot; class=&quot;colab-df-container&quot;&gt;
     &lt;div&gt;
 &lt;style scoped=&quot;&quot;&gt;
@@ -811,7 +909,9 @@ Do we stick to standard metrics like silhouette score or adjusted Rand index, or
 &lt;li&gt;&lt;strong&gt;BERT&lt;/strong&gt; - specifically the &lt;a href=&quot;https://huggingface.co/sentence-transformers/paraphrase-MiniLM-L6-v2&quot;&gt;paraphrase-MiniLM-L6-v2&lt;/a&gt; model, which provides contextual embeddings that capture semantic meaning.&lt;/li&gt;
 &lt;li&gt;&lt;strong&gt;TF-IDF&lt;/strong&gt; - a method that balances word frequency by down-weighting common words and up-weighting more informative ones.&lt;/li&gt;
 &lt;/ol&gt;
-&lt;pre class=&quot;language-python&quot; tabindex=&quot;0&quot;&gt;&lt;code class=&quot;language-python&quot;&gt;bert_model &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; SentenceTransformer&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&#39;paraphrase-MiniLM-L6-v2&#39;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+
+&lt;div style=&quot;position: relative&quot; id=&quot;code-container-169&quot;&gt;
+  &lt;pre class=&quot;language-python&quot; tabindex=&quot;0&quot;&gt;&lt;code id=&quot;code-169&quot; class=&quot;language-python&quot;&gt;bert_model &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; SentenceTransformer&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&#39;paraphrase-MiniLM-L6-v2&#39;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
 bert_model&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;to&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;device&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
 
 &lt;span class=&quot;token keyword&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;token function&quot;&gt;generate_embeddings&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;texts&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; method&lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot;tf-idf&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; vectorizer_params&lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;token boolean&quot;&gt;None&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
@@ -837,8 +937,15 @@ bert_model&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;to&lt;sp
 
 vectorizer_params &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot;ngram_range&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token number&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;token number&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;max_features&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;token number&quot;&gt;1000&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;analyzer&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot;word&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;}&lt;/span&gt;
 embeddings &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; generate_embeddings&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;df&lt;span class=&quot;token punctuation&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot;name&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;to_list&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; method&lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot;n-gram&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; vectorizer_params&lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt;vectorizer_params&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+
+  &lt;button class=&quot;code-copy &quot; data-clipboard-target=&quot;#code-169&quot; style=&quot;position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;&quot; title=&quot;Copy&quot;&gt;
+    &lt;span style=&quot;display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;&quot; class=&quot;&quot;&gt;&lt;/span&gt;
+  &lt;/button&gt;
+&lt;/div&gt;
 &lt;h3 id=&quot;hierarchical-clustering&quot;&gt;Hierarchical clustering&lt;/h3&gt;
-&lt;pre class=&quot;language-python&quot; tabindex=&quot;0&quot;&gt;&lt;code class=&quot;language-python&quot;&gt;&lt;span class=&quot;token keyword&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;token function&quot;&gt;perform_hierarchical_clustering&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;embeddings&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; method&lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot;ward&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
+
+&lt;div style=&quot;position: relative&quot; id=&quot;code-container-173&quot;&gt;
+  &lt;pre class=&quot;language-python&quot; tabindex=&quot;0&quot;&gt;&lt;code id=&quot;code-173&quot; class=&quot;language-python&quot;&gt;&lt;span class=&quot;token keyword&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;token function&quot;&gt;perform_hierarchical_clustering&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;embeddings&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; method&lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot;ward&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
     &lt;span class=&quot;token keyword&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;token keyword&quot;&gt;not&lt;/span&gt; &lt;span class=&quot;token builtin&quot;&gt;isinstance&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;embeddings&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; np&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;ndarray&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
         &lt;span class=&quot;token keyword&quot;&gt;raise&lt;/span&gt; ValueError&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot;Embeddings must be a NumPy array.&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
 
@@ -861,9 +968,16 @@ embeddings &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; generate_
     &lt;span class=&quot;token keyword&quot;&gt;return&lt;/span&gt; labels&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;astype&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token builtin&quot;&gt;int&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
 
 &lt;/code&gt;&lt;/pre&gt;
+
+  &lt;button class=&quot;code-copy &quot; data-clipboard-target=&quot;#code-173&quot; style=&quot;position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;&quot; title=&quot;Copy&quot;&gt;
+    &lt;span style=&quot;display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;&quot; class=&quot;&quot;&gt;&lt;/span&gt;
+  &lt;/button&gt;
+&lt;/div&gt;
 &lt;h3 id=&quot;evaluation&quot;&gt;Evaluation&lt;/h3&gt;
 &lt;h4 id=&quot;classical-unsupervised-clustering-evaluation&quot;&gt;Classical unsupervised clustering evaluation&lt;/h4&gt;
-&lt;pre class=&quot;language-python&quot; tabindex=&quot;0&quot;&gt;&lt;code class=&quot;language-python&quot;&gt;&lt;span class=&quot;token keyword&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;token function&quot;&gt;clustering_accuracy&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;y_true&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; y_pred&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
+
+&lt;div style=&quot;position: relative&quot; id=&quot;code-container-180&quot;&gt;
+  &lt;pre class=&quot;language-python&quot; tabindex=&quot;0&quot;&gt;&lt;code id=&quot;code-180&quot; class=&quot;language-python&quot;&gt;&lt;span class=&quot;token keyword&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;token function&quot;&gt;clustering_accuracy&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;y_true&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; y_pred&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
     cm &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; confusion_matrix&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;y_true&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; y_pred&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
     row_ind&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; col_ind &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; linear_sum_assignment&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token operator&quot;&gt;-&lt;/span&gt;cm&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
     total_correct &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; cm&lt;span class=&quot;token punctuation&quot;&gt;[&lt;/span&gt;row_ind&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; col_ind&lt;span class=&quot;token punctuation&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;token builtin&quot;&gt;sum&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
@@ -886,6 +1000,11 @@ embeddings &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; generate_
         &lt;span class=&quot;token keyword&quot;&gt;raise&lt;/span&gt; ValueError&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot;Invalid metric. Choose from &#39;silhouette&#39;, &#39;adjusted_rand&#39;.&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
 
     &lt;span class=&quot;token keyword&quot;&gt;return&lt;/span&gt; score&lt;/code&gt;&lt;/pre&gt;
+
+  &lt;button class=&quot;code-copy &quot; data-clipboard-target=&quot;#code-180&quot; style=&quot;position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;&quot; title=&quot;Copy&quot;&gt;
+    &lt;span style=&quot;display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;&quot; class=&quot;&quot;&gt;&lt;/span&gt;
+  &lt;/button&gt;
+&lt;/div&gt;
 &lt;h4 id=&quot;dasgupta-objective&quot;&gt;Dasgupta Objective&lt;/h4&gt;
 &lt;p&gt;For the Dasgupta objective, we need a linkage method and a similarity matrix between different items.&lt;/p&gt;
 &lt;p&gt;This similarity matrix can be constructed in various ways. For this experiment, I decided to build it as follows:&lt;/p&gt;
@@ -896,7 +1015,9 @@ embeddings &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; generate_
 &lt;/ul&gt;
 &lt;p&gt;This scoring reflects the idea that closely related items (at the lowest level) should have a higher similarity score than those grouped at broader levels.&lt;/p&gt;
 &lt;p&gt;To better visualize this, here&#39;s the heatmap for the similarity matrix of the first 10 items:&lt;/p&gt;
-&lt;pre class=&quot;language-python&quot; tabindex=&quot;0&quot;&gt;&lt;code class=&quot;language-python&quot;&gt;&lt;span class=&quot;token keyword&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;token function&quot;&gt;create_adjacency_matrix&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;df&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
+
+&lt;div style=&quot;position: relative&quot; id=&quot;code-container-213&quot;&gt;
+  &lt;pre class=&quot;language-python&quot; tabindex=&quot;0&quot;&gt;&lt;code id=&quot;code-213&quot; class=&quot;language-python&quot;&gt;&lt;span class=&quot;token keyword&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;token function&quot;&gt;create_adjacency_matrix&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;df&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
     &lt;span class=&quot;token keyword&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;token keyword&quot;&gt;not&lt;/span&gt; &lt;span class=&quot;token builtin&quot;&gt;all&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;col &lt;span class=&quot;token keyword&quot;&gt;in&lt;/span&gt; df&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;columns &lt;span class=&quot;token keyword&quot;&gt;for&lt;/span&gt; col &lt;span class=&quot;token keyword&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&#39;1st_level_category&#39;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&#39;2nd_level_category&#39;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&#39;3rd_level_category&#39;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
         &lt;span class=&quot;token keyword&quot;&gt;raise&lt;/span&gt; ValueError&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot;The DataFrame must contain &#39;1st_level_category&#39;, &#39;2nd_level_category&#39;, and &#39;3rd_level_category&#39; columns.&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
 
@@ -921,8 +1042,20 @@ adjacency_matrix &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; cre
 fig &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; sns&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;heatmap&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;adjacency_matrix&lt;span class=&quot;token punctuation&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;token number&quot;&gt;10&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;token number&quot;&gt;10&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
 plt&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;savefig&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token string-interpolation&quot;&gt;&lt;span class=&quot;token string&quot;&gt;f&quot;&lt;/span&gt;&lt;span class=&quot;token interpolation&quot;&gt;&lt;span class=&quot;token punctuation&quot;&gt;{&lt;/span&gt;FIGS_PATH&lt;span class=&quot;token punctuation&quot;&gt;}&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;/adj_mat.png&quot;&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; transparent&lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;token boolean&quot;&gt;True&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;
+
+  &lt;button class=&quot;code-copy &quot; data-clipboard-target=&quot;#code-213&quot; style=&quot;position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;&quot; title=&quot;Copy&quot;&gt;
+    &lt;span style=&quot;display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;&quot; class=&quot;&quot;&gt;&lt;/span&gt;
+  &lt;/button&gt;
+&lt;/div&gt;
 &lt;p&gt;&lt;picture&gt;&lt;source type=&quot;image/avif&quot; srcset=&quot;https://yonatanlou.github.io/blog/Evaluating-Hierarchical-Clustering/hierarchical-clustering-eval/nuhY2ExpUH-640.avif 640w&quot;&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://yonatanlou.github.io/blog/Evaluating-Hierarchical-Clustering/hierarchical-clustering-eval/nuhY2ExpUH-640.webp 640w&quot;&gt;&lt;img loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://yonatanlou.github.io/blog/Evaluating-Hierarchical-Clustering/hierarchical-clustering-eval/nuhY2ExpUH-640.png&quot; alt=&quot;png&quot; width=&quot;640&quot; height=&quot;480&quot;&gt;&lt;/picture&gt;&lt;/p&gt;
-&lt;pre class=&quot;language-python&quot; tabindex=&quot;0&quot;&gt;&lt;code class=&quot;language-python&quot;&gt;df&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;reset_index&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;drop&lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;token boolean&quot;&gt;True&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;head&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token number&quot;&gt;10&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+
+&lt;div style=&quot;position: relative&quot; id=&quot;code-container-217&quot;&gt;
+  &lt;pre class=&quot;language-python&quot; tabindex=&quot;0&quot;&gt;&lt;code id=&quot;code-217&quot; class=&quot;language-python&quot;&gt;df&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;reset_index&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;drop&lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;token boolean&quot;&gt;True&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;head&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token number&quot;&gt;10&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+
+  &lt;button class=&quot;code-copy &quot; data-clipboard-target=&quot;#code-217&quot; style=&quot;position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;&quot; title=&quot;Copy&quot;&gt;
+    &lt;span style=&quot;display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;&quot; class=&quot;&quot;&gt;&lt;/span&gt;
+  &lt;/button&gt;
+&lt;/div&gt;
   &lt;div id=&quot;df-9ddc9fa2-05ea-45f8-ae6d-5235f9435ee4&quot; class=&quot;colab-df-container&quot;&gt;
     &lt;div&gt;
 &lt;style scoped=&quot;&quot;&gt;
@@ -1218,7 +1351,9 @@ width=&amp;quot;24px&amp;quot;&amp;gt;&lt;br&gt;
 &lt;p&gt;Finally, there are pairs of items that have nothing in common across all levels, so their similarity score is 0.&lt;/p&gt;
 &lt;h4 id=&quot;comparison&quot;&gt;Comparison&lt;/h4&gt;
 &lt;p&gt;Let&#39;s compare the different embedding models by analyzing their dendrograms and the corresponding scores we calculated.&lt;/p&gt;
-&lt;pre class=&quot;language-python&quot; tabindex=&quot;0&quot;&gt;&lt;code class=&quot;language-python&quot;&gt;&lt;span class=&quot;token keyword&quot;&gt;from&lt;/span&gt; scipy&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;cluster&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;hierarchy &lt;span class=&quot;token keyword&quot;&gt;import&lt;/span&gt; cophenet
+
+&lt;div style=&quot;position: relative&quot; id=&quot;code-container-265&quot;&gt;
+  &lt;pre class=&quot;language-python&quot; tabindex=&quot;0&quot;&gt;&lt;code id=&quot;code-265&quot; class=&quot;language-python&quot;&gt;&lt;span class=&quot;token keyword&quot;&gt;from&lt;/span&gt; scipy&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;cluster&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;hierarchy &lt;span class=&quot;token keyword&quot;&gt;import&lt;/span&gt; cophenet
 &lt;span class=&quot;token keyword&quot;&gt;from&lt;/span&gt; scipy&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;spatial&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;distance &lt;span class=&quot;token keyword&quot;&gt;import&lt;/span&gt; pdist
 &lt;span class=&quot;token keyword&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;token function&quot;&gt;evaluate_clustering&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;df&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; vectorizer&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; vectorizer_params&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; level_for_eval&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
 
@@ -1247,7 +1382,14 @@ width=&amp;quot;24px&amp;quot;&amp;gt;&lt;br&gt;
   &lt;span class=&quot;token keyword&quot;&gt;return&lt;/span&gt; metrics
 
 &lt;/code&gt;&lt;/pre&gt;
-&lt;pre class=&quot;language-python&quot; tabindex=&quot;0&quot;&gt;&lt;code class=&quot;language-python&quot;&gt;df &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; combined_df&lt;span class=&quot;token punctuation&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot;name&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;1st_level_category&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;2nd_level_category&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;3rd_level_category&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;]&lt;/span&gt;
+
+  &lt;button class=&quot;code-copy &quot; data-clipboard-target=&quot;#code-265&quot; style=&quot;position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;&quot; title=&quot;Copy&quot;&gt;
+    &lt;span style=&quot;display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;&quot; class=&quot;&quot;&gt;&lt;/span&gt;
+  &lt;/button&gt;
+&lt;/div&gt;
+
+&lt;div style=&quot;position: relative&quot; id=&quot;code-container-266&quot;&gt;
+  &lt;pre class=&quot;language-python&quot; tabindex=&quot;0&quot;&gt;&lt;code id=&quot;code-266&quot; class=&quot;language-python&quot;&gt;df &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; combined_df&lt;span class=&quot;token punctuation&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot;name&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;1st_level_category&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;2nd_level_category&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;3rd_level_category&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;]&lt;/span&gt;
 
 n_iters &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;token number&quot;&gt;20&lt;/span&gt;
 N_SAMPLES_EVAL &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;token number&quot;&gt;1000&lt;/span&gt;
@@ -1271,7 +1413,14 @@ vectorizers &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; &lt;span
 
 comparison_df &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; pd&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;DataFrame&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;results&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;
-&lt;pre class=&quot;language-python&quot; tabindex=&quot;0&quot;&gt;&lt;code class=&quot;language-python&quot;&gt;sns&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;set_theme&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;style&lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot;white&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+
+  &lt;button class=&quot;code-copy &quot; data-clipboard-target=&quot;#code-266&quot; style=&quot;position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;&quot; title=&quot;Copy&quot;&gt;
+    &lt;span style=&quot;display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;&quot; class=&quot;&quot;&gt;&lt;/span&gt;
+  &lt;/button&gt;
+&lt;/div&gt;
+
+&lt;div style=&quot;position: relative&quot; id=&quot;code-container-267&quot;&gt;
+  &lt;pre class=&quot;language-python&quot; tabindex=&quot;0&quot;&gt;&lt;code id=&quot;code-267&quot; class=&quot;language-python&quot;&gt;sns&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;set_theme&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;style&lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot;white&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
 sns&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;boxplot&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;data&lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt;comparison_df&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; x&lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot;vectorizer&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; y&lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot;clustering_accuracy_score&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; hue&lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot;eval_level&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
 plt&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;xlabel&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot;Vectorizer&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
 plt&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;ylabel&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot;clustering_accuracy_score&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;replace&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot;_&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot; &quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;capitalize&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
@@ -1279,6 +1428,11 @@ plt&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;title&lt;span c
 plt&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;tight_layout&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
 plt&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;savefig&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token string-interpolation&quot;&gt;&lt;span class=&quot;token string&quot;&gt;f&quot;&lt;/span&gt;&lt;span class=&quot;token interpolation&quot;&gt;&lt;span class=&quot;token punctuation&quot;&gt;{&lt;/span&gt;FIGS_PATH&lt;span class=&quot;token punctuation&quot;&gt;}&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;/clustering_accuracy.png&quot;&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; transparent&lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;token boolean&quot;&gt;True&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
 plt&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;show&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+
+  &lt;button class=&quot;code-copy &quot; data-clipboard-target=&quot;#code-267&quot; style=&quot;position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;&quot; title=&quot;Copy&quot;&gt;
+    &lt;span style=&quot;display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;&quot; class=&quot;&quot;&gt;&lt;/span&gt;
+  &lt;/button&gt;
+&lt;/div&gt;
 &lt;p&gt;&lt;picture&gt;&lt;source type=&quot;image/avif&quot; srcset=&quot;https://yonatanlou.github.io/blog/Evaluating-Hierarchical-Clustering/hierarchical-clustering-eval/aOIMg_qJqd-640.avif 640w&quot;&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://yonatanlou.github.io/blog/Evaluating-Hierarchical-Clustering/hierarchical-clustering-eval/aOIMg_qJqd-640.webp 640w&quot;&gt;&lt;img loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://yonatanlou.github.io/blog/Evaluating-Hierarchical-Clustering/hierarchical-clustering-eval/aOIMg_qJqd-640.png&quot; alt=&quot;png&quot; width=&quot;640&quot; height=&quot;480&quot;&gt;&lt;/picture&gt;&lt;/p&gt;
 &lt;p&gt;Yes, it&#39;s pretty hard to make sense of everything at first glance.&lt;br&gt;
 First of all, we can see that the BERT model performs the best across all evaluation levels.&lt;/p&gt;
@@ -1286,16 +1440,25 @@ First of all, we can see that the BERT model performs the best across all evalua
 For the accuracy metric, it seems that TF-IDF performs better at the 1st level, but performs worse at the other levels.&lt;/p&gt;
 &lt;p&gt;The Dasgupta score provides a single score for all levels by taking into account the overall cost we defined earlier. This allows us to evaluate the entire hierarchy in a more holistic way, rather than focusing on individual levels.&lt;/p&gt;
 &lt;p&gt;This approach makes it easier to compare different embedding models and understand how they perform across the full tree structure.&lt;/p&gt;
-&lt;pre class=&quot;language-python&quot; tabindex=&quot;0&quot;&gt;&lt;code class=&quot;language-python&quot;&gt;
+
+&lt;div style=&quot;position: relative&quot; id=&quot;code-container-283&quot;&gt;
+  &lt;pre class=&quot;language-python&quot; tabindex=&quot;0&quot;&gt;&lt;code id=&quot;code-283&quot; class=&quot;language-python&quot;&gt;
 sns&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;boxplot&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;data&lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt;comparison_df&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; x&lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot;vectorizer&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; y&lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot;dasgupta&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; hue&lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot;eval_level&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
 plt&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;savefig&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token string-interpolation&quot;&gt;&lt;span class=&quot;token string&quot;&gt;f&quot;&lt;/span&gt;&lt;span class=&quot;token interpolation&quot;&gt;&lt;span class=&quot;token punctuation&quot;&gt;{&lt;/span&gt;FIGS_PATH&lt;span class=&quot;token punctuation&quot;&gt;}&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;/dasgupta.png&quot;&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; transparent&lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;token boolean&quot;&gt;True&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
 plt&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;title&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot;Score by dasgupta&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+
+  &lt;button class=&quot;code-copy &quot; data-clipboard-target=&quot;#code-283&quot; style=&quot;position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;&quot; title=&quot;Copy&quot;&gt;
+    &lt;span style=&quot;display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;&quot; class=&quot;&quot;&gt;&lt;/span&gt;
+  &lt;/button&gt;
+&lt;/div&gt;
 &lt;p&gt;&lt;picture&gt;&lt;source type=&quot;image/avif&quot; srcset=&quot;https://yonatanlou.github.io/blog/Evaluating-Hierarchical-Clustering/hierarchical-clustering-eval/eiS0S-DYas-640.avif 640w&quot;&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://yonatanlou.github.io/blog/Evaluating-Hierarchical-Clustering/hierarchical-clustering-eval/eiS0S-DYas-640.webp 640w&quot;&gt;&lt;img loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://yonatanlou.github.io/blog/Evaluating-Hierarchical-Clustering/hierarchical-clustering-eval/eiS0S-DYas-640.png&quot; alt=&quot;png&quot; width=&quot;640&quot; height=&quot;480&quot;&gt;&lt;/picture&gt;&lt;/p&gt;
 &lt;h4 id=&quot;dendrogram&quot;&gt;Dendrogram&lt;/h4&gt;
 &lt;p&gt;While it&#39;s really hard to read a dendrogram with more than ~100 points, it remains an important tool for evaluation and for ensuring that the clustering results align with our expectations.&lt;/p&gt;
 &lt;p&gt;Dendrograms allow us to visually inspect how items are grouped at different levels of the hierarchy, which can reveal unexpected patterns or potential issues.&lt;/p&gt;
 &lt;p&gt;Let&#39;s try to compare the dendrograms of BERT and TF-IDF side-by-side to see how they differ. By observing them &amp;quot;by eye,&amp;quot; we can get a sense of how the embedding models influence the structure of the hierarchy.&lt;/p&gt;
-&lt;pre class=&quot;language-python&quot; tabindex=&quot;0&quot;&gt;&lt;code class=&quot;language-python&quot;&gt;&lt;span class=&quot;token keyword&quot;&gt;import&lt;/span&gt; matplotlib&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;pyplot &lt;span class=&quot;token keyword&quot;&gt;as&lt;/span&gt; plt
+
+&lt;div style=&quot;position: relative&quot; id=&quot;code-container-299&quot;&gt;
+  &lt;pre class=&quot;language-python&quot; tabindex=&quot;0&quot;&gt;&lt;code id=&quot;code-299&quot; class=&quot;language-python&quot;&gt;&lt;span class=&quot;token keyword&quot;&gt;import&lt;/span&gt; matplotlib&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;pyplot &lt;span class=&quot;token keyword&quot;&gt;as&lt;/span&gt; plt
 &lt;span class=&quot;token keyword&quot;&gt;from&lt;/span&gt; matplotlib &lt;span class=&quot;token keyword&quot;&gt;import&lt;/span&gt; cm
 &lt;span class=&quot;token keyword&quot;&gt;from&lt;/span&gt; scipy&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;cluster&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;hierarchy &lt;span class=&quot;token keyword&quot;&gt;import&lt;/span&gt; dendrogram
 
@@ -1353,8 +1516,15 @@ color_by_level &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; &lt;s
 fig &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; colored_dendrogram&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;df_sampled&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; linkage_matrix&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; text_by_level&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; color_by_level&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
 plt&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;savefig&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token string-interpolation&quot;&gt;&lt;span class=&quot;token string&quot;&gt;f&quot;&lt;/span&gt;&lt;span class=&quot;token interpolation&quot;&gt;&lt;span class=&quot;token punctuation&quot;&gt;{&lt;/span&gt;FIGS_PATH&lt;span class=&quot;token punctuation&quot;&gt;}&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;/dend_bert.png&quot;&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; transparent&lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;token boolean&quot;&gt;True&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
 plt&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;show&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+
+  &lt;button class=&quot;code-copy &quot; data-clipboard-target=&quot;#code-299&quot; style=&quot;position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;&quot; title=&quot;Copy&quot;&gt;
+    &lt;span style=&quot;display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;&quot; class=&quot;&quot;&gt;&lt;/span&gt;
+  &lt;/button&gt;
+&lt;/div&gt;
 &lt;p&gt;&lt;picture&gt;&lt;source type=&quot;image/avif&quot; srcset=&quot;https://yonatanlou.github.io/blog/Evaluating-Hierarchical-Clustering/hierarchical-clustering-eval/YSLALxcm1a-1040.avif 1040w&quot;&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://yonatanlou.github.io/blog/Evaluating-Hierarchical-Clustering/hierarchical-clustering-eval/YSLALxcm1a-1040.webp 1040w&quot;&gt;&lt;img loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://yonatanlou.github.io/blog/Evaluating-Hierarchical-Clustering/hierarchical-clustering-eval/YSLALxcm1a-1040.png&quot; alt=&quot;png&quot; width=&quot;1040&quot; height=&quot;1249&quot;&gt;&lt;/picture&gt;&lt;/p&gt;
-&lt;pre class=&quot;language-python&quot; tabindex=&quot;0&quot;&gt;&lt;code class=&quot;language-python&quot;&gt;metrics&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; linkage_matrix &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; evaluate_clustering&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;df_sampled&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;tf-idf&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;token boolean&quot;&gt;None&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;3rd_level_category&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+
+&lt;div style=&quot;position: relative&quot; id=&quot;code-container-303&quot;&gt;
+  &lt;pre class=&quot;language-python&quot; tabindex=&quot;0&quot;&gt;&lt;code id=&quot;code-303&quot; class=&quot;language-python&quot;&gt;metrics&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; linkage_matrix &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; evaluate_clustering&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;df_sampled&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;tf-idf&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;token boolean&quot;&gt;None&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;3rd_level_category&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
 
 text_by_level &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;3rd_level_category&quot;&lt;/span&gt;
 color_by_level &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;2nd_level_category&quot;&lt;/span&gt;
@@ -1364,15 +1534,27 @@ fig &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; colored_dendrogr
 plt&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;savefig&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token string-interpolation&quot;&gt;&lt;span class=&quot;token string&quot;&gt;f&quot;&lt;/span&gt;&lt;span class=&quot;token interpolation&quot;&gt;&lt;span class=&quot;token punctuation&quot;&gt;{&lt;/span&gt;FIGS_PATH&lt;span class=&quot;token punctuation&quot;&gt;}&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;/dend_tf_idf.png&quot;&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; transparent&lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;token boolean&quot;&gt;True&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
 plt&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;show&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;
+
+  &lt;button class=&quot;code-copy &quot; data-clipboard-target=&quot;#code-303&quot; style=&quot;position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;&quot; title=&quot;Copy&quot;&gt;
+    &lt;span style=&quot;display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;&quot; class=&quot;&quot;&gt;&lt;/span&gt;
+  &lt;/button&gt;
+&lt;/div&gt;
 &lt;p&gt;&lt;picture&gt;&lt;source type=&quot;image/avif&quot; srcset=&quot;https://yonatanlou.github.io/blog/Evaluating-Hierarchical-Clustering/hierarchical-clustering-eval/ejt_WjjIxq-1040.avif 1040w&quot;&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://yonatanlou.github.io/blog/Evaluating-Hierarchical-Clustering/hierarchical-clustering-eval/ejt_WjjIxq-1040.webp 1040w&quot;&gt;&lt;img loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://yonatanlou.github.io/blog/Evaluating-Hierarchical-Clustering/hierarchical-clustering-eval/ejt_WjjIxq-1040.png&quot; alt=&quot;png&quot; width=&quot;1040&quot; height=&quot;1249&quot;&gt;&lt;/picture&gt;&lt;/p&gt;
 &lt;p&gt;We can clearly see that indeed the bert model have much better clustering results.&lt;/p&gt;
-&lt;pre class=&quot;language-bibtex&quot; tabindex=&quot;0&quot;&gt;&lt;code class=&quot;language-bibtex&quot;&gt;@misc{lou2025hierarchical,
+
+&lt;div style=&quot;position: relative&quot; id=&quot;code-container-310&quot;&gt;
+  &lt;pre class=&quot;language-bibtex&quot; tabindex=&quot;0&quot;&gt;&lt;code id=&quot;code-310&quot; class=&quot;language-bibtex&quot;&gt;@misc{lou2025hierarchical,
   author       = {Yonatan Lourie},
   title        = {Evaluating Hierarchical Clustering Beyond the Leaves},
   year         = {2025},
   howpublished = {&#92;url{https://yonatanlou.github.io/blog/Evaluating-Hierarchical-Clustering/hierarchical-clustering-eval/}},
   note         = {Accessed: 2025-01-12}
 }&lt;/code&gt;&lt;/pre&gt;
+
+  &lt;button class=&quot;code-copy &quot; data-clipboard-target=&quot;#code-310&quot; style=&quot;position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;&quot; title=&quot;Copy&quot;&gt;
+    &lt;span style=&quot;display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;&quot; class=&quot;&quot;&gt;&lt;/span&gt;
+  &lt;/button&gt;
+&lt;/div&gt;
 </content>
   </entry>
   <entry>
@@ -1390,7 +1572,9 @@ plt&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;show&lt;span cl
 &lt;p&gt;For instance, consider two cluster assignments: &lt;code&gt;[0, 0, 1, 1]&lt;/code&gt; and &lt;code&gt;[1, 1, 0, 0]&lt;/code&gt;. While these assignments represent the same clustering, the scikit-learn &lt;code&gt;jaccard_score&lt;/code&gt; would incorrectly report a low similarity.&lt;/p&gt;
 &lt;h3 id=&quot;custom-implementation-for-unsupervised-clustering&quot;&gt;Custom Implementation for Unsupervised Clustering&lt;/h3&gt;
 &lt;p&gt;To address this limitation, we can implement a custom Jaccard Index calculation that is agnostic to label permutations, here is the function with example:&lt;/p&gt;
-&lt;pre class=&quot;language-python&quot; tabindex=&quot;0&quot;&gt;&lt;code class=&quot;language-python&quot;&gt;&lt;span class=&quot;token keyword&quot;&gt;import&lt;/span&gt; numpy &lt;span class=&quot;token keyword&quot;&gt;as&lt;/span&gt; np
+
+&lt;div style=&quot;position: relative&quot; id=&quot;code-container-22&quot;&gt;
+  &lt;pre class=&quot;language-python&quot; tabindex=&quot;0&quot;&gt;&lt;code id=&quot;code-22&quot; class=&quot;language-python&quot;&gt;&lt;span class=&quot;token keyword&quot;&gt;import&lt;/span&gt; numpy &lt;span class=&quot;token keyword&quot;&gt;as&lt;/span&gt; np
 &lt;span class=&quot;token keyword&quot;&gt;import&lt;/span&gt; matplotlib&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;pyplot &lt;span class=&quot;token keyword&quot;&gt;as&lt;/span&gt; plt
 &lt;span class=&quot;token keyword&quot;&gt;import&lt;/span&gt; seaborn &lt;span class=&quot;token keyword&quot;&gt;as&lt;/span&gt; sns
 &lt;span class=&quot;token keyword&quot;&gt;import&lt;/span&gt; matplotlib &lt;span class=&quot;token keyword&quot;&gt;as&lt;/span&gt; mpl
@@ -1446,10 +1630,17 @@ plt&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;show&lt;span cl
 
 
 &lt;/code&gt;&lt;/pre&gt;
+
+  &lt;button class=&quot;code-copy &quot; data-clipboard-target=&quot;#code-22&quot; style=&quot;position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;&quot; title=&quot;Copy&quot;&gt;
+    &lt;span style=&quot;display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;&quot; class=&quot;&quot;&gt;&lt;/span&gt;
+  &lt;/button&gt;
+&lt;/div&gt;
 &lt;p&gt;&lt;picture&gt;&lt;source type=&quot;image/avif&quot; srcset=&quot;https://yonatanlou.github.io/blog/jaccard-index-unsupervised/Jaccard_index_for_unsupervised_clustering/ogJ0yDkBbE-1040.avif 1040w&quot;&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://yonatanlou.github.io/blog/jaccard-index-unsupervised/Jaccard_index_for_unsupervised_clustering/ogJ0yDkBbE-1040.webp 1040w&quot;&gt;&lt;img loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://yonatanlou.github.io/blog/jaccard-index-unsupervised/Jaccard_index_for_unsupervised_clustering/ogJ0yDkBbE-1040.png&quot; alt=&quot;png&quot; width=&quot;1040&quot; height=&quot;495&quot;&gt;&lt;/picture&gt;&lt;/p&gt;
 &lt;p&gt;This implementation first creates pairwise comparison matrices for both true and predicted labels. Then, it calculates the intersection and union of these matrices, accounting for the fact that cluster labels can be permuted.&lt;/p&gt;
 &lt;p&gt;First, i will make a function that will simulate data based on number of classes and how simliar those clusters are.&lt;/p&gt;
-&lt;pre class=&quot;language-python&quot; tabindex=&quot;0&quot;&gt;&lt;code class=&quot;language-python&quot;&gt;&lt;span class=&quot;token keyword&quot;&gt;try&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
+
+&lt;div style=&quot;position: relative&quot; id=&quot;code-container-32&quot;&gt;
+  &lt;pre class=&quot;language-python&quot; tabindex=&quot;0&quot;&gt;&lt;code id=&quot;code-32&quot; class=&quot;language-python&quot;&gt;&lt;span class=&quot;token keyword&quot;&gt;try&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
     &lt;span class=&quot;token keyword&quot;&gt;import&lt;/span&gt; umap
 &lt;span class=&quot;token keyword&quot;&gt;except&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
     !pip install umap&lt;span class=&quot;token operator&quot;&gt;-&lt;/span&gt;learn
@@ -1463,7 +1654,14 @@ plt&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;show&lt;span cl
 &lt;span class=&quot;token keyword&quot;&gt;from&lt;/span&gt; umap &lt;span class=&quot;token keyword&quot;&gt;import&lt;/span&gt; UMAP
 
 &lt;/code&gt;&lt;/pre&gt;
-&lt;pre class=&quot;language-python&quot; tabindex=&quot;0&quot;&gt;&lt;code class=&quot;language-python&quot;&gt;
+
+  &lt;button class=&quot;code-copy &quot; data-clipboard-target=&quot;#code-32&quot; style=&quot;position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;&quot; title=&quot;Copy&quot;&gt;
+    &lt;span style=&quot;display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;&quot; class=&quot;&quot;&gt;&lt;/span&gt;
+  &lt;/button&gt;
+&lt;/div&gt;
+
+&lt;div style=&quot;position: relative&quot; id=&quot;code-container-33&quot;&gt;
+  &lt;pre class=&quot;language-python&quot; tabindex=&quot;0&quot;&gt;&lt;code id=&quot;code-33&quot; class=&quot;language-python&quot;&gt;
 &lt;span class=&quot;token keyword&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;token function&quot;&gt;simulate_data&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;num_samples&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; num_features&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; similarity&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; num_classes&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; random_seed&lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;token number&quot;&gt;42&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
     &lt;span class=&quot;token triple-quoted-string string&quot;&gt;&quot;&quot;&quot;
     Generates synthetic data with a certain level of similarity between classes.
@@ -1529,10 +1727,17 @@ similarity2 &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; &lt;span
 data2&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; labels2 &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; simulate_data&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;num_samples&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; num_features&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; similarity2&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; num_classes&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
 
 plot_umap_projections&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;data1&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; labels1&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; data2&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; labels2&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; num_classes&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; similarity1&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; similarity2&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+
+  &lt;button class=&quot;code-copy &quot; data-clipboard-target=&quot;#code-33&quot; style=&quot;position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;&quot; title=&quot;Copy&quot;&gt;
+    &lt;span style=&quot;display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;&quot; class=&quot;&quot;&gt;&lt;/span&gt;
+  &lt;/button&gt;
+&lt;/div&gt;
 &lt;p&gt;&lt;picture&gt;&lt;source type=&quot;image/avif&quot; srcset=&quot;https://yonatanlou.github.io/blog/jaccard-index-unsupervised/Jaccard_index_for_unsupervised_clustering/WxCZBTDUAQ-1002.avif 1002w&quot;&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://yonatanlou.github.io/blog/jaccard-index-unsupervised/Jaccard_index_for_unsupervised_clustering/WxCZBTDUAQ-1002.webp 1002w&quot;&gt;&lt;img loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://yonatanlou.github.io/blog/jaccard-index-unsupervised/Jaccard_index_for_unsupervised_clustering/WxCZBTDUAQ-1002.png&quot; alt=&quot;png&quot; width=&quot;1002&quot; height=&quot;340&quot;&gt;&lt;/picture&gt;&lt;/p&gt;
 &lt;p&gt;Nice! So we can now control on the similiarity between clusters and the number of clusters.&lt;br&gt;
 Let&#39;s run a bigger simulation and measure the Jaccard measure:&lt;/p&gt;
-&lt;pre class=&quot;language-python&quot; tabindex=&quot;0&quot;&gt;&lt;code class=&quot;language-python&quot;&gt;&lt;span class=&quot;token keyword&quot;&gt;import&lt;/span&gt; numpy &lt;span class=&quot;token keyword&quot;&gt;as&lt;/span&gt; np
+
+&lt;div style=&quot;position: relative&quot; id=&quot;code-container-40&quot;&gt;
+  &lt;pre class=&quot;language-python&quot; tabindex=&quot;0&quot;&gt;&lt;code id=&quot;code-40&quot; class=&quot;language-python&quot;&gt;&lt;span class=&quot;token keyword&quot;&gt;import&lt;/span&gt; numpy &lt;span class=&quot;token keyword&quot;&gt;as&lt;/span&gt; np
 &lt;span class=&quot;token keyword&quot;&gt;import&lt;/span&gt; matplotlib&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;pyplot &lt;span class=&quot;token keyword&quot;&gt;as&lt;/span&gt; plt
 &lt;span class=&quot;token keyword&quot;&gt;from&lt;/span&gt; sklearn&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;metrics &lt;span class=&quot;token keyword&quot;&gt;import&lt;/span&gt; jaccard_score
 &lt;span class=&quot;token keyword&quot;&gt;from&lt;/span&gt; sklearn&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;preprocessing &lt;span class=&quot;token keyword&quot;&gt;import&lt;/span&gt; LabelBinarizer
@@ -1635,7 +1840,14 @@ results &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; &lt;span cla
 
 
 &lt;/code&gt;&lt;/pre&gt;
-&lt;pre class=&quot;language-python&quot; tabindex=&quot;0&quot;&gt;&lt;code class=&quot;language-python&quot;&gt;&lt;span class=&quot;token comment&quot;&gt;# Create plots&lt;/span&gt;
+
+  &lt;button class=&quot;code-copy &quot; data-clipboard-target=&quot;#code-40&quot; style=&quot;position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;&quot; title=&quot;Copy&quot;&gt;
+    &lt;span style=&quot;display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;&quot; class=&quot;&quot;&gt;&lt;/span&gt;
+  &lt;/button&gt;
+&lt;/div&gt;
+
+&lt;div style=&quot;position: relative&quot; id=&quot;code-container-41&quot;&gt;
+  &lt;pre class=&quot;language-python&quot; tabindex=&quot;0&quot;&gt;&lt;code id=&quot;code-41&quot; class=&quot;language-python&quot;&gt;&lt;span class=&quot;token comment&quot;&gt;# Create plots&lt;/span&gt;
 fig&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;ax1&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; ax2&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; plt&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;subplots&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token number&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;token number&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; figsize&lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt;FIGSIZE&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
 
 colors &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; plt&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;cm&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;viridis&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;np&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;linspace&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token number&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;token number&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;token builtin&quot;&gt;len&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;similarities&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
@@ -1668,6 +1880,11 @@ ax2&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;grid&lt;span cl
 
 plt&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;tight_layout&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
 plt&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;show&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+
+  &lt;button class=&quot;code-copy &quot; data-clipboard-target=&quot;#code-41&quot; style=&quot;position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;&quot; title=&quot;Copy&quot;&gt;
+    &lt;span style=&quot;display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;&quot; class=&quot;&quot;&gt;&lt;/span&gt;
+  &lt;/button&gt;
+&lt;/div&gt;
 &lt;p&gt;&lt;picture&gt;&lt;source type=&quot;image/avif&quot; srcset=&quot;https://yonatanlou.github.io/blog/jaccard-index-unsupervised/Jaccard_index_for_unsupervised_clustering/c6jHoN4adD-1039.avif 1039w&quot;&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://yonatanlou.github.io/blog/jaccard-index-unsupervised/Jaccard_index_for_unsupervised_clustering/c6jHoN4adD-1039.webp 1039w&quot;&gt;&lt;img loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://yonatanlou.github.io/blog/jaccard-index-unsupervised/Jaccard_index_for_unsupervised_clustering/c6jHoN4adD-1039.png&quot; alt=&quot;png&quot; width=&quot;1039&quot; height=&quot;340&quot;&gt;&lt;/picture&gt;&lt;/p&gt;
 &lt;p&gt;What we will expect to see in this simulation?&lt;br&gt;
 We will expect the data with high similiarity (clusters more dense), will get higher jaccard score.&lt;br&gt;
@@ -1685,13 +1902,20 @@ jaccard_score(a,b,average=&amp;quot;weighted&amp;quot;)
 &lt;p&gt;Which is not what we want when we doing unsupervised clustering.&lt;/p&gt;
 &lt;h3 id=&quot;conclusion&quot;&gt;Conclusion&lt;/h3&gt;
 &lt;p&gt;When evaluating unsupervised clustering algorithms, it&#39;s crucial to use metrics that are robust to label permutations. The custom Jaccard Index implementation presented here provides a reliable way to assess the similarity between true and predicted cluster assignments. By understanding the limitations of scikit-learn&#39;s jaccard_score in this context, we can make more informed decisions about the performance of our clustering models.&lt;/p&gt;
-&lt;pre class=&quot;language-bibtex&quot; tabindex=&quot;0&quot;&gt;&lt;code class=&quot;language-bibtex&quot;&gt;@misc{lou2025jaccard,
+
+&lt;div style=&quot;position: relative&quot; id=&quot;code-container-64&quot;&gt;
+  &lt;pre class=&quot;language-bibtex&quot; tabindex=&quot;0&quot;&gt;&lt;code id=&quot;code-64&quot; class=&quot;language-bibtex&quot;&gt;@misc{lou2025jaccard,
   author       = {Yonatan Lou},
   title        = {Jaccard Index for Unsupervised Clustering:},
   year         = {2024},
   howpublished = {&#92;url{https://yonatanlou.github.io/blog/jaccard-index-unsupervised/Jaccard_index_for_unsupervised_clustering/}},
   note         = {Accessed: 2024-11-10}
 }&lt;/code&gt;&lt;/pre&gt;
+
+  &lt;button class=&quot;code-copy &quot; data-clipboard-target=&quot;#code-64&quot; style=&quot;position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;&quot; title=&quot;Copy&quot;&gt;
+    &lt;span style=&quot;display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;&quot; class=&quot;&quot;&gt;&lt;/span&gt;
+  &lt;/button&gt;
+&lt;/div&gt;
 </content>
   </entry>
   <entry>
@@ -1714,40 +1938,77 @@ If you having problems, you can try to install it with: &lt;code&gt;pip instal &
 &lt;p&gt;(For more comprehensive guide check the &lt;a href=&quot;https://annotation.github.io/text-fabric/tf/index.html&quot;&gt;documentation&lt;/a&gt;)&lt;br&gt;
 To get started, you’ll need to install &lt;code&gt;text-fabric&lt;/code&gt; and load a dataset.&lt;br&gt;
 Here’s an example using the ETCBC Hebrew Bible dataset:&lt;/p&gt;
-&lt;pre class=&quot;language-python&quot; tabindex=&quot;0&quot;&gt;&lt;code class=&quot;language-python&quot;&gt;&lt;span class=&quot;token comment&quot;&gt;# Import Text-Fabric and load a dataset&lt;/span&gt;
+
+&lt;div style=&quot;position: relative&quot; id=&quot;code-container-30&quot;&gt;
+  &lt;pre class=&quot;language-python&quot; tabindex=&quot;0&quot;&gt;&lt;code id=&quot;code-30&quot; class=&quot;language-python&quot;&gt;&lt;span class=&quot;token comment&quot;&gt;# Import Text-Fabric and load a dataset&lt;/span&gt;
 &lt;span class=&quot;token keyword&quot;&gt;from&lt;/span&gt; tf&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;app &lt;span class=&quot;token keyword&quot;&gt;import&lt;/span&gt; use
 
 &lt;span class=&quot;token comment&quot;&gt;# Load the Hebrew Bible (ETCBC dataset)&lt;/span&gt;
 A &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; use&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&#39;etcbc/bhsa&#39;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; hoist&lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;token builtin&quot;&gt;globals&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+
+  &lt;button class=&quot;code-copy &quot; data-clipboard-target=&quot;#code-30&quot; style=&quot;position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;&quot; title=&quot;Copy&quot;&gt;
+    &lt;span style=&quot;display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;&quot; class=&quot;&quot;&gt;&lt;/span&gt;
+  &lt;/button&gt;
+&lt;/div&gt;
 &lt;p&gt;&lt;strong&gt;Some basic operations:&lt;/strong&gt;&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;Get the Text Structure: You can load text elements by type (book, chapter, verse) and navigate through them.&lt;/li&gt;
 &lt;/ul&gt;
-&lt;pre class=&quot;language-python&quot; tabindex=&quot;0&quot;&gt;&lt;code class=&quot;language-python&quot;&gt;&lt;span class=&quot;token comment&quot;&gt;# Get all books&lt;/span&gt;
+
+&lt;div style=&quot;position: relative&quot; id=&quot;code-container-41&quot;&gt;
+  &lt;pre class=&quot;language-python&quot; tabindex=&quot;0&quot;&gt;&lt;code id=&quot;code-41&quot; class=&quot;language-python&quot;&gt;&lt;span class=&quot;token comment&quot;&gt;# Get all books&lt;/span&gt;
 &lt;span class=&quot;token keyword&quot;&gt;for&lt;/span&gt; book &lt;span class=&quot;token keyword&quot;&gt;in&lt;/span&gt; F&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;otype&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;s&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&#39;book&#39;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
     &lt;span class=&quot;token keyword&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;F&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;book&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;v&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;book&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;  &lt;span class=&quot;token comment&quot;&gt;# Prints book names&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+
+  &lt;button class=&quot;code-copy &quot; data-clipboard-target=&quot;#code-41&quot; style=&quot;position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;&quot; title=&quot;Copy&quot;&gt;
+    &lt;span style=&quot;display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;&quot; class=&quot;&quot;&gt;&lt;/span&gt;
+  &lt;/button&gt;
+&lt;/div&gt;
 &lt;ul&gt;
 &lt;li&gt;Accessing Specific Text Data: Let’s retrieve a verse in Genesis.&lt;/li&gt;
 &lt;/ul&gt;
-&lt;pre class=&quot;language-python&quot; tabindex=&quot;0&quot;&gt;&lt;code class=&quot;language-python&quot;&gt;&lt;span class=&quot;token comment&quot;&gt;# Get Genesis 1:1&lt;/span&gt;
+
+&lt;div style=&quot;position: relative&quot; id=&quot;code-container-49&quot;&gt;
+  &lt;pre class=&quot;language-python&quot; tabindex=&quot;0&quot;&gt;&lt;code id=&quot;code-49&quot; class=&quot;language-python&quot;&gt;&lt;span class=&quot;token comment&quot;&gt;# Get Genesis 1:1&lt;/span&gt;
 verse_node &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; T&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;nodeFromSection&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&#39;Genesis&#39;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;token number&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;token number&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
 &lt;span class=&quot;token keyword&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;T&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;text&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;verse_node&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;  &lt;span class=&quot;token comment&quot;&gt;# Outputs the text of Genesis 1:1&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;
+
+  &lt;button class=&quot;code-copy &quot; data-clipboard-target=&quot;#code-49&quot; style=&quot;position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;&quot; title=&quot;Copy&quot;&gt;
+    &lt;span style=&quot;display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;&quot; class=&quot;&quot;&gt;&lt;/span&gt;
+  &lt;/button&gt;
+&lt;/div&gt;
 &lt;ul&gt;
 &lt;li&gt;Accessing Metadata: You can retrieve metadata for specific elements like morphology or part of speech.&lt;/li&gt;
 &lt;/ul&gt;
-&lt;pre class=&quot;language-python&quot; tabindex=&quot;0&quot;&gt;&lt;code class=&quot;language-python&quot;&gt;&lt;span class=&quot;token comment&quot;&gt;# Get morphological and part of speech info for a specific word in Genesis 1:1&lt;/span&gt;
+
+&lt;div style=&quot;position: relative&quot; id=&quot;code-container-57&quot;&gt;
+  &lt;pre class=&quot;language-python&quot; tabindex=&quot;0&quot;&gt;&lt;code id=&quot;code-57&quot; class=&quot;language-python&quot;&gt;&lt;span class=&quot;token comment&quot;&gt;# Get morphological and part of speech info for a specific word in Genesis 1:1&lt;/span&gt;
 word_node &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; L&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;d&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;verse_node&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; otype&lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&#39;word&#39;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;token number&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;]&lt;/span&gt;  &lt;span class=&quot;token comment&quot;&gt;# First word in Genesis 1:1&lt;/span&gt;
 &lt;span class=&quot;token keyword&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;F&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;lex&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;v&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;word_node&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; F&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;sp&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;v&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;word_node&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; F&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;g_cons&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;v&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;word_node&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;
+
+  &lt;button class=&quot;code-copy &quot; data-clipboard-target=&quot;#code-57&quot; style=&quot;position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;&quot; title=&quot;Copy&quot;&gt;
+    &lt;span style=&quot;display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;&quot; class=&quot;&quot;&gt;&lt;/span&gt;
+  &lt;/button&gt;
+&lt;/div&gt;
 &lt;h2 id=&quot;implementation&quot;&gt;Implementation&lt;/h2&gt;
 &lt;p&gt;For my case, i wanted to use the DSS dataset. the implementation is pretty straight forward: run over each scroll, store each word as a dict (each word have few attributes). That means we eventually end up with a dict of dict of dicts&lt;/p&gt;
-&lt;pre class=&quot;language-cmd&quot; tabindex=&quot;0&quot;&gt;&lt;code class=&quot;language-cmd&quot;&gt;{scroll1:[{text:ושמע, lex:שמע, ...}, {text:ה׳, lex:ה, ...}], 
+
+&lt;div style=&quot;position: relative&quot; id=&quot;code-container-64&quot;&gt;
+  &lt;pre class=&quot;language-cmd&quot; tabindex=&quot;0&quot;&gt;&lt;code id=&quot;code-64&quot; class=&quot;language-cmd&quot;&gt;{scroll1:[{text:ושמע, lex:שמע, ...}, {text:ה׳, lex:ה, ...}], 
 scroll2:[{text:רצה, lex:רצה, ...}, {text:משה, lex:משה, ...}]}&lt;/code&gt;&lt;/pre&gt;
+
+  &lt;button class=&quot;code-copy &quot; data-clipboard-target=&quot;#code-64&quot; style=&quot;position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;&quot; title=&quot;Copy&quot;&gt;
+    &lt;span style=&quot;display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;&quot; class=&quot;&quot;&gt;&lt;/span&gt;
+  &lt;/button&gt;
+&lt;/div&gt;
 &lt;p&gt;The value for each scroll is simply a list of the words of this scroll (with a lot features expect from the raw text).&lt;/p&gt;
 &lt;h3 id=&quot;simple-run&quot;&gt;Simple run&lt;/h3&gt;
 &lt;p&gt;In here, we will iterate over the whole corpus (scroll by scroll), and gather the words for each scroll (with the corresponding location in the scroll).&lt;/p&gt;
-&lt;pre class=&quot;language-python&quot; tabindex=&quot;0&quot;&gt;&lt;code class=&quot;language-python&quot;&gt;&lt;span class=&quot;token keyword&quot;&gt;from&lt;/span&gt; collections &lt;span class=&quot;token keyword&quot;&gt;import&lt;/span&gt; defaultdict
+
+&lt;div style=&quot;position: relative&quot; id=&quot;code-container-74&quot;&gt;
+  &lt;pre class=&quot;language-python&quot; tabindex=&quot;0&quot;&gt;&lt;code id=&quot;code-74&quot; class=&quot;language-python&quot;&gt;&lt;span class=&quot;token keyword&quot;&gt;from&lt;/span&gt; collections &lt;span class=&quot;token keyword&quot;&gt;import&lt;/span&gt; defaultdict
 &lt;span class=&quot;token keyword&quot;&gt;from&lt;/span&gt; tf&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;app &lt;span class=&quot;token keyword&quot;&gt;import&lt;/span&gt; use
 &lt;span class=&quot;token keyword&quot;&gt;from&lt;/span&gt; tqdm &lt;span class=&quot;token keyword&quot;&gt;import&lt;/span&gt; tqdm
 
@@ -1785,8 +2046,15 @@ all_scrolls &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; defaultd
     scroll_data &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; process_word&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;scroll_node&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; word_line_num&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; sub_word_num&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
     all_scrolls&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;update&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;scroll_data&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;
+
+  &lt;button class=&quot;code-copy &quot; data-clipboard-target=&quot;#code-74&quot; style=&quot;position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;&quot; title=&quot;Copy&quot;&gt;
+    &lt;span style=&quot;display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;&quot; class=&quot;&quot;&gt;&lt;/span&gt;
+  &lt;/button&gt;
+&lt;/div&gt;
 &lt;p&gt;But in case you want to get much rich data you can use something more complex like:&lt;/p&gt;
-&lt;pre class=&quot;language-python&quot; tabindex=&quot;0&quot;&gt;&lt;code class=&quot;language-python&quot;&gt;&lt;span class=&quot;token keyword&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;token function&quot;&gt;get_morphological_features&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;word&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
+
+&lt;div style=&quot;position: relative&quot; id=&quot;code-container-78&quot;&gt;
+  &lt;pre class=&quot;language-python&quot; tabindex=&quot;0&quot;&gt;&lt;code id=&quot;code-78&quot; class=&quot;language-python&quot;&gt;&lt;span class=&quot;token keyword&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;token function&quot;&gt;get_morphological_features&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;word&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
     &lt;span class=&quot;token triple-quoted-string string&quot;&gt;&quot;&quot;&quot;Extract morphological features for a given word node.&quot;&quot;&quot;&lt;/span&gt;
     &lt;span class=&quot;token keyword&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;{&lt;/span&gt;
         &lt;span class=&quot;token string&quot;&gt;&quot;sp&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; F&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;sp&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;v&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;word&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt;
@@ -1854,6 +2122,11 @@ all_scrolls &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; defaultd
         single_scroll_data&lt;span class=&quot;token punctuation&quot;&gt;[&lt;/span&gt;scroll&lt;span class=&quot;token punctuation&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;append&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;word_entry&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
     &lt;span class=&quot;token keyword&quot;&gt;return&lt;/span&gt; single_scroll_data
 &lt;/code&gt;&lt;/pre&gt;
+
+  &lt;button class=&quot;code-copy &quot; data-clipboard-target=&quot;#code-78&quot; style=&quot;position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;&quot; title=&quot;Copy&quot;&gt;
+    &lt;span style=&quot;display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;&quot; class=&quot;&quot;&gt;&lt;/span&gt;
+  &lt;/button&gt;
+&lt;/div&gt;
 &lt;p&gt;That&#39;s it, from here you can do whatever you want with the data.&lt;br&gt;
 For more context and much ordered pipeline you can take a peek in here: &lt;a href=&quot;https://github.com/yonatanlou/QumranNLP/blob/main/src/ETL/main_ETL.py&quot;&gt;main_ETL.py&lt;/a&gt;.&lt;/p&gt;
 </content>
