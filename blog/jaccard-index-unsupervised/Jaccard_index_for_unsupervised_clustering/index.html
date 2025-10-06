@@ -927,11 +927,19 @@ jaccard_score(a,b,average=&quot;weighted&quot;)
 #0
 </code></pre>
 <p>Which is not what we want when we doing unsupervised clustering.</p>
+<h3 id="relation-to-adjusted-rand-index-ari">Relation to Adjusted Rand Index (ARI)</h3>
+<p>Both this <strong>pairwise Jaccard</strong> and <strong>ARI</strong> compare clusterings via <strong>pairwise agreements</strong>:</p>
+<ul>
+<li><strong>Jaccard (here):</strong> ( J=\frac{TP}{TP+FP+FN} ) - considers only <em>positive pairs</em> (samples placed together in at least one partition).</li>
+<li><strong>Rand Index (RI):</strong> ( RI=\frac{TP+TN}{TP+FP+FN+TN} ) - counts both “together” (TP) and “apart” (TN) agreements.</li>
+<li><strong>Adjusted Rand Index (ARI):</strong> chance-corrected RI so random labelings score near 0.</li>
+</ul>
+<p>In short, Jaccard focuses on co-cluster overlap (useful when you care about “who’s grouped with whom”), while ARI provides a chance-normalized agreement over all pairs. Both are <strong>label-permutation invariant</strong>.</p>
 <h3 id="conclusion">Conclusion</h3>
 <p>When evaluating unsupervised clustering algorithms, it's crucial to use metrics that are robust to label permutations. The custom Jaccard Index implementation presented here provides a reliable way to assess the similarity between true and predicted cluster assignments. By understanding the limitations of scikit-learn's jaccard_score in this context, we can make more informed decisions about the performance of our clustering models.</p>
 
-<div style="position: relative" id="code-container-64">
-  <pre class="language-bibtex" tabindex="0"><code id="code-64" class="language-bibtex">@misc{lou2025jaccard,
+<div style="position: relative" id="code-container-90">
+  <pre class="language-bibtex" tabindex="0"><code id="code-90" class="language-bibtex">@misc{lou2025jaccard,
   author       = {Yonatan Lou},
   title        = {Jaccard Index for Unsupervised Clustering:},
   year         = {2024},
@@ -939,7 +947,7 @@ jaccard_score(a,b,average=&quot;weighted&quot;)
   note         = {Accessed: 2024-11-10}
 }</code></pre>
 
-  <button class="code-copy " data-clipboard-target="#code-64" style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
+  <button class="code-copy " data-clipboard-target="#code-90" style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
     <span style="display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;" class=""></span>
   </button>
 </div>
@@ -976,7 +984,7 @@ jaccard_score(a,b,average=&quot;weighted&quot;)
             </div>
         </footer>
         
-        <!-- This page `/blog/jaccard-index-unsupervised/Jaccard_index_for_unsupervised_clustering/` was built on 2025-09-23T21:38:54.941Z -->
+        <!-- This page `/blog/jaccard-index-unsupervised/Jaccard_index_for_unsupervised_clustering/` was built on 2025-10-06T19:02:02.247Z -->
         <script type="module" src="/dist/rJ3_G-2ArF.js"></script>
         <script>function showTooltip(o,e){o.trigger.className.includes("tooltipped")||(o.trigger.children[0].className="tooltipped tooltipped-s",o.trigger.children[0].ariaLabel=e)}window.addEventListener("load",()=>{var o=new ClipboardJS(".code-copy");o.on("success",o=>showTooltip(o,"Copied!")),o.on("error",o=>showTooltip(o,"Failed to copy"))});</script>
 <script async="" src="https://cdn.jsdelivr.net/npm/clipboard@2.0.11/dist/clipboard.min.js"></script>

@@ -1900,11 +1900,19 @@ jaccard_score(a,b,average=&amp;quot;weighted&amp;quot;)
 #0
 &lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;Which is not what we want when we doing unsupervised clustering.&lt;/p&gt;
+&lt;h3 id=&quot;relation-to-adjusted-rand-index-ari&quot;&gt;Relation to Adjusted Rand Index (ARI)&lt;/h3&gt;
+&lt;p&gt;Both this &lt;strong&gt;pairwise Jaccard&lt;/strong&gt; and &lt;strong&gt;ARI&lt;/strong&gt; compare clusterings via &lt;strong&gt;pairwise agreements&lt;/strong&gt;:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Jaccard (here):&lt;/strong&gt; ( J=&#92;frac{TP}{TP+FP+FN} ) - considers only &lt;em&gt;positive pairs&lt;/em&gt; (samples placed together in at least one partition).&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Rand Index (RI):&lt;/strong&gt; ( RI=&#92;frac{TP+TN}{TP+FP+FN+TN} ) - counts both “together” (TP) and “apart” (TN) agreements.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Adjusted Rand Index (ARI):&lt;/strong&gt; chance-corrected RI so random labelings score near 0.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;In short, Jaccard focuses on co-cluster overlap (useful when you care about “who’s grouped with whom”), while ARI provides a chance-normalized agreement over all pairs. Both are &lt;strong&gt;label-permutation invariant&lt;/strong&gt;.&lt;/p&gt;
 &lt;h3 id=&quot;conclusion&quot;&gt;Conclusion&lt;/h3&gt;
 &lt;p&gt;When evaluating unsupervised clustering algorithms, it&#39;s crucial to use metrics that are robust to label permutations. The custom Jaccard Index implementation presented here provides a reliable way to assess the similarity between true and predicted cluster assignments. By understanding the limitations of scikit-learn&#39;s jaccard_score in this context, we can make more informed decisions about the performance of our clustering models.&lt;/p&gt;
 
-&lt;div style=&quot;position: relative&quot; id=&quot;code-container-64&quot;&gt;
-  &lt;pre class=&quot;language-bibtex&quot; tabindex=&quot;0&quot;&gt;&lt;code id=&quot;code-64&quot; class=&quot;language-bibtex&quot;&gt;@misc{lou2025jaccard,
+&lt;div style=&quot;position: relative&quot; id=&quot;code-container-90&quot;&gt;
+  &lt;pre class=&quot;language-bibtex&quot; tabindex=&quot;0&quot;&gt;&lt;code id=&quot;code-90&quot; class=&quot;language-bibtex&quot;&gt;@misc{lou2025jaccard,
   author       = {Yonatan Lou},
   title        = {Jaccard Index for Unsupervised Clustering:},
   year         = {2024},
@@ -1912,7 +1920,7 @@ jaccard_score(a,b,average=&amp;quot;weighted&amp;quot;)
   note         = {Accessed: 2024-11-10}
 }&lt;/code&gt;&lt;/pre&gt;
 
-  &lt;button class=&quot;code-copy &quot; data-clipboard-target=&quot;#code-64&quot; style=&quot;position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;&quot; title=&quot;Copy&quot;&gt;
+  &lt;button class=&quot;code-copy &quot; data-clipboard-target=&quot;#code-90&quot; style=&quot;position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;&quot; title=&quot;Copy&quot;&gt;
     &lt;span style=&quot;display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;&quot; class=&quot;&quot;&gt;&lt;/span&gt;
   &lt;/button&gt;
 &lt;/div&gt;
