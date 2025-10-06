@@ -365,8 +365,8 @@ Which is not what we want when we doing unsupervised clustering.
 
 Both this **pairwise Jaccard** and **ARI** compare clusterings via **pairwise agreements**:
 
-- **Jaccard (here):** \( J=\frac{TP}{TP+FP+FN} \) - considers only *positive pairs* (samples placed together in at least one partition).
-- **Rand Index (RI):** \( RI=\frac{TP+TN}{TP+FP+FN+TN} \) - counts both “together” (TP) and “apart” (TN) agreements.
+- **Jaccard (here):** $J=\frac{TP}{TP+FP+FN}$ - considers only *positive pairs* (samples placed together in at least one partition).
+- **Rand Index (RI):** $RI=\frac{TP+TN}{TP+FP+FN+TN}$ - counts both "together" (TP) and "apart" (TN) agreements.
 - **Adjusted Rand Index (ARI):** chance-corrected RI so random labelings score near 0.
 
 In short, Jaccard focuses on co-cluster overlap (useful when you care about “who’s grouped with whom”), while ARI provides a chance-normalized agreement over all pairs. Both are **label-permutation invariant**.
