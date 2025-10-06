@@ -361,6 +361,17 @@ jaccard_score(a,b,average="weighted")
 ```
 Which is not what we want when we doing unsupervised clustering.
 
+### Relation to Adjusted Rand Index (ARI)
+
+Both this **pairwise Jaccard** and **ARI** compare clusterings via **pairwise agreements**:
+
+- **Jaccard (here):** \( J=\frac{TP}{TP+FP+FN} \) - considers only *positive pairs* (samples placed together in at least one partition).
+- **Rand Index (RI):** \( RI=\frac{TP+TN}{TP+FP+FN+TN} \) - counts both “together” (TP) and “apart” (TN) agreements.
+- **Adjusted Rand Index (ARI):** chance-corrected RI so random labelings score near 0.
+
+In short, Jaccard focuses on co-cluster overlap (useful when you care about “who’s grouped with whom”), while ARI provides a chance-normalized agreement over all pairs. Both are **label-permutation invariant**.
+
+
 ### Conclusion
 When evaluating unsupervised clustering algorithms, it's crucial to use metrics that are robust to label permutations. The custom Jaccard Index implementation presented here provides a reliable way to assess the similarity between true and predicted cluster assignments. By understanding the limitations of scikit-learn's jaccard_score in this context, we can make more informed decisions about the performance of our clustering models.
 
