@@ -930,8 +930,8 @@ jaccard_score(a,b,average=&quot;weighted&quot;)
 <h3 id="relation-to-adjusted-rand-index-ari">Relation to Adjusted Rand Index (ARI)</h3>
 <p>Both this <strong>pairwise Jaccard</strong> and <strong>ARI</strong> compare clusterings via <strong>pairwise agreements</strong>:</p>
 <ul>
-<li><strong>Jaccard (here):</strong> ( J=\frac{TP}{TP+FP+FN} ) - considers only <em>positive pairs</em> (samples placed together in at least one partition).</li>
-<li><strong>Rand Index (RI):</strong> ( RI=\frac{TP+TN}{TP+FP+FN+TN} ) - counts both “together” (TP) and “apart” (TN) agreements.</li>
+<li><strong>Jaccard (here):</strong> <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>J</mi><mo>=</mo><mfrac><mrow><mi>T</mi><mi>P</mi></mrow><mrow><mi>T</mi><mi>P</mi><mo>+</mo><mi>F</mi><mi>P</mi><mo>+</mo><mi>F</mi><mi>N</mi></mrow></mfrac></mrow><annotation encoding="application/x-tex">J=\frac{TP}{TP+FP+FN}</annotation></semantics></math></span> - considers only <em>positive pairs</em> (samples placed together in at least one partition).</li>
+<li><strong>Rand Index (RI):</strong> <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>R</mi><mi>I</mi><mo>=</mo><mfrac><mrow><mi>T</mi><mi>P</mi><mo>+</mo><mi>T</mi><mi>N</mi></mrow><mrow><mi>T</mi><mi>P</mi><mo>+</mo><mi>F</mi><mi>P</mi><mo>+</mo><mi>F</mi><mi>N</mi><mo>+</mo><mi>T</mi><mi>N</mi></mrow></mfrac></mrow><annotation encoding="application/x-tex">RI=\frac{TP+TN}{TP+FP+FN+TN}</annotation></semantics></math></span> - counts both &quot;together&quot; (TP) and &quot;apart&quot; (TN) agreements.</li>
 <li><strong>Adjusted Rand Index (ARI):</strong> chance-corrected RI so random labelings score near 0.</li>
 </ul>
 <p>In short, Jaccard focuses on co-cluster overlap (useful when you care about “who’s grouped with whom”), while ARI provides a chance-normalized agreement over all pairs. Both are <strong>label-permutation invariant</strong>.</p>
@@ -984,7 +984,7 @@ jaccard_score(a,b,average=&quot;weighted&quot;)
             </div>
         </footer>
         
-        <!-- This page `/blog/jaccard-index-unsupervised/Jaccard_index_for_unsupervised_clustering/` was built on 2025-10-06T19:02:48.587Z -->
+        <!-- This page `/blog/jaccard-index-unsupervised/Jaccard_index_for_unsupervised_clustering/` was built on 2025-10-06T19:27:24.880Z -->
         <script type="module" src="/dist/rJ3_G-2ArF.js"></script>
         <script>function showTooltip(o,e){o.trigger.className.includes("tooltipped")||(o.trigger.children[0].className="tooltipped tooltipped-s",o.trigger.children[0].ariaLabel=e)}window.addEventListener("load",()=>{var o=new ClipboardJS(".code-copy");o.on("success",o=>showTooltip(o,"Copied!")),o.on("error",o=>showTooltip(o,"Failed to copy"))});</script>
 <script async="" src="https://cdn.jsdelivr.net/npm/clipboard@2.0.11/dist/clipboard.min.js"></script>
