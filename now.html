@@ -31,8 +31,7 @@
         </script>
         
         <style>
-        .postlist { counter-reset: start-from 7 }
-/* Defaults */
+        /* Defaults */
 :root {
 	--font-family: -apple-system, system-ui, sans-serif;
 	--font-family-monospace: Consolas, Menlo, Monaco, Andale Mono WT, Andale Mono, Lucida Console, Lucida Sans Typewriter, DejaVu Sans Mono, Bitstream Vera Sans Mono, Liberation Mono, Nimbus Mono L, Courier New, Courier, monospace;
@@ -392,7 +391,7 @@ footer {
                 <h2 class="visually-hidden" id="top-level-navigation-menu">Top level navigation menu</h2>
                 <ul class="nav">
                         <li class="nav-item">
-                            <a href="/" aria-current="page">Home</a>
+                            <a href="/">Home</a>
                         </li>
                         <li class="nav-item">
                             <a href="/blog/">Blog</a>
@@ -417,35 +416,247 @@ footer {
             <heading-anchors>
                 
 
+<style>
+.timeline {
+  max-width: 800px;
+  margin: 2rem auto;
+}
 
-<h2 id="about-me-links-latest-posts-things-i-learned-in-my-research-roles-over-the-last-5-years-september-2025-unsupervised-text-clustering-using-gnn-graph-auto-encoder-june-2025-evaluating-hierarchical-clustering-beyond-the-leaves-january-2025-more-posts-on-all-posts">
-  <a href="/about/">About me</a>
-  |
-  <a href="/Links/">Links</a>
-  
-  <h3 id="latest-posts">Latest posts</h3>
-  
-<ol reversed="" class="postlist">
+.year-section {
+  margin-bottom: 1rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  overflow: hidden;
+  background: white;
+}
 
-	<li class="postlist-item">
-		<a href="/blog/things-that-i-learned-in-my-latest-research-roles/" class="postlist-link">Things I learned in my research roles over the last 5 years</a>
-		<time class="postlist-date" datetime="2025-09-22">September 2025</time>
-	</li>
+.year-header {
+  padding: 1rem 1.5rem;
+  background: #f5f5f5;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: background-color 0.2s;
+  user-select: none;
+}
 
-	<li class="postlist-item">
-		<a href="/blog/unsupervised-text-clustering-gnn/unsupervised-gae-clustering/" class="postlist-link">Unsupervised text clustering using GNN (Graph Auto Encoder)</a>
-		<time class="postlist-date" datetime="2025-06-18">June 2025</time>
-	</li>
+.year-header:hover {
+  background: #e8e8e8;
+}
 
-	<li class="postlist-item">
-		<a href="/blog/Evaluating-Hierarchical-Clustering/hierarchical-clustering-eval/" class="postlist-link">Evaluating Hierarchical Clustering Beyond the Leaves 🌳</a>
-		<time class="postlist-date" datetime="2025-01-12">January 2025</time>
-	</li>
+.year-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 0;
+}
 
-</ol>
- More posts on
-  <a href="/blog/">All posts</a>
-            </h2></heading-anchors>
+.year-icon {
+  font-size: 1.2rem;
+  transition: transform 0.3s;
+}
+
+.year-section.active .year-icon {
+  transform: rotate(180deg);
+}
+
+.year-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease-out;
+}
+
+.year-section.active .year-content {
+  max-height: 1000px;
+  transition: max-height 0.5s ease-in;
+}
+
+.year-inner {
+  padding: 1.5rem;
+  line-height: 1.6;
+}
+
+.year-inner h3 {
+  margin-top: 0;
+  color: #333;
+}
+
+.year-inner p {
+  margin: 0.5rem 0;
+}
+
+.year-inner ul {
+  margin: 0.5rem 0;
+  padding-left: 1.5rem;
+}
+</style>
+<h2 id="now">Now</h2>
+<p>I'm currently working at <a href="https://www.tavily.com/">Tavily</a> as an AI Researcher, building the best web infrastructure layer for agents.</p>
+<p>Finished my Masters in Statistics and Data Science at Tel Aviv University.</p>
+<div class="timeline">
+<div class="year-section">
+  <div class="year-header" onclick="toggleYear(this)">
+    <h2 class="year-title" id="2024">2024</h2>
+    <span class="year-icon">▼</span>
+  </div>
+  <div class="year-content">
+    <div class="year-inner">
+<ul>
+<li>
+<p>Reserve Duty.</p>
+</li>
+<li>
+<p>Started my Masters thesis under the supervision of <a href="https://www.cs.tau.ac.il/~roded/">Roded Sharan</a>.</p>
+</li>
+<li>
+<p>Bachelor party in Prague.</p>
+</li>
+<li>
+<p>Got married to my love of my life.</p>
+</li>
+<li>
+<p>Honeymoon in Japan and Bali</p>
+</li>
+<li>
+<p>Moved to a new place (still Tel aviv).</p>
+</li>
+<li>
+<p>Places: Czech Republic (Prague), Italy (Tuscany, Rome, Florence), Japan (Tokyo, Osaka, Kyoto, Hakone), Bali.</p>
+  </li></ul></div>
+</div>
+
+
+</div>
+<div class="year-section">
+  <div class="year-header" onclick="toggleYear(this)">
+    <h2 class="year-title" id="2023">2023</h2>
+    <span class="year-icon">▼</span>
+  </div>
+  <div class="year-content">
+    <div class="year-inner">
+<ul>
+<li>
+<p>We got <a href="https://github.com/yonatanlou/yonatanlou.github.io/blob/main/content/img/mailo_cartoon.png?raw=true">Mailo</a>.</p>
+</li>
+<li>
+<p>Ive proposed to Babsi.</p>
+</li>
+<li>
+<p>Places: Egypt (Sinai), Cyprus (Aya Napa), Netherlands (Amsterdam), Hungary (Budapest), USA (NYC, NC, CT).</p>
+</li>
+<li>
+<p>7th of October, 2023 - Reserve Duty.</p>
+  </li></ul></div>
+</div>
+
+
+</div>
+<div class="year-section">
+  <div class="year-header" onclick="toggleYear(this)">
+    <h2 class="year-title" id="2022">2022</h2>
+    <span class="year-icon">▼</span>
+  </div>
+  <div class="year-content">
+    <div class="year-inner">
+<ul>
+<li>
+<p>Moved to Tel Aviv.</p>
+</li>
+<li>
+<p>Started my MSC in Statistics and Data Science at Tel Aviv University.</p>
+</li>
+<li>
+<p>Places: Lisbon, Mexico, Guatemala, Belize, Orlando, Miami, NYC.</p>
+</li>
+<li>
+<p>Places: Portugal (Lisbon), Mexico (East coast, San Cristobal de las Casas), Guatemala, Belize, USA (Miami, NYC.</p>
+  </li></ul></div>
+</div>
+
+
+</div>
+<div class="year-section">
+  <div class="year-header" onclick="toggleYear(this)">
+    <h2 class="year-title" id="2021">2021</h2>
+    <span class="year-icon">▼</span>
+  </div>
+  <div class="year-content">
+    <div class="year-inner">
+<ul>
+<li>
+<p>Started my job as a researcher at Forter.</p>
+</li>
+<li>
+<p>Places: Egypt (Sinai), France (Paris), Germany (Berlin).</p>
+  </li></ul></div>
+</div>
+
+
+</div>
+<div class="year-section">
+  <div class="year-header" onclick="toggleYear(this)">
+    <h2 class="year-title" id="2020">2020</h2>
+    <span class="year-icon">▼</span>
+  </div>
+  <div class="year-content">
+    <div class="year-inner">
+<ul>
+<li>
+<p>Started my first job as an Analyst at the ministry of finance.</p>
+</li>
+<li>
+<p>Corona</p>
+  </li></ul></div>
+</div>
+
+
+</div>
+<div class="year-section">
+  <div class="year-header" onclick="toggleYear(this)">
+    <h2 class="year-title" id="2019">2019</h2>
+    <span class="year-icon">▼</span>
+  </div>
+  <div class="year-content">
+    <div class="year-inner">
+<ul>
+<li>
+<p>Moved to NYC with <a href="https://www.instagram.com/shanniebreda">Babsi</a>.</p>
+</li>
+<li>
+<p>Drummer at <a href="https://www.babygotbacktalk.com/">Baby Got Back Talk</a>.</p>
+</li>
+<li>
+<p>Moved to Jerusalem.</p>
+</li>
+<li>
+<p>Started my BSc in Statistics and Data Science at The Hebrew University of Jerusalem.</p>
+</li>
+<li>
+<p>Places: France (Paris), USA (NYC, Washington D.C), Ontario, Jordan, Sinai.</p>
+  </li></ul></div>
+</div>
+
+
+</div>
+</div>
+<script>
+function toggleYear(header) {
+  const section = header.parentElement;
+  const wasActive = section.classList.contains('active');
+
+  // Close all sections
+  document.querySelectorAll('.year-section').forEach(s => {
+    s.classList.remove('active');
+  });
+
+  // Open clicked section if it wasn't active
+  if (!wasActive) {
+    section.classList.add('active');
+  }
+}
+</script>
+
+            </heading-anchors>
         </main>
         
         <footer>
@@ -474,7 +685,7 @@ footer {
             </div>
         </footer>
         
-        <!-- This page `/` was built on 2025-10-17T09:57:47.391Z -->
+        <!-- This page `/now.html` was built on 2025-10-17T09:57:47.393Z -->
         <script type="module" src="/dist/rJ3_G-2ArF.js"></script>
         <script>function showTooltip(o,e){o.trigger.className.includes("tooltipped")||(o.trigger.children[0].className="tooltipped tooltipped-s",o.trigger.children[0].ariaLabel=e)}window.addEventListener("load",()=>{var o=new ClipboardJS(".code-copy");o.on("success",o=>showTooltip(o,"Copied!")),o.on("error",o=>showTooltip(o,"Failed to copy"))});</script>
 <script async="" src="https://cdn.jsdelivr.net/npm/clipboard@2.0.11/dist/clipboard.min.js"></script>
