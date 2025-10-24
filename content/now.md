@@ -144,9 +144,13 @@ year2019: |
 
 ## Now
 
-I'm currently working at [Tavily](https://www.tavily.com/) as an AI Researcher, building the best web infrastructure layer for agents.
+As of October 2025: 
+- I've started a new role at [Tavily](https://www.tavily.com/) as an AI Researcher, building the best web infrastructure layer for agents.
 
-Finished my Masters in Statistics and Data Science at Tel Aviv University.
+- Finished my Masters in Statistics and Data Science at Tel Aviv University this year.
+
+- Presented my Masters thesis at the [ALP](https://www.ancientnlp.com/alp2025/) Workshop at [NAACL 2025](https://2025.naacl.org/)  
+  [Paper](https://aclanthology.org/2025.alp-1.2/).
 
 <div class="timeline">
 
