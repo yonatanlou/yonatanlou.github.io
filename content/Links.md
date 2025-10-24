@@ -17,7 +17,8 @@ I’ll try to update here with the stuff I liked most.
 
 
 ## Blogs
-<small>Last updated: 2025-01-27</small>
+<small>Last updated: 2025-10-24</small>
+This is automated generated list of RSS feeds of blogs i try to read with my not so free time. (Im using blogtrottr)
 
 {{ "" | generateBlogLinks }}
 
@@ -35,7 +36,7 @@ And this is a list of the podcasts I listen to occasionally:
 
 ## Buy it for life
 <small>Last updated: 2025-01-27</small>
-
+(based on this subreddit [r/BuyItForLife](https://www.reddit.com/r/BuyItForLife/))
 Things that i bought and i think that are worth the money:
 - [NEBULA Capsule 3](https://amzn.to/3CSE32p) - Portable projector, in heavy use, great quality.
 - [DEWALT 20V MAX XR Hammer Drill Kit](https://amzn.to/4gKbstO) - The best hammer drill i ever had.
