@@ -1,0 +1,757 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <!-- Favicon -->
+        <link rel="icon" type="image/x-icon" href="/favicon.ico">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+        <link rel="icon" type="image/png" sizes="192x192" href="/android-chrome-192x192.png">
+        <link rel="icon" type="image/png" sizes="512x512" href="/android-chrome-512x512.png">
+        <link rel="manifest" href="/site.webmanifest">
+        
+        <title>Yonatan Lourie</title>
+        <meta name="description" content="How I solved Python dependency issues when deploying the same ML model to both Kubernetes and AWS Lambda using awslambdaric.">
+        <link rel="alternate" href="feed/feed.xml" type="application/atom+xml" title="Yonatan Lourie">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Primer/19.1.1/tooltips.min.css">
+        
+        <!-- Google Analytics -->
+        <script async="" src="https://www.googletagmanager.com/gtag/js?id=G-C6PG57BBFC"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag() {
+                dataLayer.push(arguments);
+            }
+            gtag('js', new Date());
+            gtag('config', 'G-C6PG57BBFC');
+        </script>
+        
+        <style>
+        /**
+ * okaidia theme for JavaScript, CSS and HTML
+ * Loosely based on Monokai textmate theme by http://www.monokai.nl/
+ * @author ocodia
+ */
+
+code[class*="language-"],
+pre[class*="language-"] {
+	color: #f8f8f2;
+	background: none;
+	text-shadow: 0 1px rgba(0, 0, 0, 0.3);
+	font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+	font-size: 1em;
+	text-align: left;
+	white-space: pre;
+	word-spacing: normal;
+	word-break: normal;
+	word-wrap: normal;
+	line-height: 1.5;
+
+	-moz-tab-size: 4;
+	-o-tab-size: 4;
+	tab-size: 4;
+
+	-webkit-hyphens: none;
+	-moz-hyphens: none;
+	-ms-hyphens: none;
+	hyphens: none;
+}
+
+/* Code blocks */
+pre[class*="language-"] {
+	padding: 1em;
+	margin: .5em 0;
+	overflow: auto;
+	border-radius: 0.3em;
+}
+
+:not(pre) > code[class*="language-"],
+pre[class*="language-"] {
+	background: #272822;
+}
+
+/* Inline code */
+:not(pre) > code[class*="language-"] {
+	padding: .1em;
+	border-radius: .3em;
+	white-space: normal;
+}
+
+.token.comment,
+.token.prolog,
+.token.doctype,
+.token.cdata {
+	color: #8292a2;
+}
+
+.token.punctuation {
+	color: #f8f8f2;
+}
+
+.token.namespace {
+	opacity: .7;
+}
+
+.token.property,
+.token.tag,
+.token.constant,
+.token.symbol,
+.token.deleted {
+	color: #f92672;
+}
+
+.token.boolean,
+.token.number {
+	color: #ae81ff;
+}
+
+.token.selector,
+.token.attr-name,
+.token.string,
+.token.char,
+.token.builtin,
+.token.inserted {
+	color: #a6e22e;
+}
+
+.token.operator,
+.token.entity,
+.token.url,
+.language-css .token.string,
+.style .token.string,
+.token.variable {
+	color: #f8f8f2;
+}
+
+.token.atrule,
+.token.attr-value,
+.token.function,
+.token.class-name {
+	color: #e6db74;
+}
+
+.token.keyword {
+	color: #66d9ef;
+}
+
+.token.regex,
+.token.important {
+	color: #fd971f;
+}
+
+.token.important,
+.token.bold {
+	font-weight: bold;
+}
+.token.italic {
+	font-style: italic;
+}
+
+.token.entity {
+	cursor: help;
+}
+/*
+ * New diff- syntax
+ */
+
+pre[class*="language-diff-"] {
+	--eleventy-code-padding: 1.25em;
+	padding-left: var(--eleventy-code-padding);
+	padding-right: var(--eleventy-code-padding);
+}
+.token.deleted {
+	background-color: hsl(0, 51%, 37%);
+	color: inherit;
+}
+.token.inserted {
+	background-color: hsl(126, 31%, 39%);
+	color: inherit;
+}
+
+/* Make the + and - characters unselectable for copy/paste */
+.token.prefix.unchanged,
+.token.prefix.inserted,
+.token.prefix.deleted {
+	-webkit-user-select: none;
+	user-select: none;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding-top: 2px;
+	padding-bottom: 2px;
+}
+.token.prefix.inserted,
+.token.prefix.deleted {
+	width: var(--eleventy-code-padding);
+	background-color: rgba(0,0,0,.2);
+}
+
+/* Optional: full-width background color */
+.token.inserted:not(.prefix),
+.token.deleted:not(.prefix) {
+	display: block;
+	margin-left: calc(-1 * var(--eleventy-code-padding));
+	margin-right: calc(-1 * var(--eleventy-code-padding));
+	text-decoration: none; /* override del, ins, mark defaults */
+	color: inherit; /* override del, ins, mark defaults */
+}
+/* Defaults */
+:root {
+	--font-family: -apple-system, system-ui, sans-serif;
+	--font-family-monospace: Consolas, Menlo, Monaco, Andale Mono WT, Andale Mono, Lucida Console, Lucida Sans Typewriter, DejaVu Sans Mono, Bitstream Vera Sans Mono, Liberation Mono, Nimbus Mono L, Courier New, Courier, monospace;
+}
+
+/* Theme colors */
+:root {
+	--color-gray-20: #e0e0e0;
+	--color-gray-50: #C0C0C0;
+	--color-gray-90: #333;
+	/* Change to a darker shade */
+
+	--background-color: #f5f5f5;
+	/* Lighter background */
+
+	--text-color: #333;
+	/* Change to a darker shade */
+	--text-color-link: #007bff;
+	--text-color-link-active: #0056b3;
+	--text-color-link-visited: #563d7c;
+}
+
+/* @media (prefers-color-scheme: light) {
+	:root {
+		--color-gray-20: #e0e0e0;
+		--color-gray-50: #C0C0C0;
+		--color-gray-90: #dad8d8;
+
+		--text-color-link: #1493fb;
+		--text-color-link-active: #6969f7;
+		--text-color-link-visited: #a6a6f8;
+
+		--background-color: #79bcff;
+	}
+} */
+
+
+/* Global stylesheet */
+* {
+	box-sizing: border-box;
+}
+
+@view-transition {
+	navigation: auto;
+}
+
+html,
+body {
+	padding: 0;
+	margin: 0 auto;
+	font-family: var(--font-family);
+	color: var(--text-color);
+	background-color: var(--background-color);
+}
+
+html {
+	overflow-y: scroll;
+}
+
+body {
+	max-width: 65em;
+}
+
+/* https://www.a11yproject.com/posts/how-to-hide-content/ */
+.visually-hidden {
+	clip: rect(0 0 0 0);
+	clip-path: inset(50%);
+	height: 1px;
+	overflow: hidden;
+	position: absolute;
+	white-space: nowrap;
+	width: 1px;
+}
+
+p:last-child {
+	margin-bottom: 0;
+}
+
+p {
+	line-height: 1.5;
+}
+
+li {
+	line-height: 1.5;
+}
+
+a[href] {
+	color: var(--text-color-link);
+}
+
+a[href]:visited {
+	color: var(--text-color-link-visited);
+}
+
+a[href]:hover,
+a[href]:active {
+	color: var(--text-color-link-active);
+}
+
+main,
+footer {
+	padding: 1rem;
+}
+
+main :first-child {
+	margin-top: 0;
+}
+
+header {
+	border-bottom: 1px dashed var(--color-gray-20);
+}
+
+header:after {
+	content: "";
+	display: table;
+	clear: both;
+}
+
+.links-nextprev {
+	display: flex;
+	justify-content: space-between;
+	gap: .5em 1em;
+	list-style: "";
+	border-top: 1px dashed var(--color-gray-20);
+	padding: 1em 0;
+}
+
+.links-nextprev>* {
+	flex-grow: 1;
+}
+
+.links-nextprev-next {
+	text-align: right;
+}
+
+table {
+	margin: 1em 0;
+}
+
+table td,
+table th {
+	padding-right: 1em;
+}
+
+pre,
+code {
+	font-family: var(--font-family-monospace);
+}
+
+pre:not([class*="language-"]) {
+	margin: .5em 0;
+	line-height: 1.375;
+	/* 22px /16 */
+	-moz-tab-size: var(--syntax-tab-size);
+	-o-tab-size: var(--syntax-tab-size);
+	tab-size: var(--syntax-tab-size);
+	-webkit-hyphens: none;
+	-ms-hyphens: none;
+	hyphens: none;
+	direction: ltr;
+	text-align: left;
+	white-space: pre;
+	word-spacing: normal;
+	word-break: normal;
+	overflow-x: auto;
+}
+
+code {
+	word-break: break-all;
+}
+
+/* Header */
+header {
+	display: flex;
+	gap: 1em .5em;
+	flex-wrap: wrap;
+	align-items: center;
+	padding: 1em;
+}
+
+.home-link {
+	font-size: 1.2em;
+	/* 16px /16 */
+	font-weight: 700;
+	margin-right: 2em;
+}
+
+.home-link:link:not(:hover) {
+	text-decoration: none;
+}
+
+/* Nav */
+.nav {
+	display: flex;
+	padding: 0;
+	margin: 0;
+	list-style: none;
+}
+
+.nav-item {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+.nav-item a[href]:not(:hover) {
+	text-decoration: none;
+}
+
+.nav a[href][aria-current="page"] {
+	text-decoration: underline;
+}
+
+/* Posts list */
+.postlist {
+	list-style: none;
+	padding: 0;
+	padding-left: 1.5rem;
+}
+
+.postlist-item {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: baseline;
+	counter-increment: start-from -1;
+	margin-bottom: 1em;
+}
+
+.postlist-item:before {
+	display: inline-block;
+	pointer-events: none;
+	content: "" counter(start-from, decimal-leading-zero) ". ";
+	line-height: 100%;
+	text-align: right;
+	margin-left: -1.5rem;
+}
+
+.postlist-date,
+.postlist-item:before {
+	font-size: 0.8125em;
+	/* 13px /16 */
+	color: var(--color-gray-90);
+}
+
+.postlist-date {
+	word-spacing: -0.5px;
+}
+
+.postlist-link {
+	font-size: 1.1875em;
+	/* 19px /16 */
+	font-weight: 700;
+	flex-basis: calc(100% - 1.5rem);
+	padding-left: .25em;
+	padding-right: .5em;
+	text-underline-position: from-font;
+	text-underline-offset: 0;
+	text-decoration-thickness: 1px;
+}
+
+.postlist-item-active .postlist-link {
+	font-weight: bold;
+}
+
+/* Tags */
+.post-tag {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	text-transform: capitalize;
+	font-style: italic;
+}
+
+.postlist-item>.post-tag {
+	align-self: center;
+}
+
+/* Tags list */
+.post-metadata {
+	display: inline-flex;
+	flex-wrap: wrap;
+	gap: .5em;
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+
+.post-metadata time {
+	margin-right: 1em;
+}
+
+footer {
+	text-align: center;
+	padding: 20px 0;
+}
+
+.social-links {
+	margin-top: 5px;
+}
+
+.social-links a {
+	margin: 0 3px;
+	text-decoration: none;
+	color: #333;
+}
+
+.social-links a:hover {
+	color: #cca4f4;
+	/* Customize this color as needed */
+}
+
+.social-links i {
+	font-size: 1.5em;
+	/* Adjust size as needed */
+}
+
+.site-logo {
+	max-width: 100px;
+	/* Adjust the size as needed */
+	height: auto;
+	/* Maintain aspect ratio */
+	display: block;
+	margin: 0 auto;
+	/* Center the logo */
+}
+/* Code copy button styles */
+        .code-copy {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            padding: 0.25rem 0.5rem;
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            z-index: 10;
+        }
+        
+        .code-copy:hover {
+            background: white;
+        }
+        
+        pre {
+            position: relative;
+        }
+        </style>
+    </head>
+    <body>
+        <a href="#skip" class="visually-hidden">Skip to main content</a>
+        
+        <header>
+            <a href="/" class="home-link">
+                <picture><source type="image/avif" srcset="/img/t_xVYiIA5X-512.avif 512w"><source type="image/webp" srcset="/img/t_xVYiIA5X-512.webp 512w"><img loading="lazy" decoding="async" src="/img/t_xVYiIA5X-512.png" alt="Yonatan Lourie logo" class="site-logo" width="512" height="512"></picture>
+            </a>
+            <a href="/" class="home-link">Yonatan Lourie</a>
+            <nav>
+                <h2 class="visually-hidden" id="top-level-navigation-menu">Top level navigation menu</h2>
+                <ul class="nav">
+                        <li class="nav-item">
+                            <a href="/">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/blog/">Blog</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/about/">About</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/Links/">Links</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/projects/">Projects</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/feed/feed.xml">Feed</a>
+                        </li>
+                </ul>
+            </nav>
+        </header>
+        
+        <main id="skip">
+            <heading-anchors>
+                
+<h1 id="how-you-can-run-the-same-python-distribution-on-eks-and-aws-lambda-using-uv">How you can run the same Python distribution on EKS and AWS Lambda (using UV)</h1>
+
+<ul class="post-metadata">
+	<li><time datetime="2025-11-08">08 November 2025</time></li>
+</ul>
+
+<p>I recently tackled a problem that ate up a few hours of my day, and I'm documenting the solution for anyone who hits this same wall in the future.</p>
+<h2 id="the-setup">The Setup</h2>
+<p>I'm doing my development with <code>uv</code>, and I was working on a microservice that serves an ML model via API. It's a FastAPI application running at on an EKS cluster in Kubernetes. Everything was working great.</p>
+<p>Then came another requirement: we needed to use the exact same model inference pipeline in an AWS Lambda function. &quot;Easy peasy,&quot; I thought. &quot;I'll just pack the whole thing in another Docker container and ship it to Lambda.&quot;</p>
+<h2 id="the-problem">The Problem</h2>
+<p>I packaged everything up, but immediately hit a wall with <code>uv</code> installations. The exact same packages that worked perfectly in my FastAPI application were causing chaos in Lambda. Specifically, I kept running into issues with <code>numpy</code>, <code>pyarrow</code>, and a few other scientific computing packages.</p>
+<p>After some digging, I found the problem:</p>
+<ul>
+<li><strong>FastAPI app</strong>: Used the standard <code>public.ecr.aws/docker/library/python:3.11-slim</code> image</li>
+<li><strong>Lambda app</strong>: Used <code>public.ecr.aws/lambda/python:3.11</code> image</li>
+</ul>
+<p>These two Python distributions are different enough that my dependencies were breaking left and right. I tried fixing the dependency issues manually, but it was a nightmare.</p>
+<h2 id="why-cant-i-just-use-regular-python-for-lambda">Why Can't I Just Use Regular Python for Lambda?</h2>
+<p>Here's the thing about AWS Lambda: it's not just running your code on some random server. Lambda has a specific runtime architecture designed for serverless execution.</p>
+<p>When a Lambda function is invoked, AWS needs to:</p>
+<ol>
+<li>Find (or spin up) an execution environment</li>
+<li>Load your code and dependencies</li>
+<li>Execute your handler function</li>
+<li>Return the result</li>
+</ol>
+<p>This whole process, especially when starting from a cold environment (called a &quot;cold start&quot;), needs to be fast and predictable. AWS Lambda's Python distribution includes specific system libraries, dependencies, and configurations that are optimized for this runtime environment.</p>
+<p>The official <code>public.ecr.aws/lambda/python:3.11</code> base image includes:</p>
+<ul>
+<li>The Lambda Runtime Interface Client</li>
+<li>System-level dependencies that Lambda expects</li>
+<li>Proper file system structure (<code>/var/task</code>, <code>/opt</code>, etc.)</li>
+<li>Libraries compiled against Amazon Linux 2</li>
+</ul>
+<p>If you use a standard Python image, you're essentially trying to fit a square peg in a round hole. Your packages might compile against different system libraries, leading to cryptic runtime errors or, worse, subtle bugs that only show up under load.</p>
+<p>(you can read more about lambda's in <a href="https://medium.com/@joudwawad/aws-lambda-architecture-deep-dive-bef856b9b2c4">AWS Lambda Architecture Deep Dive</a>)</p>
+<h2 id="the-solution-awslambdaric">The Solution: awslambdaric</h2>
+<p>Ive started to think of making a new package within my repository with custom uv requirements, but then you will need to train the same model with different packaging versions, and you will be in a mess.</p>
+<p>Eventually, I discovered <code>awslambdaric</code> (AWS Lambda Runtime Interface Client), which turned out to be the perfect middle ground. This package lets you use a standard Python distribution while still being compatible with Lambda's runtime.</p>
+<p>The beauty of <code>awslambdaric</code> is that it implements the Lambda Runtime API, so your container can communicate with Lambda's execution environment without needing the full AWS Lambda base image. The only downside? Local testing requires a bit more setup, but it's totally manageable.</p>
+<p>Here's my original Dockerfile for the FastAPI application:</p>
+
+<div style="position: relative" id="code-container-116">
+  <pre class="language-dockerfile" tabindex="0"><code id="code-116" class="language-dockerfile"><span class="token instruction"><span class="token keyword">FROM</span> public.ecr.aws/docker/library/python:3.11-slim <span class="token keyword">AS</span> base</span>
+<span class="token instruction"><span class="token keyword">WORKDIR</span> /app</span>
+<span class="token instruction"><span class="token keyword">COPY</span> <span class="token options"><span class="token property">--from</span><span class="token punctuation">=</span><span class="token string">ghcr.io/astral-sh/uv:latest</span></span> /uv /uvx /bin/</span>
+<span class="token instruction"><span class="token keyword">COPY</span> pyproject.toml uv.lock ./</span>
+
+<span class="token instruction"><span class="token keyword">FROM</span> base <span class="token keyword">AS</span> app</span>
+<span class="token instruction"><span class="token keyword">RUN</span> apt-get update &amp;&amp; apt-get install -y git &amp;&amp; rm -rf /var/lib/apt/lists/*</span>
+<span class="token instruction"><span class="token keyword">COPY</span> application.py ./</span>
+<span class="token instruction"><span class="token keyword">COPY</span> src/ ./src/</span>
+<span class="token instruction"><span class="token keyword">COPY</span> models/ ./models/</span>
+<span class="token instruction"><span class="token keyword">RUN</span> uv sync --frozen</span>
+<span class="token instruction"><span class="token keyword">EXPOSE</span> 8000</span>
+<span class="token instruction"><span class="token keyword">CMD</span> [<span class="token string">"uv"</span>, <span class="token string">"run"</span>, <span class="token string">"uvicorn"</span>, <span class="token string">"application:app"</span>, <span class="token string">"--host"</span>, <span class="token string">"0.0.0.0"</span>, <span class="token string">"--port"</span>, <span class="token string">"8000"</span>, <span class="token string">"--workers"</span>, <span class="token string">"4"</span>, <span class="token string">"--loop"</span>, <span class="token string">"uvloop"</span>]</span></code></pre>
+
+  <button class="code-copy " data-clipboard-target="#code-116" style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
+    <span style="display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;" class=""></span>
+  </button>
+</div>
+<p>And here's the new Lambda-compatible Dockerfile using <code>awslambdaric</code>:</p>
+
+<div style="position: relative" id="code-container-120">
+  <pre class="language-dockerfile" tabindex="0"><code id="code-120" class="language-dockerfile"><span class="token instruction"><span class="token keyword">ARG</span> FUNCTION_DIR=<span class="token string">"/function"</span></span>
+
+<span class="token instruction"><span class="token keyword">FROM</span> python:3.11 <span class="token keyword">AS</span> build-image</span>
+<span class="token instruction"><span class="token keyword">ARG</span> FUNCTION_DIR</span>
+<span class="token instruction"><span class="token keyword">RUN</span> apt-get update &amp;&amp; apt-get install -y git &amp;&amp; rm -rf /var/lib/apt/lists/*</span>
+<span class="token instruction"><span class="token keyword">COPY</span> <span class="token options"><span class="token property">--from</span><span class="token punctuation">=</span><span class="token string">ghcr.io/astral-sh/uv:latest</span></span> /uv /uvx /bin/</span>
+
+<span class="token instruction"><span class="token keyword">RUN</span> mkdir -p <span class="token variable">${FUNCTION_DIR}</span></span>
+<span class="token instruction"><span class="token keyword">COPY</span> pyproject.toml uv.lock <span class="token variable">${FUNCTION_DIR}</span>/</span>
+<span class="token instruction"><span class="token keyword">RUN</span> uv pip install --target <span class="token variable">${FUNCTION_DIR}</span> --no-cache -r <span class="token variable">${FUNCTION_DIR}</span>/pyproject.toml</span>
+<span class="token instruction"><span class="token keyword">RUN</span> pip install --target <span class="token variable">${FUNCTION_DIR}</span> awslambdaric</span>
+
+<span class="token instruction"><span class="token keyword">COPY</span> application.py <span class="token variable">${FUNCTION_DIR}</span>/</span>
+<span class="token instruction"><span class="token keyword">COPY</span> src/ <span class="token variable">${FUNCTION_DIR}</span>/src/</span>
+<span class="token instruction"><span class="token keyword">COPY</span> lambda_aws/ <span class="token variable">${FUNCTION_DIR}</span>/lambda_aws/</span>
+<span class="token instruction"><span class="token keyword">COPY</span> models/ <span class="token variable">${FUNCTION_DIR}</span>/models/</span>
+
+<span class="token instruction"><span class="token keyword">FROM</span> public.ecr.aws/docker/library/python:3.11-slim <span class="token keyword">AS</span> app</span>
+<span class="token instruction"><span class="token keyword">ARG</span> FUNCTION_DIR</span>
+<span class="token instruction"><span class="token keyword">WORKDIR</span> <span class="token variable">${FUNCTION_DIR}</span></span>
+<span class="token instruction"><span class="token keyword">COPY</span> <span class="token options"><span class="token property">--from</span><span class="token punctuation">=</span><span class="token string">build-image</span></span> <span class="token variable">${FUNCTION_DIR}</span> <span class="token variable">${FUNCTION_DIR}</span></span>
+
+<span class="token instruction"><span class="token keyword">ENTRYPOINT</span> [<span class="token string">"/usr/local/bin/python"</span>, <span class="token string">"-m"</span>, <span class="token string">"awslambdaric"</span>]</span>
+<span class="token instruction"><span class="token keyword">CMD</span> [<span class="token string">"lambda_aws.lambda_function.handler"</span>]</span></code></pre>
+
+  <button class="code-copy " data-clipboard-target="#code-120" style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
+    <span style="display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;" class=""></span>
+  </button>
+</div>
+<p>Key differences:</p>
+<ul>
+<li>Using a multi-stage build to install dependencies in the first stage</li>
+<li>Installing <code>awslambdaric</code> alongside other dependencies</li>
+<li>Setting the entrypoint to run Python with the <code>awslambdaric</code> module</li>
+<li>Pointing to your Lambda handler function in the CMD</li>
+</ul>
+<h2 id="testing-locally">Testing Locally</h2>
+<p>Testing Lambda containers locally requires the AWS Lambda Runtime Interface Emulator (RIE). Here's how to set it up:</p>
+
+<div style="position: relative" id="code-container-152">
+  <pre class="language-bash" tabindex="0"><code id="code-152" class="language-bash"><span class="token comment"># Build Lambda image</span>
+<span class="token function">docker</span> build <span class="token parameter variable">-f</span> lambda-dockerfile <span class="token punctuation">\</span>
+  <span class="token parameter variable">-t</span> your-project-name <span class="token builtin class-name">.</span>
+
+<span class="token comment"># Download AWS Lambda Runtime Interface Emulator (one-time setup)</span>
+<span class="token function">mkdir</span> <span class="token parameter variable">-p</span> ~/.aws-lambda-rie <span class="token operator">&amp;&amp;</span> <span class="token punctuation">\</span>
+  <span class="token function">curl</span> <span class="token parameter variable">-Lo</span> ~/.aws-lambda-rie/aws-lambda-rie <span class="token punctuation">\</span>
+  https://github.com/aws/aws-lambda-runtime-interface-emulator/releases/latest/download/aws-lambda-rie <span class="token operator">&amp;&amp;</span> <span class="token punctuation">\</span>
+  <span class="token function">chmod</span> +x ~/.aws-lambda-rie/aws-lambda-rie
+
+<span class="token comment"># Run Lambda container with RIE</span>
+<span class="token function">docker</span> run <span class="token punctuation">\</span>
+  <span class="token parameter variable">-v</span> ~/.aws-lambda-rie:/aws-lambda <span class="token punctuation">\</span>
+  <span class="token parameter variable">-p</span> <span class="token number">9000</span>:8080 <span class="token punctuation">\</span>
+  <span class="token parameter variable">--entrypoint</span> /aws-lambda/aws-lambda-rie <span class="token punctuation">\</span>
+  --env-file .env <span class="token punctuation">\</span>
+  your-project-name-lambda <span class="token punctuation">\</span>
+  /usr/local/bin/python <span class="token parameter variable">-m</span> awslambdaric lambda_aws.lambda_function.handler
+
+<span class="token comment"># Test with a sample invocation</span>
+<span class="token function">curl</span> <span class="token parameter variable">-XPOST</span> <span class="token string">"http://localhost:9000/2015-03-31/functions/function/invocations"</span> <span class="token punctuation">\</span>
+  <span class="token parameter variable">-d</span> <span class="token string">'your payload'</span></code></pre>
+
+  <button class="code-copy " data-clipboard-target="#code-152" style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
+    <span style="display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;" class=""></span>
+  </button>
+</div>
+<p>The RIE acts as a local Lambda service, letting you invoke your function just like AWS would, without deploying anything to the cloud.</p>
+
+<ul class="links-nextprev"><li class="links-nextprev-prev">← Previous<br> <a href="/blog/things-that-i-learned-in-my-latest-research-roles/">Things I learned in my research roles over the last 5 years</a></li>
+</ul>
+
+            </heading-anchors>
+        </main>
+        
+        <footer>
+            <div class="social-links">
+                <a href="https://www.goodreads.com/user/show/103722180-yonatan-lourie" target="_blank" title="Goodreads">
+                    <i class="fab fa-goodreads"></i>
+                </a>
+                <a href="https://www.imdb.com/user/ur88119677/ratings/" target="_blank" title="IMDb">
+                    <i class="fab fa-imdb"></i>
+                </a>
+                <a href="https://open.spotify.com/user/224udkuetwxsiqba7n4tums6q?si=_RD2kBO8QlSUYLfjBLjBEQ&nd=1" target="_blank" title="Spotify">
+                    <i class="fab fa-spotify"></i>
+                </a>
+                <a href="https://x.com/yonatanlou" target="_blank" title="Twitter">
+                    <i class="fab fa-twitter"></i>
+                </a>
+                <a href="https://www.linkedin.com/in/yonatanlourie/" target="_blank" title="LinkedIn">
+                    <i class="fab fa-linkedin"></i>
+                </a>
+                <a href="https://github.com/yonatanlou" target="_blank" title="GitHub">
+                    <i class="fab fa-github"></i>
+                </a>
+                <a href="mailto:yonatanlou@gmail.com" target="_blank" title="Email">
+                    <i class="fa-solid fa-envelope"></i>
+                </a>
+            </div>
+        </footer>
+        
+        <!-- This page `/blog/how-you-can-run-the-same-python-distribution-on-eks-and-aws-lambda/how_you_can_run_the_same_python_distribution_on_eks_and_aws_lambda/` was built on 2025-11-08T16:14:04.284Z -->
+        <script type="module" src="/dist/rJ3_G-2ArF.js"></script>
+        <script>function showTooltip(o,e){o.trigger.className.includes("tooltipped")||(o.trigger.children[0].className="tooltipped tooltipped-s",o.trigger.children[0].ariaLabel=e)}window.addEventListener("load",()=>{var o=new ClipboardJS(".code-copy");o.on("success",o=>showTooltip(o,"Copied!")),o.on("error",o=>showTooltip(o,"Failed to copy"))});</script>
+<script async="" src="https://cdn.jsdelivr.net/npm/clipboard@2.0.11/dist/clipboard.min.js"></script>
+    </body>
+</html>

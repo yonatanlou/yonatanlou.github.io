@@ -5,11 +5,145 @@
   <subtitle>Just a solid place to have a proper virtual identity.</subtitle>
   <link href="https://yonatanlou.github.io/feed/feed.xml" rel="self" />
   <link href="https://yonatanlou.github.io/" />
-  <updated>2025-09-22T00:00:00Z</updated>
+  <updated>2025-11-08T00:00:00Z</updated>
   <id>https://yonatanlou.github.io/</id>
   <author>
     <name>Yonatan Lourie</name>
   </author>
+  <entry>
+    <title>How you can run the same Python distribution on EKS and AWS Lambda (using UV)</title>
+    <link href="https://yonatanlou.github.io/blog/how-you-can-run-the-same-python-distribution-on-eks-and-aws-lambda/%03how_you_can_run_the_same_python_distribution_on_eks_and_aws_lambda/" />
+    <updated>2025-11-08T00:00:00Z</updated>
+    <id>https://yonatanlou.github.io/blog/how-you-can-run-the-same-python-distribution-on-eks-and-aws-lambda/%03how_you_can_run_the_same_python_distribution_on_eks_and_aws_lambda/</id>
+    <content type="html">&lt;p&gt;I recently tackled a problem that ate up a few hours of my day, and I&#39;m documenting the solution for anyone who hits this same wall in the future.&lt;/p&gt;
+&lt;h2 id=&quot;the-setup&quot;&gt;The Setup&lt;/h2&gt;
+&lt;p&gt;I&#39;m doing my development with &lt;code&gt;uv&lt;/code&gt;, and I was working on a microservice that serves an ML model via API. It&#39;s a FastAPI application running at on an EKS cluster in Kubernetes. Everything was working great.&lt;/p&gt;
+&lt;p&gt;Then came another requirement: we needed to use the exact same model inference pipeline in an AWS Lambda function. &amp;quot;Easy peasy,&amp;quot; I thought. &amp;quot;I&#39;ll just pack the whole thing in another Docker container and ship it to Lambda.&amp;quot;&lt;/p&gt;
+&lt;h2 id=&quot;the-problem&quot;&gt;The Problem&lt;/h2&gt;
+&lt;p&gt;I packaged everything up, but immediately hit a wall with &lt;code&gt;uv&lt;/code&gt; installations. The exact same packages that worked perfectly in my FastAPI application were causing chaos in Lambda. Specifically, I kept running into issues with &lt;code&gt;numpy&lt;/code&gt;, &lt;code&gt;pyarrow&lt;/code&gt;, and a few other scientific computing packages.&lt;/p&gt;
+&lt;p&gt;After some digging, I found the problem:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;FastAPI app&lt;/strong&gt;: Used the standard &lt;code&gt;public.ecr.aws/docker/library/python:3.11-slim&lt;/code&gt; image&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Lambda app&lt;/strong&gt;: Used &lt;code&gt;public.ecr.aws/lambda/python:3.11&lt;/code&gt; image&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;These two Python distributions are different enough that my dependencies were breaking left and right. I tried fixing the dependency issues manually, but it was a nightmare.&lt;/p&gt;
+&lt;h2 id=&quot;why-cant-i-just-use-regular-python-for-lambda&quot;&gt;Why Can&#39;t I Just Use Regular Python for Lambda?&lt;/h2&gt;
+&lt;p&gt;Here&#39;s the thing about AWS Lambda: it&#39;s not just running your code on some random server. Lambda has a specific runtime architecture designed for serverless execution.&lt;/p&gt;
+&lt;p&gt;When a Lambda function is invoked, AWS needs to:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Find (or spin up) an execution environment&lt;/li&gt;
+&lt;li&gt;Load your code and dependencies&lt;/li&gt;
+&lt;li&gt;Execute your handler function&lt;/li&gt;
+&lt;li&gt;Return the result&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;This whole process, especially when starting from a cold environment (called a &amp;quot;cold start&amp;quot;), needs to be fast and predictable. AWS Lambda&#39;s Python distribution includes specific system libraries, dependencies, and configurations that are optimized for this runtime environment.&lt;/p&gt;
+&lt;p&gt;The official &lt;code&gt;public.ecr.aws/lambda/python:3.11&lt;/code&gt; base image includes:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;The Lambda Runtime Interface Client&lt;/li&gt;
+&lt;li&gt;System-level dependencies that Lambda expects&lt;/li&gt;
+&lt;li&gt;Proper file system structure (&lt;code&gt;/var/task&lt;/code&gt;, &lt;code&gt;/opt&lt;/code&gt;, etc.)&lt;/li&gt;
+&lt;li&gt;Libraries compiled against Amazon Linux 2&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;If you use a standard Python image, you&#39;re essentially trying to fit a square peg in a round hole. Your packages might compile against different system libraries, leading to cryptic runtime errors or, worse, subtle bugs that only show up under load.&lt;/p&gt;
+&lt;p&gt;(you can read more about lambda&#39;s in &lt;a href=&quot;https://medium.com/@joudwawad/aws-lambda-architecture-deep-dive-bef856b9b2c4&quot;&gt;AWS Lambda Architecture Deep Dive&lt;/a&gt;)&lt;/p&gt;
+&lt;h2 id=&quot;the-solution-awslambdaric&quot;&gt;The Solution: awslambdaric&lt;/h2&gt;
+&lt;p&gt;Ive started to think of making a new package within my repository with custom uv requirements, but then you will need to train the same model with different packaging versions, and you will be in a mess.&lt;/p&gt;
+&lt;p&gt;Eventually, I discovered &lt;code&gt;awslambdaric&lt;/code&gt; (AWS Lambda Runtime Interface Client), which turned out to be the perfect middle ground. This package lets you use a standard Python distribution while still being compatible with Lambda&#39;s runtime.&lt;/p&gt;
+&lt;p&gt;The beauty of &lt;code&gt;awslambdaric&lt;/code&gt; is that it implements the Lambda Runtime API, so your container can communicate with Lambda&#39;s execution environment without needing the full AWS Lambda base image. The only downside? Local testing requires a bit more setup, but it&#39;s totally manageable.&lt;/p&gt;
+&lt;p&gt;Here&#39;s my original Dockerfile for the FastAPI application:&lt;/p&gt;
+
+&lt;div style=&quot;position: relative&quot; id=&quot;code-container-116&quot;&gt;
+  &lt;pre class=&quot;language-dockerfile&quot; tabindex=&quot;0&quot;&gt;&lt;code id=&quot;code-116&quot; class=&quot;language-dockerfile&quot;&gt;&lt;span class=&quot;token instruction&quot;&gt;&lt;span class=&quot;token keyword&quot;&gt;FROM&lt;/span&gt; public.ecr.aws/docker/library/python:3.11-slim &lt;span class=&quot;token keyword&quot;&gt;AS&lt;/span&gt; base&lt;/span&gt;
+&lt;span class=&quot;token instruction&quot;&gt;&lt;span class=&quot;token keyword&quot;&gt;WORKDIR&lt;/span&gt; /app&lt;/span&gt;
+&lt;span class=&quot;token instruction&quot;&gt;&lt;span class=&quot;token keyword&quot;&gt;COPY&lt;/span&gt; &lt;span class=&quot;token options&quot;&gt;&lt;span class=&quot;token property&quot;&gt;--from&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;ghcr.io/astral-sh/uv:latest&lt;/span&gt;&lt;/span&gt; /uv /uvx /bin/&lt;/span&gt;
+&lt;span class=&quot;token instruction&quot;&gt;&lt;span class=&quot;token keyword&quot;&gt;COPY&lt;/span&gt; pyproject.toml uv.lock ./&lt;/span&gt;
+
+&lt;span class=&quot;token instruction&quot;&gt;&lt;span class=&quot;token keyword&quot;&gt;FROM&lt;/span&gt; base &lt;span class=&quot;token keyword&quot;&gt;AS&lt;/span&gt; app&lt;/span&gt;
+&lt;span class=&quot;token instruction&quot;&gt;&lt;span class=&quot;token keyword&quot;&gt;RUN&lt;/span&gt; apt-get update &amp;amp;&amp;amp; apt-get install -y git &amp;amp;&amp;amp; rm -rf /var/lib/apt/lists/*&lt;/span&gt;
+&lt;span class=&quot;token instruction&quot;&gt;&lt;span class=&quot;token keyword&quot;&gt;COPY&lt;/span&gt; application.py ./&lt;/span&gt;
+&lt;span class=&quot;token instruction&quot;&gt;&lt;span class=&quot;token keyword&quot;&gt;COPY&lt;/span&gt; src/ ./src/&lt;/span&gt;
+&lt;span class=&quot;token instruction&quot;&gt;&lt;span class=&quot;token keyword&quot;&gt;COPY&lt;/span&gt; models/ ./models/&lt;/span&gt;
+&lt;span class=&quot;token instruction&quot;&gt;&lt;span class=&quot;token keyword&quot;&gt;RUN&lt;/span&gt; uv sync --frozen&lt;/span&gt;
+&lt;span class=&quot;token instruction&quot;&gt;&lt;span class=&quot;token keyword&quot;&gt;EXPOSE&lt;/span&gt; 8000&lt;/span&gt;
+&lt;span class=&quot;token instruction&quot;&gt;&lt;span class=&quot;token keyword&quot;&gt;CMD&lt;/span&gt; [&lt;span class=&quot;token string&quot;&gt;&quot;uv&quot;&lt;/span&gt;, &lt;span class=&quot;token string&quot;&gt;&quot;run&quot;&lt;/span&gt;, &lt;span class=&quot;token string&quot;&gt;&quot;uvicorn&quot;&lt;/span&gt;, &lt;span class=&quot;token string&quot;&gt;&quot;application:app&quot;&lt;/span&gt;, &lt;span class=&quot;token string&quot;&gt;&quot;--host&quot;&lt;/span&gt;, &lt;span class=&quot;token string&quot;&gt;&quot;0.0.0.0&quot;&lt;/span&gt;, &lt;span class=&quot;token string&quot;&gt;&quot;--port&quot;&lt;/span&gt;, &lt;span class=&quot;token string&quot;&gt;&quot;8000&quot;&lt;/span&gt;, &lt;span class=&quot;token string&quot;&gt;&quot;--workers&quot;&lt;/span&gt;, &lt;span class=&quot;token string&quot;&gt;&quot;4&quot;&lt;/span&gt;, &lt;span class=&quot;token string&quot;&gt;&quot;--loop&quot;&lt;/span&gt;, &lt;span class=&quot;token string&quot;&gt;&quot;uvloop&quot;&lt;/span&gt;]&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+
+  &lt;button class=&quot;code-copy &quot; data-clipboard-target=&quot;#code-116&quot; style=&quot;position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;&quot; title=&quot;Copy&quot;&gt;
+    &lt;span style=&quot;display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;&quot; class=&quot;&quot;&gt;&lt;/span&gt;
+  &lt;/button&gt;
+&lt;/div&gt;
+&lt;p&gt;And here&#39;s the new Lambda-compatible Dockerfile using &lt;code&gt;awslambdaric&lt;/code&gt;:&lt;/p&gt;
+
+&lt;div style=&quot;position: relative&quot; id=&quot;code-container-120&quot;&gt;
+  &lt;pre class=&quot;language-dockerfile&quot; tabindex=&quot;0&quot;&gt;&lt;code id=&quot;code-120&quot; class=&quot;language-dockerfile&quot;&gt;&lt;span class=&quot;token instruction&quot;&gt;&lt;span class=&quot;token keyword&quot;&gt;ARG&lt;/span&gt; FUNCTION_DIR=&lt;span class=&quot;token string&quot;&gt;&quot;/function&quot;&lt;/span&gt;&lt;/span&gt;
+
+&lt;span class=&quot;token instruction&quot;&gt;&lt;span class=&quot;token keyword&quot;&gt;FROM&lt;/span&gt; python:3.11 &lt;span class=&quot;token keyword&quot;&gt;AS&lt;/span&gt; build-image&lt;/span&gt;
+&lt;span class=&quot;token instruction&quot;&gt;&lt;span class=&quot;token keyword&quot;&gt;ARG&lt;/span&gt; FUNCTION_DIR&lt;/span&gt;
+&lt;span class=&quot;token instruction&quot;&gt;&lt;span class=&quot;token keyword&quot;&gt;RUN&lt;/span&gt; apt-get update &amp;amp;&amp;amp; apt-get install -y git &amp;amp;&amp;amp; rm -rf /var/lib/apt/lists/*&lt;/span&gt;
+&lt;span class=&quot;token instruction&quot;&gt;&lt;span class=&quot;token keyword&quot;&gt;COPY&lt;/span&gt; &lt;span class=&quot;token options&quot;&gt;&lt;span class=&quot;token property&quot;&gt;--from&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;ghcr.io/astral-sh/uv:latest&lt;/span&gt;&lt;/span&gt; /uv /uvx /bin/&lt;/span&gt;
+
+&lt;span class=&quot;token instruction&quot;&gt;&lt;span class=&quot;token keyword&quot;&gt;RUN&lt;/span&gt; mkdir -p &lt;span class=&quot;token variable&quot;&gt;${FUNCTION_DIR}&lt;/span&gt;&lt;/span&gt;
+&lt;span class=&quot;token instruction&quot;&gt;&lt;span class=&quot;token keyword&quot;&gt;COPY&lt;/span&gt; pyproject.toml uv.lock &lt;span class=&quot;token variable&quot;&gt;${FUNCTION_DIR}&lt;/span&gt;/&lt;/span&gt;
+&lt;span class=&quot;token instruction&quot;&gt;&lt;span class=&quot;token keyword&quot;&gt;RUN&lt;/span&gt; uv pip install --target &lt;span class=&quot;token variable&quot;&gt;${FUNCTION_DIR}&lt;/span&gt; --no-cache -r &lt;span class=&quot;token variable&quot;&gt;${FUNCTION_DIR}&lt;/span&gt;/pyproject.toml&lt;/span&gt;
+&lt;span class=&quot;token instruction&quot;&gt;&lt;span class=&quot;token keyword&quot;&gt;RUN&lt;/span&gt; pip install --target &lt;span class=&quot;token variable&quot;&gt;${FUNCTION_DIR}&lt;/span&gt; awslambdaric&lt;/span&gt;
+
+&lt;span class=&quot;token instruction&quot;&gt;&lt;span class=&quot;token keyword&quot;&gt;COPY&lt;/span&gt; application.py &lt;span class=&quot;token variable&quot;&gt;${FUNCTION_DIR}&lt;/span&gt;/&lt;/span&gt;
+&lt;span class=&quot;token instruction&quot;&gt;&lt;span class=&quot;token keyword&quot;&gt;COPY&lt;/span&gt; src/ &lt;span class=&quot;token variable&quot;&gt;${FUNCTION_DIR}&lt;/span&gt;/src/&lt;/span&gt;
+&lt;span class=&quot;token instruction&quot;&gt;&lt;span class=&quot;token keyword&quot;&gt;COPY&lt;/span&gt; lambda_aws/ &lt;span class=&quot;token variable&quot;&gt;${FUNCTION_DIR}&lt;/span&gt;/lambda_aws/&lt;/span&gt;
+&lt;span class=&quot;token instruction&quot;&gt;&lt;span class=&quot;token keyword&quot;&gt;COPY&lt;/span&gt; models/ &lt;span class=&quot;token variable&quot;&gt;${FUNCTION_DIR}&lt;/span&gt;/models/&lt;/span&gt;
+
+&lt;span class=&quot;token instruction&quot;&gt;&lt;span class=&quot;token keyword&quot;&gt;FROM&lt;/span&gt; public.ecr.aws/docker/library/python:3.11-slim &lt;span class=&quot;token keyword&quot;&gt;AS&lt;/span&gt; app&lt;/span&gt;
+&lt;span class=&quot;token instruction&quot;&gt;&lt;span class=&quot;token keyword&quot;&gt;ARG&lt;/span&gt; FUNCTION_DIR&lt;/span&gt;
+&lt;span class=&quot;token instruction&quot;&gt;&lt;span class=&quot;token keyword&quot;&gt;WORKDIR&lt;/span&gt; &lt;span class=&quot;token variable&quot;&gt;${FUNCTION_DIR}&lt;/span&gt;&lt;/span&gt;
+&lt;span class=&quot;token instruction&quot;&gt;&lt;span class=&quot;token keyword&quot;&gt;COPY&lt;/span&gt; &lt;span class=&quot;token options&quot;&gt;&lt;span class=&quot;token property&quot;&gt;--from&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;build-image&lt;/span&gt;&lt;/span&gt; &lt;span class=&quot;token variable&quot;&gt;${FUNCTION_DIR}&lt;/span&gt; &lt;span class=&quot;token variable&quot;&gt;${FUNCTION_DIR}&lt;/span&gt;&lt;/span&gt;
+
+&lt;span class=&quot;token instruction&quot;&gt;&lt;span class=&quot;token keyword&quot;&gt;ENTRYPOINT&lt;/span&gt; [&lt;span class=&quot;token string&quot;&gt;&quot;/usr/local/bin/python&quot;&lt;/span&gt;, &lt;span class=&quot;token string&quot;&gt;&quot;-m&quot;&lt;/span&gt;, &lt;span class=&quot;token string&quot;&gt;&quot;awslambdaric&quot;&lt;/span&gt;]&lt;/span&gt;
+&lt;span class=&quot;token instruction&quot;&gt;&lt;span class=&quot;token keyword&quot;&gt;CMD&lt;/span&gt; [&lt;span class=&quot;token string&quot;&gt;&quot;lambda_aws.lambda_function.handler&quot;&lt;/span&gt;]&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+
+  &lt;button class=&quot;code-copy &quot; data-clipboard-target=&quot;#code-120&quot; style=&quot;position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;&quot; title=&quot;Copy&quot;&gt;
+    &lt;span style=&quot;display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;&quot; class=&quot;&quot;&gt;&lt;/span&gt;
+  &lt;/button&gt;
+&lt;/div&gt;
+&lt;p&gt;Key differences:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Using a multi-stage build to install dependencies in the first stage&lt;/li&gt;
+&lt;li&gt;Installing &lt;code&gt;awslambdaric&lt;/code&gt; alongside other dependencies&lt;/li&gt;
+&lt;li&gt;Setting the entrypoint to run Python with the &lt;code&gt;awslambdaric&lt;/code&gt; module&lt;/li&gt;
+&lt;li&gt;Pointing to your Lambda handler function in the CMD&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&quot;testing-locally&quot;&gt;Testing Locally&lt;/h2&gt;
+&lt;p&gt;Testing Lambda containers locally requires the AWS Lambda Runtime Interface Emulator (RIE). Here&#39;s how to set it up:&lt;/p&gt;
+
+&lt;div style=&quot;position: relative&quot; id=&quot;code-container-152&quot;&gt;
+  &lt;pre class=&quot;language-bash&quot; tabindex=&quot;0&quot;&gt;&lt;code id=&quot;code-152&quot; class=&quot;language-bash&quot;&gt;&lt;span class=&quot;token comment&quot;&gt;# Build Lambda image&lt;/span&gt;
+&lt;span class=&quot;token function&quot;&gt;docker&lt;/span&gt; build &lt;span class=&quot;token parameter variable&quot;&gt;-f&lt;/span&gt; lambda-dockerfile &lt;span class=&quot;token punctuation&quot;&gt;&#92;&lt;/span&gt;
+  &lt;span class=&quot;token parameter variable&quot;&gt;-t&lt;/span&gt; your-project-name &lt;span class=&quot;token builtin class-name&quot;&gt;.&lt;/span&gt;
+
+&lt;span class=&quot;token comment&quot;&gt;# Download AWS Lambda Runtime Interface Emulator (one-time setup)&lt;/span&gt;
+&lt;span class=&quot;token function&quot;&gt;mkdir&lt;/span&gt; &lt;span class=&quot;token parameter variable&quot;&gt;-p&lt;/span&gt; ~/.aws-lambda-rie &lt;span class=&quot;token operator&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;&#92;&lt;/span&gt;
+  &lt;span class=&quot;token function&quot;&gt;curl&lt;/span&gt; &lt;span class=&quot;token parameter variable&quot;&gt;-Lo&lt;/span&gt; ~/.aws-lambda-rie/aws-lambda-rie &lt;span class=&quot;token punctuation&quot;&gt;&#92;&lt;/span&gt;
+  https://github.com/aws/aws-lambda-runtime-interface-emulator/releases/latest/download/aws-lambda-rie &lt;span class=&quot;token operator&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;&#92;&lt;/span&gt;
+  &lt;span class=&quot;token function&quot;&gt;chmod&lt;/span&gt; +x ~/.aws-lambda-rie/aws-lambda-rie
+
+&lt;span class=&quot;token comment&quot;&gt;# Run Lambda container with RIE&lt;/span&gt;
+&lt;span class=&quot;token function&quot;&gt;docker&lt;/span&gt; run &lt;span class=&quot;token punctuation&quot;&gt;&#92;&lt;/span&gt;
+  &lt;span class=&quot;token parameter variable&quot;&gt;-v&lt;/span&gt; ~/.aws-lambda-rie:/aws-lambda &lt;span class=&quot;token punctuation&quot;&gt;&#92;&lt;/span&gt;
+  &lt;span class=&quot;token parameter variable&quot;&gt;-p&lt;/span&gt; &lt;span class=&quot;token number&quot;&gt;9000&lt;/span&gt;:8080 &lt;span class=&quot;token punctuation&quot;&gt;&#92;&lt;/span&gt;
+  &lt;span class=&quot;token parameter variable&quot;&gt;--entrypoint&lt;/span&gt; /aws-lambda/aws-lambda-rie &lt;span class=&quot;token punctuation&quot;&gt;&#92;&lt;/span&gt;
+  --env-file .env &lt;span class=&quot;token punctuation&quot;&gt;&#92;&lt;/span&gt;
+  your-project-name-lambda &lt;span class=&quot;token punctuation&quot;&gt;&#92;&lt;/span&gt;
+  /usr/local/bin/python &lt;span class=&quot;token parameter variable&quot;&gt;-m&lt;/span&gt; awslambdaric lambda_aws.lambda_function.handler
+
+&lt;span class=&quot;token comment&quot;&gt;# Test with a sample invocation&lt;/span&gt;
+&lt;span class=&quot;token function&quot;&gt;curl&lt;/span&gt; &lt;span class=&quot;token parameter variable&quot;&gt;-XPOST&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;http://localhost:9000/2015-03-31/functions/function/invocations&quot;&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;&#92;&lt;/span&gt;
+  &lt;span class=&quot;token parameter variable&quot;&gt;-d&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&#39;your payload&#39;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+
+  &lt;button class=&quot;code-copy &quot; data-clipboard-target=&quot;#code-152&quot; style=&quot;position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;&quot; title=&quot;Copy&quot;&gt;
+    &lt;span style=&quot;display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;&quot; class=&quot;&quot;&gt;&lt;/span&gt;
+  &lt;/button&gt;
+&lt;/div&gt;
+&lt;p&gt;The RIE acts as a local Lambda service, letting you invoke your function just like AWS would, without deploying anything to the cloud.&lt;/p&gt;
+</content>
+  </entry>
   <entry>
     <title>Things I learned in my research roles over the last 5 years</title>
     <link href="https://yonatanlou.github.io/blog/things-that-i-learned-in-my-latest-research-roles/" />
